@@ -48,7 +48,7 @@ export class BatchOperationsService {
             break;
 
           default:
-            throw new BadRequestException(\`نوع العملية غير مدعوم: \${operationType}\`);
+            throw new BadRequestException(`نوع العملية غير مدعوم: ${operationType}`);
         }
       } catch (e) {
         errors.push({ itemId, reason: e.message || 'خطأ غير معروف أثناء المعالجة' });
@@ -57,14 +57,12 @@ export class BatchOperationsService {
 
     const success = errors.length === 0;
     const message = success
-      ? \`تم تنفيذ العملية المجمعة بنجاح على \${processedCount} منتج.\`
-      : \`تم تنفيذ العملية المجمعة مع \${errors.length} أخطاء.\`;
+      ? `تم تنفيذ العملية المجمعة بنجاح على ${processedCount} منتج.`
+      : `تم تنفيذ العملية المجمعة مع ${errors.length} أخطاء.`;
 
     return {
-      success,
       processedCount,
-      message,
-      errors: errors.length > 0 ? errors : undefined,
-    };
+      errors,
+    } as BatchOperationResponseDto;
   }
 }
