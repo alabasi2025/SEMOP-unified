@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   BehaviorSubject,
   Observable,
@@ -102,7 +103,7 @@ class MockInventoryService extends InventoryService {
 @Component({
   selector: 'app-movements-page',
   standalone: true,
-  imports: [CommonModule], // سيتم إضافة المكونات الأخرى في ملف HTML
+  imports: [CommonModule, FormsModule], // سيتم إضافة المكونات الأخرى في ملف HTML
   templateUrl: './movements-page.component.html',
   styleUrls: ['./movements-page.component.scss'],
   providers: [
