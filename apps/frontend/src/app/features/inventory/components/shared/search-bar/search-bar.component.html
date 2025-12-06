@@ -1,47 +1,39 @@
-<!-- حاوية شريط البحث الرئيسية -->
-<div class="search-bar-container" [class.is-loading]="loading" [class.has-value]="searchTerm().length > 0">
-  <!-- أيقونة البحث (تظهر دائماً) -->
-  <span class="search-icon" aria-hidden="true">
-    <!-- Placeholder لأيقونة البحث -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-      <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm6.32-1.68a1 1 0 011.41 1.41l3.59 3.59a1 1 0 01-1.41 1.41l-3.59-3.59a1 1 0 01-1.41-1.41z"/>
-    </svg>
-  </span>
-
-  <!-- حقل الإدخال للبحث -->
-  <input
-    #searchInput
-    type="search"
-    [placeholder]="placeholder"
-    [attr.aria-label]="placeholder"
-    [attr.autocomplete]="autocomplete ? 'on' : 'off'"
-    [value]="searchTerm()"
-    (input)="onSearchTermChange($event.target.value)"
-    (focus)="onFocus()"
-    (blur)="onBlur()"
-    class="search-input"
-    role="searchbox"
-  />
-
-  <!-- مؤشر التحميل (يظهر فقط عند loading=true) -->
-  <div *ngIf="loading" class="loading-indicator" role="status" aria-label="جاري التحميل">
-    <!-- Placeholder لمؤشر التحميل (spinner) -->
-    <div class="spinner"></div>
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <span class="p-input-icon-left" style="width: 100%;">
+      <i class="pi pi-search"></i>
+      <input 
+        type="text" 
+        pInputText 
+        [(ngModel)]="searchTerm"
+        [placeholder]="placeholder"
+        (keyup.enter)="search()"
+        style="width: 100%;" />
+    </span>
+    <button 
+      *ngIf="searchTerm"
+      pButton 
+      icon="pi pi-times" 
+      class="p-button-text"
+      (click)="clearSearch()"></button>
+    <button 
+      pButton 
+      icon="pi pi-search" 
+      label="بحث"
+      (click)="search()"></button>
   </div>
-
-  <!-- زر المسح (يظهر فقط إذا كان showClearButton=true وهناك قيمة في حقل البحث وليس في حالة تحميل) -->
-  <button
-    *ngIf="showClearButton && searchTerm().length > 0 && !loading"
-    class="clear-button"
-    (click)="clearSearch()"
-    type="button"
-    aria-label="مسح حقل البحث"
-  >
-    <!-- Placeholder لأيقونة المسح -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-      <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.71 13.29a1 1 0 01-1.42 1.42L12 13.41l-3.29 3.3a1 1 0 01-1.42-1.42L10.59 12l-3.3-3.29a1 1 0 011.42-1.42L12 10.59l3.29-3.3a1 1 0 011.42 1.42L13.41 12l3.3 3.29z"/>
-    </svg>
-  </button>
+  
+  <div class="search-filters" *ngIf="filters.length > 0">
+    <div *ngFor="let filter of filters" class="filter-item">
+      <label>{{ filter.label }}</label>
+      <p-dropdown 
+        [options]="filter.options"
+        [(ngModel)]="selectedFilters[filter.field]"
+        (onChange)="filterChanged(filter, $event.value)"
+        [placeholder]="'اختر ' + filter.label"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"></p-dropdown>
+    </div>
+  </div>
 </div>
-
-<!-- ملاحظة: اختصار لوحة المفاتيح (Ctrl+K) يتم التعامل معه في ملف TypeScript -->
