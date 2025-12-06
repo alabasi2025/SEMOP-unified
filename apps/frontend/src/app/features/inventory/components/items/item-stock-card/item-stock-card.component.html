@@ -1,0 +1,71 @@
+<div 
+  class="item-stock-card"
+  [class.clickable]="clickable"
+  [class.loading]="loading"
+  [attr.data-status]="stockStatus"
+  (click)="onCardClick()"
+  role="article"
+  [attr.aria-label]="'بطاقة رصيد الصنف ' + itemName">
+  
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading" class="skeleton-loader">
+    <div class="skeleton skeleton-header"></div>
+    <div class="skeleton skeleton-text"></div>
+    <div class="skeleton skeleton-text"></div>
+    <div class="skeleton skeleton-progress"></div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading" class="card-content">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="item-info">
+        <h3 class="item-name">{{ itemName }}</h3>
+        <span class="item-code">{{ itemCode }}</span>
+      </div>
+      <div class="status-badge" [attr.data-status]="stockStatus">
+        <span class="status-icon">{{ stockStatusIcon }}</span>
+        <span class="status-text">{{ stockStatusText }}</span>
+      </div>
+    </div>
+
+    <!-- Warehouse Info -->
+    <div *ngIf="showWarehouse" class="warehouse-info">
+      <span class="warehouse-icon">🏢</span>
+      <span class="warehouse-name">{{ warehouseName }}</span>
+    </div>
+
+    <!-- Stock Quantity -->
+    <div class="stock-quantity">
+      <div class="quantity-label">الكمية الحالية</div>
+      <div class="quantity-value">{{ formattedQuantity }}</div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div *ngIf="maxQuantity > 0" class="progress-container">
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width.%]="stockPercentage"
+          [attr.data-status]="stockStatus"
+          role="progressbar"
+          [attr.aria-valuenow]="quantity"
+          [attr.aria-valuemin]="0"
+          [attr.aria-valuemax]="maxQuantity">
+        </div>
+      </div>
+      <div class="progress-labels">
+        <span class="min-label">الحد الأدنى: {{ formattedMinQuantity }}</span>
+        <span class="max-label">الحد الأقصى: {{ formattedMaxQuantity }}</span>
+      </div>
+    </div>
+
+    <!-- Min/Max Info (without progress bar) -->
+    <div *ngIf="maxQuantity === 0" class="min-max-info">
+      <div class="info-item">
+        <span class="info-label">الحد الأدنى:</span>
+        <span class="info-value">{{ formattedMinQuantity }}</span>
+      </div>
+    </div>
+  </div>
+</div>
