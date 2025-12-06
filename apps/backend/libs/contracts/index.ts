@@ -1,114 +1,144 @@
 // Temporary contracts barrel export
 // TODO: Replace with actual @semop/contracts package
 
+// Base DTO with index signature
+class BaseDto {
+  [key: string]: any;
+}
+
 // ==================== Auth DTOs ====================
-export class LoginDto {
-  email: string;
-  password: string;
+export class LoginDto extends BaseDto {
+  email?: string;
+  password?: string;
 }
 
 // ==================== Organizational Structure DTOs ====================
-export class CreateDepartmentDto {
+export class CreateDepartmentDto extends BaseDto {
   name?: string;
   description?: string;
+  code?: string;
+  parentId?: string;
+  managerId?: string;
 }
 
-export class UpdateDepartmentDto {
+export class UpdateDepartmentDto extends BaseDto {
   name?: string;
   description?: string;
+  parentId?: string;
+  managerId?: string;
+  isActive?: boolean;
 }
 
-export class CreatePositionDto {
+export class CreatePositionDto extends BaseDto {
   title?: string;
   description?: string;
+  code?: string;
+  level?: number;
 }
 
-export class UpdatePositionDto {
+export class UpdatePositionDto extends BaseDto {
   title?: string;
   description?: string;
+  level?: number;
+  isActive?: boolean;
 }
 
-export class CreateEmployeeDto {
+export class CreateEmployeeDto extends BaseDto {
   name?: string;
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  mobile?: string;
+  hireDate?: string;
 }
 
-export class UpdateEmployeeDto {
+export class UpdateEmployeeDto extends BaseDto {
   name?: string;
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  mobile?: string;
 }
 
 // ==================== Role Permissions DTOs ====================
-export class CreateRolePermissionDto {
+export class CreateRolePermissionDto extends BaseDto {
   roleId?: string;
   permissionId?: string;
 }
 
-export class UpdateRolePermissionDto {
+export class UpdateRolePermissionDto extends BaseDto {
   roleId?: string;
   permissionId?: string;
 }
 
 // ==================== Roles DTOs ====================
-export class CreateRoleDto {
+export class CreateRoleDto extends BaseDto {
   name?: string;
   description?: string;
+  nameAr?: string;
+  nameEn?: string;
 }
 
-export class UpdateRoleDto {
+export class UpdateRoleDto extends BaseDto {
   name?: string;
   description?: string;
+  nameAr?: string;
+  nameEn?: string;
 }
 
-export class RoleResponseDto {
+export class RoleResponseDto extends BaseDto {
   id?: string;
   name?: string;
   description?: string;
 }
 
 // ==================== Genes DTOs ====================
-export class CreateGeneDto {
+export class CreateGeneDto extends BaseDto {
   name?: string;
   code?: string;
+  sectorCode?: string;
 }
 
-export class UpdateGeneDto {
+export class UpdateGeneDto extends BaseDto {
   name?: string;
   code?: string;
+  sectorCode?: string;
 }
 
-export class LinkGeneSectorDto {
+export class LinkGeneSectorDto extends BaseDto {
   geneId?: string;
   sectorId?: string;
 }
 
 // ==================== Latitude Points DTOs ====================
-export class CreateLatitudePointDto {
+export class CreateLatitudePointDto extends BaseDto {
   latitude?: number;
   longitude?: number;
   name?: string;
 }
 
-export class UpdateLatitudePointDto {
+export class UpdateLatitudePointDto extends BaseDto {
   latitude?: number;
   longitude?: number;
   name?: string;
 }
 
 // ==================== Customer Contacts DTOs ====================
-export class CreateCustomerContactDto {
+export class CreateCustomerContactDto extends BaseDto {
   name?: string;
   email?: string;
   phone?: string;
 }
 
-export class UpdateCustomerContactDto {
+export class UpdateCustomerContactDto extends BaseDto {
   name?: string;
   email?: string;
   phone?: string;
 }
 
-export class CustomerContactDto {
+export class CustomerContactDto extends BaseDto {
   id?: string;
   name?: string;
   email?: string;
@@ -116,47 +146,47 @@ export class CustomerContactDto {
 }
 
 // ==================== Inventory DTOs ====================
-export class BatchOperationDto {
-  itemIds: string[];
-  operationType: string;
-  value: any;
+export class BatchOperationDto extends BaseDto {
+  itemIds?: string[];
+  operationType?: string;
+  value?: any;
 }
 
-export class BatchOperationResponseDto {
-  processedCount: number;
-  errors: { itemId: string; reason: string }[];
+export class BatchOperationResponseDto extends BaseDto {
+  processedCount?: number;
+  errors?: { itemId: string; reason: string }[];
 }
 
-export class TransferItemDto {
-  itemId: string;
-  quantity: number;
+export class TransferItemDto extends BaseDto {
+  itemId?: string;
+  quantity?: number;
 }
 
-export class CreateWarehouseTransferDto {
-  sourceWarehouseId: number;
-  destinationWarehouseId: number;
-  transferDate: string;
+export class CreateWarehouseTransferDto extends BaseDto {
+  sourceWarehouseId?: number;
+  destinationWarehouseId?: number;
+  transferDate?: string;
   notes?: string;
-  items: TransferItemDto[];
+  items?: TransferItemDto[];
 }
 
-export class WarehouseTransfer {
-  id: number;
-  sourceWarehouseId: number;
-  destinationWarehouseId: number;
-  transferDate: Date;
-  status: string;
+export class WarehouseTransfer extends BaseDto {
+  id?: number;
+  sourceWarehouseId?: number;
+  destinationWarehouseId?: number;
+  transferDate?: Date;
+  status?: string;
   notes?: string;
-  items: TransferItemDto[];
+  items?: TransferItemDto[];
 }
 
 // ==================== Purchasing DTOs ====================
-export class CreatePurchaseOrderDto {
+export class CreatePurchaseOrderDto extends BaseDto {
   supplierId?: string;
   items?: any[];
 }
 
-export class UpdatePurchaseOrderDto {
+export class UpdatePurchaseOrderDto extends BaseDto {
   supplierId?: string;
   items?: any[];
 }
@@ -184,21 +214,29 @@ export enum PeriodStatus {
 }
 
 // Account DTOs
-export class CreateAccountDto {
+export class CreateAccountDto extends BaseDto {
   code?: string;
   name?: string;
   type?: AccountType;
   nature?: AccountNature;
+  accountType?: string;
+  accountNature?: string;
+  isParent?: boolean;
+  parentId?: string;
 }
 
-export class UpdateAccountDto {
+export class UpdateAccountDto extends BaseDto {
   code?: string;
   name?: string;
   type?: AccountType;
   nature?: AccountNature;
+  accountType?: string;
+  accountNature?: string;
+  isParent?: boolean;
+  parentId?: string;
 }
 
-export class AccountResponseDto {
+export class AccountResponseDto extends BaseDto {
   id?: string;
   code?: string;
   name?: string;
@@ -206,111 +244,126 @@ export class AccountResponseDto {
   nature?: AccountNature;
 }
 
-export class AccountSuggestionRequestDto {
+export class AccountSuggestionRequestDto extends BaseDto {
   operationType?: string;
   amount?: number;
+  contextType?: string;
+  contextId?: string;
 }
 
-export class SuggestedAccountDto {
+export class SuggestedAccountDto extends BaseDto {
   accountId?: string;
   accountCode?: string;
   accountName?: string;
   confidence?: number;
 }
 
-export class GenerateAccountCodeDto {
+export class GenerateAccountCodeDto extends BaseDto {
   type?: AccountType;
   parentCode?: string;
 }
 
 // Journal Entry DTOs
-export class CreateJournalEntryFromOperationDto {
+export class CreateJournalEntryFromOperationDto extends BaseDto {
   operationType?: string;
   operationId?: string;
   amount?: number;
+  sourceType?: string;
+  sourceId?: string;
+  sourceData?: any;
 }
 
-export class CreateJournalEntryFromTemplateDto {
+export class CreateJournalEntryFromTemplateDto extends BaseDto {
   templateId?: string;
   data?: any;
 }
 
-export class CreateJournalEntryTemplateDto {
+export class CreateJournalEntryTemplateDto extends BaseDto {
   name?: string;
   description?: string;
   entries?: any[];
+  lines?: any[];
+  allowManualEntry?: boolean;
 }
 
-export class UpdateJournalEntryTemplateDto {
+export class UpdateJournalEntryTemplateDto extends BaseDto {
   name?: string;
   description?: string;
   entries?: any[];
+  lines?: any[];
+  allowManualEntry?: boolean;
 }
 
-export class JournalEntryTemplateDto {
+export class JournalEntryTemplateDto extends BaseDto {
   id?: string;
   name?: string;
   description?: string;
   entries?: any[];
+  lines?: any[];
 }
 
-export class ValidateJournalEntryDto {
+export class ValidateJournalEntryDto extends BaseDto {
   entries?: any[];
+  lines?: any[];
+  entryDate?: string;
+  fiscalYearId?: string;
+  fiscalPeriodId?: string;
 }
 
-export class JournalEntryValidationResultDto {
-  isValid: boolean;
-  errors: string[];
+export class JournalEntryValidationResultDto extends BaseDto {
+  isValid?: boolean;
+  errors?: string[];
 }
 
-export class AutomatedJournalEntryDto {
+export class AutomatedJournalEntryDto extends BaseDto {
   operationType?: string;
   data?: any;
 }
 
-export class PostJournalEntryDto {
+export class PostJournalEntryDto extends BaseDto {
   journalEntryId?: string;
 }
 
-export class SmartJournalEntryStatsDto {
+export class SmartJournalEntryStatsDto extends BaseDto {
   totalEntries?: number;
   automatedEntries?: number;
   manualEntries?: number;
 }
 
 // Usage DTOs
-export class RecordUsageDto {
+export class RecordUsageDto extends BaseDto {
   feature?: string;
   action?: string;
 }
 
-export class UsageStatisticsDto {
+export class UsageStatisticsDto extends BaseDto {
   feature?: string;
   usageCount?: number;
 }
 
 // Fiscal Year DTOs
-export class CloseFiscalYearDto {
+export class CloseFiscalYearDto extends BaseDto {
   fiscalYearId?: string;
 }
 
 // Period DTOs
-export class ClosePeriodDto {
+export class ClosePeriodDto extends BaseDto {
   periodId?: string;
 }
 
-export class CheckPeriodStatusDto {
+export class CheckPeriodStatusDto extends BaseDto {
   periodId?: string;
 }
 
 // Income Statement DTOs
-export class GetIncomeStatementDto {
+export class GetIncomeStatementDto extends BaseDto {
   startDate?: string;
   endDate?: string;
   fiscalYearId?: string;
+  limit?: number;
 }
 
-export class IncomeStatementDto {
+export class IncomeStatementDto extends BaseDto {
   revenue?: number;
   expenses?: number;
   netIncome?: number;
@@ -318,7 +371,7 @@ export class IncomeStatementDto {
 }
 
 // Export DTOs
-export class ExportDataDto {
+export class ExportDataDto extends BaseDto {
   format?: string;
   startDate?: string;
   endDate?: string;
