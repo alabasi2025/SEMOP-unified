@@ -1,0 +1,69 @@
+<!--
+  ملف القالب: warehouse-stats-card.component.html
+  الوصف: قالب HTML لمكون بطاقة إحصائيات المستودع.
+  يتضمن دعمًا لحالة التحميل (Skeleton) وعرض نسبة الإشغال بشكل دائري.
+-->
+
+<div
+  class="warehouse-stats-card"
+  [class.clickable]="clickable"
+  [class.loading]="loading"
+  (click)="onCardClick()"
+  role="button"
+  [attr.aria-label]="clickable ? ('عرض تفاصيل المستودع ' + warehouse?.name) : null"
+>
+  <!-- حالة التحميل (Skeleton Loader) -->
+  <ng-container *ngIf="loading; else content">
+    <div class="skeleton-header">
+      <div class="skeleton-line skeleton-title"></div>
+    </div>
+    <div class="skeleton-body">
+      <div class="skeleton-stat">
+        <div class="skeleton-line skeleton-text"></div>
+        <div class="skeleton-line skeleton-value"></div>
+      </div>
+      <div class="skeleton-stat">
+        <div class="skeleton-line skeleton-text"></div>
+        <div class="skeleton-line skeleton-value"></div>
+      </div>
+      <div class="skeleton-occupancy">
+        <div class="skeleton-circle"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- المحتوى الفعلي -->
+  <ng-template #content>
+    <div class="card-header">
+      <h3 class="warehouse-name" title="{{ warehouse.name }}">{{ warehouse.name }}</h3>
+      <span class="warehouse-location">{{ warehouse.location }}</span>
+    </div>
+
+    <div class="card-body">
+      <!-- إحصائية إجمالي الأصناف -->
+      <div class="stat-item">
+        <span class="stat-label">إجمالي الأصناف</span>
+        <span class="stat-value">{{ totalItems | number }}</span>
+      </div>
+
+      <!-- إحصائية القيمة الإجمالية -->
+      <div class="stat-item">
+        <span class="stat-label">القيمة الإجمالية</span>
+        <!-- نفترض استخدام عملة افتراضية، يمكن تخصيصها عبر إعدادات Angular Locale -->
+        <span class="stat-value">{{ totalValue | currency:'SAR':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <!-- نسبة الإشغال مع الرسم البياني الدائري -->
+      <div class="occupancy-rate-container">
+        <div class="occupancy-rate-chart" [attr.data-rate]="occupancyRate" [class]="occupancyColor">
+          <!-- هذا العنصر سيتم تنسيقه باستخدام SCSS لإنشاء الرسم البياني الدائري -->
+          <div class="circle-progress" [style.--rate]="occupancyRate"></div>
+          <div class="circle-inner">
+            <span class="rate-value">{{ occupancyRate | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+        <span class="occupancy-label">نسبة الإشغال</span>
+      </div>
+    </div>
+  </ng-template>
+</div>

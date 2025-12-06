@@ -1,0 +1,278 @@
+/*
+  ملف التنسيق: warehouse-stats-card.component.scss
+  الوصف: تنسيقات SCSS لمكون بطاقة إحصائيات المستودع.
+  يتضمن متغيرات الألوان، دعم RTL، وتنسيق حالة التحميل والرسم البياني الدائري.
+*/
+
+// 1. متغيرات الألوان الأساسية
+$color-primary: #007bff;
+$color-text: #333;
+$color-secondary-text: #6c757d;
+$color-border: #e9ecef;
+$color-background: #fff;
+$color-hover: #f8f9fa;
+
+// متغيرات ألوان نسبة الإشغال
+$color-occupancy-green: #28a745; // آمن
+$color-occupancy-yellow: #ffc107; // تحذير
+$color-occupancy-red: #dc3545; // خطر
+
+// متغيرات Skeleton
+$skeleton-bg: #f0f0f0;
+$skeleton-shine: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+
+// 2. تنسيق البطاقة الرئيسية
+.warehouse-stats-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  background-color: $color-background;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  text-align: right; // دعم RTL
+
+  &.clickable {
+    cursor: pointer;
+    &:hover {
+      background-color: $color-hover;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+// 3. تنسيق الرأس
+.card-header {
+  margin-bottom: 15px;
+  border-bottom: 1px solid $color-border;
+  padding-bottom: 10px;
+
+  .warehouse-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $color-primary;
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .warehouse-location {
+    font-size: 0.85rem;
+    color: $color-secondary-text;
+  }
+}
+
+// 4. تنسيق الجسم والإحصائيات
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 80px;
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: $color-secondary-text;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $color-text;
+  }
+}
+
+// 5. تنسيق نسبة الإشغال والرسم البياني الدائري
+.occupancy-rate-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+
+  .occupancy-label {
+    font-size: 0.8rem;
+    color: $color-secondary-text;
+    margin-top: 5px;
+  }
+}
+
+.occupancy-rate-chart {
+  --size: 60px; // حجم الرسم البياني
+  --border-width: 6px; // عرض الشريط
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+
+  // تحديد لون الخلفية الافتراضي
+  background: conic-gradient($color-border 0%, $color-border 100%);
+
+  // تطبيق الألوان بناءً على نسبة الإشغال
+  &.green {
+    --occupancy-color: #{$color-occupancy-green};
+  }
+  &.yellow {
+    --occupancy-color: #{$color-occupancy-yellow};
+  }
+  &.red {
+    --occupancy-color: #{$color-occupancy-red};
+  }
+
+  .circle-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    // استخدام conic-gradient لرسم التقدم
+    background: conic-gradient(
+      var(--occupancy-color) 0deg,
+      var(--occupancy-color) calc(var(--rate) * 3.6deg),
+      $color-border calc(var(--rate) * 3.6deg),
+      $color-border 360deg
+    );
+  }
+
+  .circle-inner {
+    position: absolute;
+    width: calc(var(--size) - var(--border-width) * 2);
+    height: calc(var(--size) - var(--border-width) * 2);
+    background-color: $color-background;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+    .rate-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--occupancy-color); // استخدام لون التقدم للنص
+    }
+  }
+}
+
+// 6. تنسيق Skeleton Loader
+@keyframes pulse {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.skeleton-header, .skeleton-body {
+  display: flex;
+  width: 100%;
+}
+
+.skeleton-header {
+  margin-bottom: 15px;
+  border-bottom: 1px solid $color-border;
+  padding-bottom: 10px;
+}
+
+.skeleton-body {
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.skeleton-line {
+  background-color: $skeleton-bg;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite linear;
+  background-repeat: no-repeat;
+  background-image: $skeleton-shine;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 70%;
+  margin-bottom: 5px;
+}
+
+.skeleton-text {
+  height: 12px;
+  width: 80%;
+  margin-bottom: 4px;
+}
+
+.skeleton-value {
+  height: 18px;
+  width: 60%;
+}
+
+.skeleton-stat {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.skeleton-occupancy {
+  min-width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skeleton-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: $skeleton-bg;
+  animation: pulse 1.5s infinite linear;
+  background-repeat: no-repeat;
+  background-image: $skeleton-shine;
+}
+
+// 7. دعم الاستجابة (Responsive)
+@media (max-width: 576px) {
+  .warehouse-stats-card {
+    padding: 15px;
+  }
+
+  .card-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stat-item {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .occupancy-rate-container {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid $color-border;
+
+    .occupancy-label {
+      margin-top: 0;
+    }
+  }
+}

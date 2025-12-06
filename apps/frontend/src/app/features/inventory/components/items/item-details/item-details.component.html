@@ -1,0 +1,119 @@
+<!-- /home/ubuntu/item-details.component.html -->
+<!-- قالب HTML لمكون ItemDetailsComponent -->
+
+<div class="item-details-container" *ngIf="!loading; else loadingState">
+  <!-- رأس المكون: الاسم والأزرار -->
+  <header class="item-header">
+    <h1 class="item-name">{{ item.name }}</h1>
+    <div class="item-actions">
+      <button class="btn btn-primary" (click)="onEdit()">
+        <i class="icon-edit"></i> تعديل الصنف
+      </button>
+      <button class="btn btn-danger" (click)="onDelete()">
+        <i class="icon-delete"></i> حذف الصنف
+      </button>
+    </div>
+  </header>
+
+  <!-- تفاصيل الصنف الأساسية -->
+  <section class="item-info-section card">
+    <h2 class="section-title">بيانات الصنف الأساسية</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">كود الصنف:</span>
+        <span class="value">{{ item.code }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">الفئة:</span>
+        <span class="value">{{ item.category.name }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">الوحدة:</span>
+        <span class="value">{{ item.unit.name }} ({{ item.unit.symbol }})</span>
+      </div>
+      <div class="info-item">
+        <span class="label">سعر الشراء:</span>
+        <span class="value">{{ item.purchasePrice | currency:'SAR' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">سعر البيع:</span>
+        <span class="value">{{ item.salePrice | currency:'SAR' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">الحد الأدنى للرصيد:</span>
+        <span class="value">{{ item.minStockLevel }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">الحد الأقصى للرصيد:</span>
+        <span class="value">{{ item.maxStockLevel }}</span>
+      </div>
+      <div class="info-item full-width">
+        <span class="label">الوصف:</span>
+        <span class="value">{{ item.description || 'لا يوجد وصف.' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- إحصائيات الصنف (StatsCardComponent) -->
+  <section class="item-stats-section" *ngIf="itemStatistics$ | async as stats">
+    <h2 class="section-title">إحصائيات الصنف</h2>
+    <div class="stats-grid">
+      <!-- بطاقة إجمالي الرصيد -->
+      <app-stats-card
+        title="إجمالي الرصيد"
+        [value]="stats.totalBalance"
+        icon="inventory"
+        unit="{{ item.unit.symbol }}"
+      ></app-stats-card>
+
+      <!-- بطاقة القيمة الإجمالية -->
+      <app-stats-card
+        title="القيمة الإجمالية"
+        [value]="stats.totalValue"
+        icon="monetization_on"
+        unit="SAR"
+        [isCurrency]="true"
+      ></app-stats-card>
+
+      <!-- بطاقة عدد الحركات -->
+      <app-stats-card
+        title="عدد الحركات الأخيرة"
+        [value]="stats.movementCount"
+        icon="swap_horiz"
+      ></app-stats-card>
+    </div>
+  </section>
+
+  <!-- أرصدة الصنف في المستودعات (DataTableComponent) -->
+  <section class="item-balance-section card">
+    <h2 class="section-title">أرصدة المستودعات</h2>
+    <app-data-table
+      [data]="stockBalance"
+      [columns]="warehouseColumns"
+      emptyMessage="لا توجد أرصدة مسجلة لهذا الصنف في المستودعات."
+    ></app-data-table>
+  </section>
+
+  <!-- حركات الصنف الأخيرة (DataTableComponent) -->
+  <section class="item-movements-section card">
+    <header class="movements-header">
+      <h2 class="section-title">آخر 10 حركات</h2>
+      <button class="btn btn-link" (click)="onViewAllMovements()">
+        عرض جميع الحركات <i class="icon-arrow-left"></i>
+      </button>
+    </header>
+    <app-data-table
+      [data]="recentMovements"
+      [columns]="movementColumns"
+      emptyMessage="لا توجد حركات صنف مسجلة مؤخراً."
+    ></app-data-table>
+  </section>
+</div>
+
+<!-- حالة التحميل (Loading State) -->
+<ng-template #loadingState>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>جاري تحميل تفاصيل الصنف...</p>
+  </div>
+</ng-template>

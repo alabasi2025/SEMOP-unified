@@ -1,0 +1,106 @@
+<!-- item-list.component.html -->
+
+<div class="item-list-container" [class.loading]="loading">
+  <!-- @description قسم الإحصائيات - عرض الرصيد -->
+  <div class="stats-section" *ngIf="inventoryStats">
+    <!-- افتراض استخدام StatsCardComponent لعرض الإحصائيات -->
+    <app-stats-card
+      title="إجمالي الأصناف"
+      [value]="inventoryStats.totalItems"
+      icon="inventory_2"
+    ></app-stats-card>
+    <app-stats-card
+      title="قيمة المخزون الإجمالية"
+      [value]="inventoryStats.totalStockValue | currency: 'SAR'"
+      icon="monetization_on"
+    ></app-stats-card>
+    <app-stats-card
+      title="أصناف منخفضة المخزون"
+      [value]="inventoryStats.lowStockItems"
+      icon="warning"
+      class="low-stock"
+    ></app-stats-card>
+  </div>
+
+  <!-- @description شريط الأدوات والبحث والفلترة -->
+  <div class="toolbar">
+    <div class="search-filter-group">
+      <!-- افتراض استخدام SearchBarComponent للبحث -->
+      <app-search-bar
+        (searchChange)="onSearch($event)"
+        placeholder="البحث باسم الصنف أو الرمز..."
+      ></app-search-bar>
+
+      <!-- فلترة حسب الفئة -->
+      <div class="filter-group">
+        <label for="category-filter">الفئة:</label>
+        <select
+          id="category-filter"
+          [ngModel]="selectedCategoryId"
+          (ngModelChange)="onCategoryChange($event)"
+          class="form-select"
+        >
+          <option [ngValue]="null">جميع الفئات</option>
+          <option *ngFor="let category of categories" [ngValue]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- أزرار الإجراءات الرئيسية -->
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="onAddItem()">
+        <i class="material-icons">add</i>
+        <span>إضافة صنف جديد</span>
+      </button>
+      <button class="btn btn-secondary" (click)="onExportToExcel()">
+        <i class="material-icons">download</i>
+        <span>تصدير Excel</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- @description عرض حالة التحميل -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>جاري تحميل الأصناف...</p>
+  </div>
+
+  <!-- @description عرض رسالة في حالة عدم وجود أصناف -->
+  <div class="no-items" *ngIf="!loading && items.length === 0">
+    <i class="material-icons">info</i>
+    <p>لا توجد أصناف لعرضها حاليًا.</p>
+  </div>
+
+  <!-- @description جدول عرض الأصناف -->
+  <div class="table-wrapper" *ngIf="!loading && items.length > 0">
+    <!-- افتراض استخدام DataTableComponent لعرض البيانات -->
+    <app-data-table
+      [data]="items"
+      [columns]="tableColumns"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalItems]="totalItems"
+      (rowClick)="onItemClick($event)"
+      (pageChange)="onPageChange($event)"
+    >
+      <!-- تخصيص عمود الإجراءات داخل DataTableComponent -->
+      <ng-template #actionsTemplate let-item>
+        <div class="actions-cell">
+          <button class="btn btn-icon" title="تعديل" (click)="onEditItem(item); $event.stopPropagation()">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="btn btn-icon btn-danger" title="حذف" (click)="onDeleteItem(item); $event.stopPropagation()">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </ng-template>
+    </app-data-table>
+  </div>
+
+  <!-- @description عرض معلومات إضافية عن التصفح -->
+  <div class="pagination-info" *ngIf="!loading && totalItems > 0">
+    عرض {{ (currentPage - 1) * pageSize + 1 }} - {{ [currentPage * pageSize, totalItems] | min }} من {{ totalItems }} صنف.
+  </div>
+</div>

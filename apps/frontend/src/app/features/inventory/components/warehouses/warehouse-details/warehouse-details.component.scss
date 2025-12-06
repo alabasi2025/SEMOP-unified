@@ -1,0 +1,223 @@
+/* warehouse-details.component.scss */
+
+// تعريف متغيرات الألوان الأساسية (افتراضية)
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$danger-color: #dc3545;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$border-color: #e9ecef;
+$text-color: #343a40;
+
+.warehouse-details-container {
+  padding: 20px;
+  background-color: $background-color;
+  min-height: 100vh;
+  color: $text-color;
+
+  // دعم RTL (الاتجاه الافتراضي للعربية)
+  &[dir='rtl'] {
+    text-align: right;
+  }
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// #region التحميل (Loading)
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  background-color: rgba($card-background, 0.8);
+  border-radius: 8px;
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+// #endregion
+
+// #region البطاقات (Card Style)
+.card {
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+
+  h2 {
+    color: $primary-color;
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $border-color;
+    font-size: 1.5rem;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $border-color;
+  }
+}
+// #endregion
+
+// #region رأس الصفحة (Header)
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid $primary-color;
+
+  h1 {
+    font-size: 2rem;
+    margin: 0;
+    i {
+      margin-left: 10px; // مسافة على اليسار لدعم RTL
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+// #endregion
+
+// #region الأزرار (Buttons)
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+
+  i {
+    margin-left: 5px; // مسافة على اليسار لدعم RTL
+  }
+
+  &-primary {
+    background-color: $primary-color;
+    color: $card-background;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &-danger {
+    background-color: $danger-color;
+    color: $card-background;
+    &:hover {
+      background-color: darken($danger-color, 10%);
+    }
+  }
+
+  &-secondary {
+    background-color: $secondary-color;
+    color: $card-background;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+}
+// #endregion
+
+// #region البيانات الأساسية والإحصائيات (Basic Info & Stats)
+.basic-info-stats {
+  display: grid;
+  grid-template-columns: 1fr 2fr; // عمود للبيانات الأساسية وعمودين للإحصائيات
+  gap: 20px;
+  margin-bottom: 20px;
+
+  .basic-info {
+    p {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    strong {
+      color: $primary-color;
+    }
+  }
+
+  .stats-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+}
+// #endregion
+
+// #region الرسم البياني (Chart)
+.occupancy-chart-section {
+  .chart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .occupancy-chart {
+      max-width: 400px;
+      max-height: 400px;
+      width: 100%;
+    }
+  }
+}
+// #endregion
+
+// #region رسالة لا توجد بيانات (No Data Message)
+.no-data-message {
+  text-align: center;
+  padding: 50px;
+  background-color: $card-background;
+  border-radius: 8px;
+  margin-top: 20px;
+  i {
+    font-size: 3rem;
+    color: $secondary-color;
+    margin-bottom: 15px;
+  }
+  h2 {
+    color: $secondary-color;
+  }
+}
+// #endregion
+
+// #region الاستجابة (Responsiveness)
+@media (max-width: 992px) {
+  .basic-info-stats {
+    grid-template-columns: 1fr; // عمود واحد على الشاشات الصغيرة
+  }
+}
+
+@media (max-width: 576px) {
+  .details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .actions {
+    width: 100%;
+    .btn {
+      flex-grow: 1;
+    }
+  }
+}
+// #endregion

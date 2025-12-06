@@ -1,0 +1,214 @@
+// =================================================================================
+// متغيرات SCSS (لأغراض العرض التوضيحي)
+// =================================================================================
+$primary-color: #007bff; // اللون الأساسي
+$secondary-color: #6c757d; // اللون الثانوي
+$danger-color: #dc3545; // لون الخطر (للأخطاء)
+$success-color: #28a745; // لون النجاح
+$border-color: #ced4da; // لون الحدود
+$background-color: #f8f9fa; // لون الخلفية الخفيف
+$padding-base: 15px;
+$margin-base: 10px;
+$breakpoint-md: 768px; // نقطة التوقف للأجهزة اللوحية
+
+// =================================================================================
+// تنسيق المكون الرئيسي
+// =================================================================================
+.warehouse-form-container {
+  // دعم RTL (الاتجاه من اليمين لليسار)
+  direction: rtl;
+  text-align: right;
+  padding: $padding-base * 2;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.form-title {
+  color: $primary-color;
+  border-bottom: 2px solid $primary-color;
+  padding-bottom: $padding-base / 2;
+  margin-bottom: $padding-base * 2;
+  font-size: 1.5rem;
+}
+
+.warehouse-form {
+  display: flex;
+  flex-direction: column;
+}
+
+// =================================================================================
+// تنسيق الصفوف والحقول (لضمان الاستجابة)
+// =================================================================================
+.form-row {
+  display: flex;
+  flex-wrap: wrap; // يسمح بكسر السطر في الشاشات الصغيرة
+  margin-right: -$margin-base; // تعويض الهامش الأيمن للحقول
+  margin-left: -$margin-base; // تعويض الهامش الأيسر للحقول
+}
+
+.form-group {
+  padding: $margin-base;
+  margin-bottom: $margin-base;
+  // التنسيق الافتراضي (للشاشات الصغيرة - عمود واحد)
+  width: 100%;
+
+  // تنسيق الشاشات المتوسطة والكبيرة (3 أعمدة أو 12 عمود)
+  &.col-md-4 {
+    @media (min-width: $breakpoint-md) {
+      flex: 0 0 33.333333%; // 4/12
+      max-width: 33.333333%;
+    }
+  }
+
+  &.col-md-12 {
+    @media (min-width: $breakpoint-md) {
+      flex: 0 0 100%; // 12/12
+      max-width: 100%;
+    }
+  }
+}
+
+// =================================================================================
+// تنسيق عناصر النموذج
+// =================================================================================
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.required {
+  color: $danger-color;
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus {
+    border-color: lighten($primary-color, 10%);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+  }
+
+  // تنسيق حقل textarea
+  &[rows] {
+    resize: vertical;
+  }
+}
+
+// =================================================================================
+// تنسيق خانة الاختيار (Checkbox)
+// =================================================================================
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  padding-top: 5px;
+
+  input[type="checkbox"] {
+    // إخفاء خانة الاختيار الأصلية
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    // تنسيق مربع الاختيار المخصص
+    & + .checkbox-label::before {
+      content: '';
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid $primary-color;
+      border-radius: 3px;
+      margin-left: 10px; // مسافة بين المربع والنص (لغة RTL)
+      vertical-align: middle;
+      transition: all 0.2s ease;
+    }
+
+    // تنسيق عند التحديد
+    &:checked + .checkbox-label::before {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      // علامة الصح (✓)
+      content: '\2713';
+      color: #fff;
+      text-align: center;
+      line-height: 14px;
+      font-size: 12px;
+    }
+  }
+
+  .checkbox-label {
+    cursor: pointer;
+    user-select: none;
+    font-weight: normal;
+  }
+}
+
+// =================================================================================
+// تنسيق رسائل الأخطاء
+// =================================================================================
+.error-message {
+  color: $danger-color;
+  font-size: 0.875rem;
+  margin-top: 5px;
+  padding: 5px 0;
+  border-right: 3px solid $danger-color; // شريط جانبي أحمر
+  padding-right: 8px;
+}
+
+// =================================================================================
+// تنسيق أزرار الإجراءات
+// =================================================================================
+.form-actions {
+  display: flex;
+  justify-content: flex-end; // محاذاة الأزرار لليسار في RTL (نهاية السطر)
+  gap: 10px;
+  margin-top: $padding-base;
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+
+    &.btn-primary {
+      background-color: $primary-color;
+      color: #fff;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:disabled {
+        background-color: lighten($primary-color, 20%);
+        cursor: not-allowed;
+      }
+    }
+
+    &.btn-secondary {
+      background-color: $secondary-color;
+      color: #fff;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+}

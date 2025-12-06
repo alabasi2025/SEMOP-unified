@@ -1,0 +1,125 @@
+<!--
+  ملف القالب HTML لمكون FilterPanelComponent
+  يحتوي على هيكل لوحة الفلاتر، العرض الديناميكي للفلاتر، وأزرار التحكم.
+-->
+
+<div class="filter-panel" [class.collapsed]="isCollapsed && collapsible" [class.collapsible]="collapsible">
+
+  <!-- رأس اللوحة: العنوان، زر الطي، وعداد الفلاتر النشطة -->
+  <div class="filter-panel-header" (click)="toggleCollapse()">
+    <h3 class="filter-panel-title">
+      <!-- أيقونة الفلتر (يمكن استبدالها بأيقونة مادية أو أيقونة مخصصة) -->
+      <span class="filter-icon">⚙️</span>
+      لوحة الفلاتر
+      <!-- شارة عدد الفلاتر النشطة -->
+      <span class="active-filters-badge" *ngIf="activeFiltersCount > 0">
+        {{ activeFiltersCount }}
+      </span>
+    </h3>
+
+    <!-- زر الطي/التوسيع (يظهر فقط إذا كان المكون قابلاً للطي) -->
+    <button *ngIf="collapsible" class="collapse-toggle-btn" type="button" [attr.aria-expanded]="!isCollapsed" aria-controls="filter-panel-content">
+      <span *ngIf="isCollapsed">▼ توسيع</span>
+      <span *ngIf="!isCollapsed">▲ طي</span>
+    </button>
+  </div>
+
+  <!-- محتوى اللوحة: نموذج الفلاتر والأزرار -->
+  <div id="filter-panel-content" class="filter-panel-content" [class.hidden]="isCollapsed && collapsible">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filter-form">
+
+      <!-- شبكة الفلاتر الديناميكية -->
+      <div class="filter-grid">
+        <div *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-control-group">
+
+          <label [for]="filter.key" class="filter-label">{{ filter.label }}</label>
+
+          <!-- 1. فلتر النص (text) -->
+          <ng-container *ngSwitchCase="'text'">
+            <input
+              [id]="filter.key"
+              type="text"
+              [formControlName]="filter.key"
+              [placeholder]="filter.placeholder || 'أدخل قيمة'"
+              class="filter-input"
+            >
+          </ng-container>
+
+          <!-- 2. فلتر الاختيار (select) -->
+          <ng-container *ngSwitchCase="'select'">
+            <select [id]="filter.key" [formControlName]="filter.key" class="filter-select">
+              <option [ngValue]="null" disabled selected>-- اختر {{ filter.label }} --</option>
+              <option *ngFor="let option of filter.options" [ngValue]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </ng-container>
+
+          <!-- 3. فلتر التاريخ (date) -->
+          <ng-container *ngSwitchCase="'date'">
+            <input
+              [id]="filter.key"
+              type="date"
+              [formControlName]="filter.key"
+              class="filter-input"
+            >
+          </ng-container>
+
+          <!-- 4. فلتر النطاق (range) - يتم تمثيله هنا كمدخلين نصيين مبدئياً -->
+          <!-- في تطبيق حقيقي، سيتم استبدال هذا بمكون نطاق مخصص (مثل slider أو مدخلين) -->
+          <ng-container *ngSwitchCase="'range'">
+            <div class="range-group">
+              <!-- يمكن استخدام FormGroup nested هنا للتحكم في قيمتين (من/إلى) -->
+              <!-- لتبسيط المثال، سنفترض أن قيمة النطاق يتم التعامل معها في مكون مخصص أو كمدخل واحد مركب -->
+              <input
+                [id]="filter.key"
+                type="text"
+                [formControlName]="filter.key"
+                [placeholder]="filter.placeholder || 'أدخل نطاق'"
+                class="filter-input"
+              >
+              <!-- مثال على رسالة توضيحية للنطاق -->
+              <small class="range-hint">مثال: 100-500</small>
+            </div>
+          </ng-container>
+
+          <!-- 5. فلتر مربع الاختيار (checkbox) -->
+          <ng-container *ngSwitchCase="'checkbox'">
+            <div class="checkbox-group">
+              <input
+                [id]="filter.key"
+                type="checkbox"
+                [formControlName]="filter.key"
+                class="filter-checkbox"
+              >
+              <label [for]="filter.key" class="checkbox-label">{{ filter.label }}</label>
+            </div>
+          </ng-container>
+
+          <!-- رسائل التحقق من الصحة (Validation) -->
+          <div *ngIf="filterForm.get(filter.key)?.invalid && (filterForm.get(filter.key)?.dirty || filterForm.get(filter.key)?.touched)" class="validation-error">
+            <span *ngIf="filterForm.get(filter.key)?.errors?.['required']">
+              {{ filter.label }} مطلوب.
+            </span>
+            <!-- يمكن إضافة المزيد من رسائل الأخطاء هنا -->
+          </div>
+
+        </div>
+      </div>
+
+      <!-- منطقة الأزرار -->
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="filterForm.invalid">
+          تطبيق الفلاتر
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+          إعادة تعيين
+        </button>
+        <button type="button" class="btn btn-link" (click)="clearAllFilters()">
+          مسح الكل
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

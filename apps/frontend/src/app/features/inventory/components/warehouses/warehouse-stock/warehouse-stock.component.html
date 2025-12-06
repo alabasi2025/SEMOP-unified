@@ -1,0 +1,107 @@
+<!--
+  @file warehouse-stock.component.html
+  @description قالب HTML لمكون رصيد المستودع (WarehouseStockComponent).
+  يحتوي على بطاقات إحصائيات، شريط أدوات للبحث والتصدير، وجدول عرض الأصناف.
+-->
+
+<div class="warehouse-stock-container">
+
+  <!-- مؤشر التحميل العام -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <span>جاري تحميل بيانات المخزون...</span>
+  </div>
+
+  <!-- قسم الإحصائيات - يستخدم StatsCardComponent المفترض -->
+  <div class="stats-section" *ngIf="statsData$ | async as stats">
+    <!-- يتم تكرار بطاقات الإحصائيات -->
+    <ng-container *ngFor="let stat of stats">
+      <!-- افتراض استخدام مكون مشترك app-stats-card -->
+      <!-- <app-stats-card [data]="stat"></app-stats-card> -->
+      <!-- بديل بسيط في حال عدم وجود المكون المشترك -->
+      <div class="stat-card">
+        <div class="stat-title">{{ stat.title }}</div>
+        <div class="stat-value" [style.color]="stat.color">{{ stat.value | number }} {{ stat.unit }}</div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- شريط الأدوات والبحث -->
+  <div class="toolbar">
+    <h2 class="component-title">رصيد المستودع: {{ warehouseId }}</h2>
+
+    <div class="actions">
+      <!-- حقل البحث والتصفية -->
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="البحث باسم الصنف أو رمزه..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange($event)"
+          [disabled]="loading"
+        >
+        <i class="search-icon">🔍</i>
+      </div>
+
+      <!-- زر التصدير إلى Excel -->
+      <button class="action-button export-button" (click)="onExportExcel()" [disabled]="loading">
+        <i class="export-icon">📊</i>
+        <span>تصدير Excel</span>
+      </button>
+
+      <!-- زر التحديث -->
+      <button class="action-button refresh-button" (click)="onRefresh()" [disabled]="loading">
+        <i class="refresh-icon">🔄</i>
+        <span>تحديث</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- جدول عرض الأصناف - يستخدم DataTableComponent المفترض -->
+  <div class="table-section">
+    <ng-container *ngIf="filteredItems$ | async as items">
+      <!-- افتراض استخدام مكون مشترك app-data-table -->
+      <!--
+      <app-data-table
+        [data]="items"
+        [columns]="columns"
+        (rowClick)="onItemClick($event)"
+        [loading]="loading"
+      >
+      </app-data-table>
+      -->
+
+      <!-- بديل بسيط لتمثيل الجدول في حال عدم وجود المكون المشترك -->
+      <table class="stock-table" *ngIf="items.length > 0; else emptyState">
+        <thead>
+          <tr>
+            <th *ngFor="let col of columns">{{ col.header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items" (click)="onItemClick(item)">
+            <td>{{ item.name }}</td>
+            <td>{{ item.sku }}</td>
+            <td>{{ item.currentStock | number }}</td>
+            <td>{{ item.unitPrice | currency:'SAR' }}</td>
+            <td>{{ item.totalValue | currency:'SAR' }}</td>
+            <td>
+              <span [ngClass]="getStatusClass(item.status)">
+                {{ item.status === 'low' ? 'ناقص' : item.status === 'excess' ? 'زائد' : 'عادي' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- حالة عدم وجود بيانات -->
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <i class="no-data-icon">📦</i>
+          <p>لا توجد أصناف مخزون لعرضها أو لا تتطابق مع معايير البحث.</p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+</div>

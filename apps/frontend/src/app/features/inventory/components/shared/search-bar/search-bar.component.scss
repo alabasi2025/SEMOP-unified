@@ -1,0 +1,154 @@
+/*
+ * ملف التنسيق SCSS للمكون SearchBarComponent
+ * يتضمن متغيرات الألوان، التنسيق الأساسي، ودعم RTL.
+ */
+
+// #region متغيرات الألوان والتنسيق الأساسية (CSS Variables)
+
+// يمكن استبدال هذه المتغيرات بمتغيرات نظام التصميم (Design System) الخاص بالمشروع
+:host {
+  --search-bar-height: 40px;
+  --search-bar-border-radius: 8px;
+  --search-bar-bg-color: #f5f5f5; // خلفية فاتحة
+  --search-bar-border-color: #e0e0e0;
+  --search-bar-focus-color: #007bff; // لون التركيز الأزرق
+  --search-bar-text-color: #333;
+  --search-bar-icon-color: #999;
+  --search-bar-clear-color: #777;
+  --search-bar-placeholder-color: #aaa;
+}
+
+// #endregion
+
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--search-bar-height);
+  border: 1px solid var(--search-bar-border-color);
+  border-radius: var(--search-bar-border-radius);
+  background-color: var(--search-bar-bg-color);
+  padding: 0 10px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-sizing: border-box;
+
+  // حالة التركيز
+  &:focus-within {
+    border-color: var(--search-bar-focus-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+}
+
+.search-icon {
+  display: flex;
+  align-items: center;
+  color: var(--search-bar-icon-color);
+  margin-inline-end: 8px; // مسافة بعد الأيقونة (تدعم RTL)
+  flex-shrink: 0; // منع الأيقونة من الانكماش
+}
+
+.search-input {
+  flex-grow: 1; // السماح لحقل الإدخال بأخذ المساحة المتبقية
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--search-bar-text-color);
+  padding: 0;
+  margin: 0;
+
+  // تنسيق النص النائب (Placeholder)
+  &::placeholder {
+    color: var(--search-bar-placeholder-color);
+    opacity: 1; /* Firefox */
+  }
+
+  // إزالة سهم المسح الافتراضي في IE/Edge
+  &::-ms-clear {
+    display: none;
+  }
+}
+
+.clear-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--search-bar-clear-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-inline-start: 8px; // مسافة قبل زر المسح (تدعم RTL)
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--search-bar-text-color);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.loading-indicator {
+  margin-inline-start: 8px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// #region مؤشر التحميل (Spinner Animation)
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--search-bar-icon-color);
+  border-top-color: var(--search-bar-focus-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// #endregion
+
+// #region دعم RTL (Right-to-Left)
+
+// بما أننا استخدمنا الخصائص المنطقية (margin-inline-start/end)، فإن دعم RTL يتم تلقائياً
+// إذا كان الاتجاه (dir) هو rtl، فإن inline-start يصبح يميناً و inline-end يصبح يساراً.
+// لا نحتاج إلى كود إضافي هنا ما لم يكن هناك تنسيق خاص بالاتجاه.
+
+// #endregion
+
+// #region الاستجابة (Responsive Design)
+
+// مثال على تنسيق استجابي: تقليل الارتفاع على الشاشات الصغيرة
+@media (max-width: 600px) {
+  :host {
+    --search-bar-height: 36px;
+    --search-bar-border-radius: 6px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+}
+
+// #endregion

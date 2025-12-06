@@ -1,0 +1,196 @@
+/*
+  ملف التنسيق SCSS لمكون PaginationComponent
+  يشمل المتغيرات، التنسيقات الأساسية، دعم RTL، والاستجابة (Responsive).
+*/
+
+// متغيرات الألوان الأساسية
+$primary-color: #007bff; // أزرق أساسي
+$secondary-color: #6c757d; // رمادي ثانوي
+$text-color: #343a40; // لون النص
+$border-color: #dee2e6; // لون الحدود
+$background-color: #f8f9fa; // لون الخلفية
+$active-bg-color: $primary-color; // لون خلفية الزر النشط
+$active-text-color: #ffffff; // لون نص الزر النشط
+$disabled-color: #adb5bd; // لون العناصر المعطلة
+
+// التنسيق الأساسي للحاوية
+.pagination-container {
+  display: flex;
+  flex-wrap: wrap; // يسمح بالانتقال إلى سطر جديد في الشاشات الصغيرة
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-family: Arial, sans-serif;
+  color: $text-color;
+  direction: ltr; // الافتراضي هو LTR
+
+  &.rtl {
+    direction: rtl; // دعم RTL
+  }
+}
+
+// تنسيق معلومات الإجمالي وحجم الصفحة
+.pagination-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; // مسافة أسفل في الشاشات الصغيرة
+  flex-wrap: wrap;
+}
+
+.total-items {
+  font-size: 0.9rem;
+  margin-inline-end: 20px; // مسافة بعد النص
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+
+  label {
+    font-size: 0.9rem;
+    margin-inline-end: 5px;
+  }
+
+  select {
+    padding: 5px 10px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    background-color: #fff;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+    }
+  }
+}
+
+// تنسيق أزرار التنقل
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px; // مسافة أسفل في الشاشات الصغيرة
+}
+
+.control-button, .page-number {
+  padding: 8px 12px;
+  margin-inline-end: 4px;
+  border: 1px solid $border-color;
+  background-color: #fff;
+  color: $text-color;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+  min-width: 35px; // لضمان حجم ثابت للأزرار
+
+  &:hover:not([disabled]) {
+    background-color: $background-color;
+    border-color: $primary-color;
+  }
+
+  &.active {
+    background-color: $active-bg-color;
+    color: $active-text-color;
+    border-color: $active-bg-color;
+    cursor: default;
+  }
+
+  &[disabled] {
+    color: $disabled-color;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.ellipsis {
+  padding: 8px 12px;
+  margin-inline-end: 4px;
+  color: $secondary-color;
+  font-size: 0.9rem;
+}
+
+// تنسيق القفز إلى صفحة
+.jump-to-page {
+  display: flex;
+  align-items: center;
+  margin-inline-start: 10px;
+  font-size: 0.9rem;
+
+  label {
+    margin-inline-end: 5px;
+  }
+
+  input {
+    width: 50px;
+    padding: 5px 8px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+    }
+  }
+
+  .total-pages-display {
+    margin-inline-start: 5px;
+    color: $secondary-color;
+  }
+}
+
+// الاستجابة (Responsive Design) - للشاشات الصغيرة
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-info {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .control-button, .page-number {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: 30px;
+  }
+
+  .jump-to-page {
+    margin-inline-start: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// دعم RTL - تعديلات خاصة بالاتجاه
+.pagination-container.rtl {
+  .total-items {
+    margin-inline-start: 20px; // عكس الهامش
+    margin-inline-end: 0;
+  }
+
+  .jump-to-page {
+    margin-inline-start: 0;
+    margin-inline-end: 10px; // عكس الهامش
+  }
+
+  .control-button, .page-number {
+    margin-inline-start: 4px; // عكس الهامش
+    margin-inline-end: 0;
+  }
+}

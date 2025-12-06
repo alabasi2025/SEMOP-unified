@@ -1,0 +1,162 @@
+<!--
+  ملف: warehouse-list.component.html
+  الوصف: قالب HTML لمكون قائمة المستودعات (WarehouseListComponent).
+  الميزات: عرض الإحصائيات، شريط البحث والتحكم، دعم العرض كجدول أو كشبكة (كروت)، حالة التحميل.
+-->
+
+<div class="warehouse-list-container">
+  <!-- شريط العنوان والتحكم -->
+  <header class="list-header">
+    <h1 class="list-title">قائمة المستودعات</h1>
+    <div class="actions">
+      <!-- زر إضافة مستودع جديد -->
+      <button class="btn btn-primary" (click)="onAdd()">
+        <i class="material-icons">add</i>
+        <span>إضافة مستودع</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- حالة التحميل -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل بيانات المستودعات...</p>
+  </div>
+
+  <!-- قسم الإحصائيات (Stats Cards) -->
+  <section class="stats-section" *ngIf="statsData$ | async as stats">
+    <!-- افتراض وجود مكون مشترك لبطاقة الإحصائيات (StatsCardComponent) -->
+    <div class="stats-grid">
+      <div class="stats-card" *ngFor="let stat of stats" [attr.data-color]="stat.color">
+        <div class="icon-wrapper">
+          <i class="material-icons">{{ stat.icon }}</i>
+        </div>
+        <div class="content">
+          <p class="title">{{ stat.title }}</p>
+          <h2 class="value">{{ stat.value }}</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- شريط البحث ووضع العرض -->
+  <section class="controls-bar">
+    <div class="search-box">
+      <i class="material-icons">search</i>
+      <input type="text" [formControl]="searchControl" placeholder="البحث باسم المستودع أو الموقع..." aria-label="البحث في المستودعات">
+    </div>
+
+    <div class="view-mode-toggle">
+      <button
+        class="toggle-btn"
+        [class.active]="viewModeControl.value === 'table'"
+        (click)="viewModeControl.setValue('table')"
+        title="عرض كجدول"
+      >
+        <i class="material-icons">table_rows</i>
+      </button>
+      <button
+        class="toggle-btn"
+        [class.active]="viewModeControl.value === 'grid'"
+        (click)="viewModeControl.setValue('grid')"
+        title="عرض كشبكة"
+      >
+        <i class="material-icons">grid_view</i>
+      </button>
+    </div>
+  </section>
+
+  <!-- عرض قائمة المستودعات -->
+  <section class="list-content" *ngIf="filteredWarehouses$ | async as warehouses">
+    <ng-container *ngIf="warehouses.length > 0; else noData">
+      <!-- وضع الجدول (Table View) -->
+      <div class="table-view" *ngIf="viewModeControl.value === 'table'">
+        <!-- افتراض وجود مكون مشترك لجدول البيانات (DataTableComponent) -->
+        <!-- يجب تمرير البيانات والأعمدة المناسبة -->
+        <div class="data-table-placeholder">
+          <!-- هذا يمثل مكون DataTableComponent الفعلي -->
+          <table class="responsive-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الموقع</th>
+                <th>عدد الأصناف</th>
+                <th>القيمة الإجمالية</th>
+                <th>نسبة الإشغال</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let warehouse of warehouses" (click)="onWarehouseClick(warehouse)">
+                <td data-label="الاسم">{{ warehouse.name }}</td>
+                <td data-label="الموقع">{{ warehouse.location }}</td>
+                <td data-label="عدد الأصناف">{{ warehouse.itemCount }}</td>
+                <td data-label="القيمة الإجمالية">{{ warehouse.totalValue | currency:'SAR':'symbol':'1.0-0':'ar-SA' }}</td>
+                <td data-label="نسبة الإشغال">
+                  <span class="occupancy-badge" [class.high]="warehouse.occupancyRate > 80">{{ warehouse.occupancyRate | number:'1.0-1' }}%</span>
+                </td>
+                <td data-label="الإجراءات" class="actions-cell">
+                  <button class="btn-icon" (click)="$event.stopPropagation(); onEdit(warehouse)" title="تعديل">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button class="btn-icon delete-btn" (click)="$event.stopPropagation(); onDelete(warehouse)" title="حذف">
+                    <i class="material-icons">delete</i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- وضع الشبكة (Grid View - Cards) -->
+      <div class="grid-view" *ngIf="viewModeControl.value === 'grid'">
+        <div class="warehouse-card" *ngFor="let warehouse of warehouses" (click)="onWarehouseClick(warehouse)">
+          <div class="card-header">
+            <h3 class="card-title">{{ warehouse.name }}</h3>
+            <div class="card-actions">
+              <button class="btn-icon" (click)="$event.stopPropagation(); onEdit(warehouse)" title="تعديل">
+                <i class="material-icons">edit</i>
+              </button>
+              <button class="btn-icon delete-btn" (click)="$event.stopPropagation(); onDelete(warehouse)" title="حذف">
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="location"><i class="material-icons">location_on</i> {{ warehouse.location }}</p>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="label">الأصناف</span>
+                <span class="value">{{ warehouse.itemCount }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">القيمة</span>
+                <span class="value">{{ warehouse.totalValue | currency:'SAR':'symbol':'1.0-0':'ar-SA' }}</span>
+              </div>
+            </div>
+            <div class="occupancy-progress">
+              <span class="label">الإشغال ({{ warehouse.occupancyRate | number:'1.0-1' }}%)</span>
+              <div class="progress-bar-container">
+                <div
+                  class="progress-bar"
+                  [style.width.%]="warehouse.occupancyRate"
+                  [class.high]="warehouse.occupancyRate > 80"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- حالة عدم وجود بيانات -->
+    <ng-template #noData>
+      <div class="no-data-message">
+        <i class="material-icons">info_outline</i>
+        <p>لا توجد مستودعات مطابقة لمعايير البحث.</p>
+        <button class="btn btn-secondary" (click)="onAdd()">إضافة أول مستودع</button>
+      </div>
+    </ng-template>
+  </section>
+</div>

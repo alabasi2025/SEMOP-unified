@@ -1,0 +1,179 @@
+<!-- item-form.component.html -->
+<!-- قالب HTML لمكون نموذج إضافة/تعديل صنف (ItemFormComponent) -->
+
+<div class="item-form-container">
+  <!-- عنوان النموذج -->
+  <header class="form-header">
+    <h2>{{ formTitle }}</h2>
+  </header>
+
+  <!-- النموذج التفاعلي -->
+  <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="item-form">
+
+    <!-- القسم الأول: المعلومات الأساسية -->
+    <section class="form-section basic-info">
+      <h3>المعلومات الأساسية</h3>
+      <div class="row">
+        <!-- حقل اسم الصنف -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="name">اسم الصنف <span class="required">*</span></label>
+          <input id="name" type="text" class="form-control" formControlName="name" placeholder="أدخل اسم الصنف">
+          <div *ngIf="getErrorMessage('name')" class="error-message">
+            {{ getErrorMessage('name') }}
+          </div>
+        </div>
+
+        <!-- حقل وصف الصنف -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="description">وصف الصنف (اختياري)</label>
+          <textarea id="description" class="form-control" formControlName="description" rows="1" placeholder="وصف مختصر للصنف"></textarea>
+          <div *ngIf="getErrorMessage('description')" class="error-message">
+            {{ getErrorMessage('description') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- حقل اختيار الفئة -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="categoryId">الفئة <span class="required">*</span></label>
+          <select id="categoryId" class="form-control" formControlName="categoryId">
+            <option [ngValue]="null" disabled>اختر فئة</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+          <div *ngIf="getErrorMessage('categoryId')" class="error-message">
+            {{ getErrorMessage('categoryId') }}
+          </div>
+        </div>
+
+        <!-- حقل اختيار الوحدة -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="unitId">وحدة القياس <span class="required">*</span></label>
+          <select id="unitId" class="form-control" formControlName="unitId">
+            <option [ngValue]="null" disabled>اختر وحدة</option>
+            <option *ngFor="let unit of units" [ngValue]="unit.id">
+              {{ unit.name }}
+            </option>
+          </select>
+          <div *ngIf="getErrorMessage('unitId')" class="error-message">
+            {{ getErrorMessage('unitId') }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- القسم الثاني: الأسعار والمخزون -->
+    <section class="form-section pricing-stock">
+      <h3>الأسعار والمخزون</h3>
+      <div formGroupName="pricing" class="row">
+        <!-- حقل سعر التكلفة -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="costPrice">سعر التكلفة <span class="required">*</span></label>
+          <input id="costPrice" type="number" class="form-control" formControlName="costPrice" placeholder="أدخل سعر التكلفة" min="0.01">
+          <div *ngIf="getErrorMessage('costPrice', 'pricing')" class="error-message">
+            {{ getErrorMessage('costPrice', 'pricing') }}
+          </div>
+        </div>
+
+        <!-- حقل سعر البيع -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="salePrice">سعر البيع <span class="required">*</span></label>
+          <input id="salePrice" type="number" class="form-control" formControlName="salePrice" placeholder="أدخل سعر البيع" min="0.01">
+          <div *ngIf="getErrorMessage('salePrice', 'pricing')" class="error-message">
+            {{ getErrorMessage('salePrice', 'pricing') }}
+          </div>
+        </div>
+        <!-- رسالة خطأ المجموعة (سعر البيع > سعر التكلفة) -->
+        <div *ngIf="itemForm.get('pricing')?.errors && itemForm.get('pricing')?.errors!['priceRange']" class="col-12 error-message group-error">
+          {{ getErrorMessage('', 'pricing') }}
+        </div>
+      </div>
+
+      <div formGroupName="stockLimits" class="row">
+        <!-- حقل الحد الأدنى للمخزون -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="minStockLevel">الحد الأدنى للمخزون <span class="required">*</span></label>
+          <input id="minStockLevel" type="number" class="form-control" formControlName="minStockLevel" placeholder="أدخل الحد الأدنى" min="0">
+          <div *ngIf="getErrorMessage('minStockLevel', 'stockLimits')" class="error-message">
+            {{ getErrorMessage('minStockLevel', 'stockLimits') }}
+          </div>
+        </div>
+
+        <!-- حقل الحد الأقصى للمخزون -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="maxStockLevel">الحد الأقصى للمخزون <span class="required">*</span></label>
+          <input id="maxStockLevel" type="number" class="form-control" formControlName="maxStockLevel" placeholder="أدخل الحد الأقصى" min="0">
+          <div *ngIf="getErrorMessage('maxStockLevel', 'stockLimits')" class="error-message">
+            {{ getErrorMessage('maxStockLevel', 'stockLimits') }}
+          </div>
+        </div>
+        <!-- رسالة خطأ المجموعة (الحد الأقصى > الحد الأدنى) -->
+        <div *ngIf="itemForm.get('stockLimits')?.errors && itemForm.get('stockLimits')?.errors!['stockRange']" class="col-12 error-message group-error">
+          {{ getErrorMessage('', 'stockLimits') }}
+        </div>
+      </div>
+    </section>
+
+    <!-- القسم الثالث: الباركود والصورة -->
+    <section class="form-section barcode-image">
+      <h3>الباركود والصورة</h3>
+      <div class="row">
+        <!-- حقل SKU -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="sku">رمز المنتج (SKU) (اختياري)</label>
+          <input id="sku" type="text" class="form-control" formControlName="sku" placeholder="أدخل رمز SKU">
+          <div *ngIf="getErrorMessage('sku')" class="error-message">
+            {{ getErrorMessage('sku') }}
+          </div>
+        </div>
+
+        <!-- حقل الباركود -->
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="barcode">الباركود (اختياري)</label>
+          <input id="barcode" type="text" class="form-control" formControlName="barcode" placeholder="أدخل الباركود">
+          <div *ngIf="getErrorMessage('barcode')" class="error-message">
+            {{ getErrorMessage('barcode') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- حقل رفع الصورة -->
+      <div class="row">
+        <div class="col-12 form-group image-upload-group">
+          <label>صورة الصنف (اختياري)</label>
+          <div class="image-preview-container">
+            <img *ngIf="tempImageUrl" [src]="tempImageUrl" alt="صورة الصنف" class="image-preview">
+            <div *ngIf="tempImageUrl" class="remove-image-btn" (click)="removeImage()">
+              <span class="icon-close"></span> إزالة الصورة
+            </div>
+            <input id="imageUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="file-input">
+            <label for="imageUpload" class="upload-label">
+              <span class="icon-upload"></span>
+              <span>{{ tempImageUrl ? 'تغيير الصورة' : 'اختر صورة أو اسحبها هنا' }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- القسم الرابع: حالة التفعيل -->
+    <section class="form-section activation-status">
+      <h3>حالة الصنف</h3>
+      <div class="form-group checkbox-group">
+        <input id="isActive" type="checkbox" formControlName="isActive">
+        <label for="isActive">الصنف مفعل حالياً (يمكن استخدامه في العمليات)</label>
+      </div>
+    </section>
+
+    <!-- أزرار الإجراءات -->
+    <footer class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">إلغاء</button>
+      <button type="submit" class="btn btn-primary" [disabled]="itemForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        {{ mode === 'create' ? 'حفظ ومتابعة' : 'حفظ التعديلات' }}
+      </button>
+    </footer>
+  </form>
+</div>
