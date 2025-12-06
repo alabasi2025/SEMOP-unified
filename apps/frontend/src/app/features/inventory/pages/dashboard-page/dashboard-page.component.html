@@ -1,0 +1,112 @@
+<!--
+  dashboard-page.component.html
+  قالب HTML لمكون لوحة التحكم (DashboardPageComponent)
+  يستخدم هيكل شبكي (Grid) لضمان الاستجابة (Responsive) ودعم RTL.
+-->
+
+<div class="dashboard-page" dir="rtl">
+  <!-- شريط العنوان والفلترة -->
+  <header class="dashboard-header">
+    <h1>لوحة التحكم - نظرة عامة على المخزون</h1>
+    <!-- مكون الفلترة: يسمح للمستخدم بتحديد الفترة الزمنية -->
+    <app-filter-panel
+      (filterChange)="onFilterChange($event)"
+      [initialFilter]="currentFilter"
+    ></app-filter-panel>
+  </header>
+
+  <!-- حالة التحميل والخطأ -->
+  <div *ngIf="isLoading | async" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل بيانات لوحة التحكم...</p>
+  </div>
+
+  <div *ngIf="hasError | async" class="error-message">
+    <p>عذراً، حدث خطأ أثناء جلب البيانات. يرجى المحاولة مرة أخرى.</p>
+    <button (click)="startAutoRefresh()">إعادة المحاولة</button>
+  </div>
+
+  <!-- المحتوى الرئيسي للوحة التحكم -->
+  <main *ngIf="dashboardData && !(isLoading | async)" class="dashboard-content">
+
+    <!-- 1. إحصائيات عامة (Stats Cards) -->
+    <section class="stats-cards-grid">
+      <app-stats-card
+        *ngFor="let stat of dashboardData.generalStats"
+        [title]="stat.title"
+        [value]="stat.value"
+        [unit]="stat.unit"
+        [icon]="stat.icon"
+      ></app-stats-card>
+    </section>
+
+    <!-- 2. الرسوم البيانية الرئيسية -->
+    <section class="charts-section">
+      <!-- حركة المخزون الشهرية -->
+      <div class="chart-container full-width">
+        <h2>حركة المخزون الشهرية (دخول وخروج)</h2>
+        <app-chart
+          [data]="dashboardData.monthlyInventoryMovement"
+          type="bar"
+        ></app-chart>
+      </div>
+
+      <!-- أعلى الأصناف حركة -->
+      <div class="chart-container half-width">
+        <h2>أعلى 5 أصناف حركة</h2>
+        <app-chart
+          [data]="dashboardData.topMovingItems"
+          type="bar"
+        ></app-chart>
+      </div>
+
+      <!-- توزيع المخزون حسب الفئة -->
+      <div class="chart-container half-width">
+        <h2>توزيع المخزون حسب الفئة</h2>
+        <app-chart
+          [data]="dashboardData.inventoryDistributionByCategory"
+          type="pie"
+        ></app-chart>
+      </div>
+    </section>
+
+    <!-- 3. الجداول الصغيرة (الأصناف الناقصة وآخر الحركات) -->
+    <section class="tables-section">
+      <!-- الأصناف الناقصة (Low Stock Items) -->
+      <div class="table-container half-width">
+        <h2>الأصناف التي تحتاج إلى إعادة طلب</h2>
+        <app-data-table
+          [data]="dashboardData.lowStockItems"
+          [columns]="[
+            { field: 'name', header: 'الصنف' },
+            { field: 'stock', header: 'المتوفر' },
+            { field: 'minStock', header: 'الحد الأدنى' }
+          ]"
+        ></app-data-table>
+        <a href="/items/low-stock" class="view-all-link">عرض كل الأصناف الناقصة</a>
+      </div>
+
+      <!-- آخر الحركات (Recent Transactions) -->
+      <div class="table-container half-width">
+        <h2>آخر 5 حركات مخزون</h2>
+        <app-data-table
+          [data]="dashboardData.recentTransactions"
+          [columns]="[
+            { field: 'date', header: 'التاريخ' },
+            { field: 'type', header: 'النوع' },
+            { field: 'item', header: 'الصنف' },
+            { field: 'quantity', header: 'الكمية' }
+          ]"
+        ></app-data-table>
+        <a href="/transactions" class="view-all-link">عرض كل الحركات</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- رسالة في حال عدم وجود بيانات بعد التحميل -->
+  <div *ngIf="!dashboardData && !(isLoading | async) && !(hasError | async)" class="no-data-message">
+    <p>لا توجد بيانات لعرضها في لوحة التحكم للفترة المحددة.</p>
+  </div>
+
+</div>

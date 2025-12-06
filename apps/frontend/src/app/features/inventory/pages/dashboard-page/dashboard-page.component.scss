@@ -1,0 +1,191 @@
+/*
+  dashboard-page.component.scss
+  تنسيق SCSS لمكون لوحة التحكم (DashboardPageComponent)
+  يدعم RTL والاستجابة (Responsive)
+*/
+
+// تعريف متغيرات الألوان الأساسية (افتراضية)
+$primary-color: #007bff; // أزرق أساسي
+$secondary-color: #6c757d; // رمادي ثانوي
+$success-color: #28a745; // أخضر للنجاح
+$danger-color: #dc3545; // أحمر للخطر
+$warning-color: #ffc107; // أصفر للتحذير
+$background-color: #f8f9fa; // خلفية فاتحة
+$card-background: #ffffff; // خلفية البطاقات
+$text-color: #343a40; // لون النص الأساسي
+$border-color: #e9ecef; // لون الحدود
+
+// Mixin لإنشاء شبكة مرنة (Grid)
+@mixin grid-layout($min-width: 250px, $gap: 20px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+.dashboard-page {
+  padding: 20px;
+  background-color: $background-color;
+  min-height: 100vh;
+  color: $text-color;
+
+  // شريط العنوان والفلترة
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap; // لضمان الاستجابة
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0;
+      padding-bottom: 10px; // مسافة عند الالتفاف
+    }
+
+    // تنسيق مكون الفلترة (افتراضي)
+    app-filter-panel {
+      // تنسيقات خاصة بالفلتر إذا لزم الأمر
+    }
+  }
+
+  // حالة التحميل والخطأ
+  .loading-overlay, .error-message {
+    text-align: center;
+    padding: 50px 0;
+    font-size: 1.2rem;
+    color: $secondary-color;
+  }
+
+  .error-message {
+    color: $danger-color;
+    button {
+      background-color: $danger-color;
+      color: $card-background;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: darken($danger-color, 10%);
+      }
+    }
+  }
+
+  // المحتوى الرئيسي
+  .dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  // 1. إحصائيات عامة (Stats Cards)
+  .stats-cards-grid {
+    @include grid-layout(200px, 20px);
+  }
+
+  // 2. الرسوم البيانية الرئيسية
+  .charts-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    .chart-container {
+      background-color: $card-background;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      min-height: 350px; // ارتفاع أدنى للرسوم البيانية
+
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 10px;
+      }
+
+      &.full-width {
+        flex: 1 1 100%; // يأخذ العرض الكامل على الشاشات الصغيرة
+      }
+
+      &.half-width {
+        flex: 1 1 calc(50% - 10px); // يأخذ نصف العرض مع مراعاة الفجوة
+        min-width: 300px; // لضمان عدم الانكماش الشديد
+      }
+    }
+  }
+
+  // 3. الجداول الصغيرة
+  .tables-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    .table-container {
+      background-color: $card-background;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 10px;
+      }
+
+      &.half-width {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 300px;
+      }
+
+      app-data-table {
+        flex-grow: 1; // لضمان أن الجدول يملأ المساحة المتاحة
+      }
+
+      .view-all-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 500;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // دعم الاستجابة (Media Queries)
+  @media (max-width: 1200px) {
+    .charts-section, .tables-section {
+      .chart-container.half-width, .table-container.half-width {
+        flex: 1 1 100%; // على الشاشات الأصغر، تأخذ الرسوم البيانية والجداول العرض الكامل
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 15px;
+
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      h1 {
+        width: 100%;
+        text-align: center;
+      }
+      app-filter-panel {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,203 @@
+/* /home/ubuntu/movements-page.component.scss */
+
+// تعريف متغيرات الألوان الأساسية
+$primary-color: #007bff;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$text-color: #333;
+$background-color: #f8f9fa;
+$border-color: #dee2e6;
+$card-background: #fff;
+
+// نمط الصفحة الرئيسي
+.movements-page {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+
+  // دعم RTL
+  direction: rtl;
+  text-align: right;
+}
+
+// رأس الصفحة
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid $border-color;
+  padding-bottom: 10px;
+}
+
+.page-title {
+  color: $primary-color;
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.export-button {
+  // تنسيق زر التصدير (يفترض أنه مكون app-button)
+  background-color: $success-color;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  app-icon {
+    margin-left: 8px; // مسافة بين الأيقونة والنص في RTL
+  }
+
+  &:hover {
+    background-color: darken($success-color, 10%);
+  }
+}
+
+// قسم الإحصائيات
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+// قسم الفلترة
+.filter-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-fields {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  input,
+  select,
+  app-warehouse-list,
+  app-item-list {
+    flex: 1 1 200px; // استجابة جيدة
+    padding: 8px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+  }
+}
+
+// قسم جدول البيانات
+.data-table-section {
+  background-color: $card-background;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// حالة التحميل والخطأ
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: $primary-color;
+  font-weight: bold;
+}
+
+.spinner {
+  // تنسيق وهمي لمؤشر التحميل
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid $primary-color;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: lighten($danger-color, 40%);
+  color: $danger-color;
+  border: 1px solid $danger-color;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+
+  app-icon {
+    margin-left: 10px;
+  }
+}
+
+// تنسيق أنواع الحركات
+.movement-type-inbound {
+  color: $success-color;
+  font-weight: bold;
+}
+
+.movement-type-outbound {
+  color: $danger-color;
+  font-weight: bold;
+}
+
+.movement-type-adjustment {
+  color: $warning-color;
+  font-weight: bold;
+}
+
+// تفاصيل الحركة في Dialog
+.movement-details {
+  padding: 10px;
+
+  p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  strong {
+    color: $primary-color;
+    display: inline-block;
+    min-width: 100px;
+  }
+}
+
+// الاستجابة (Responsive)
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .export-button {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filter-fields {
+    flex-direction: column;
+
+    input,
+    select,
+    app-warehouse-list,
+    app-item-list {
+      flex: 1 1 100%;
+    }
+  }
+}
