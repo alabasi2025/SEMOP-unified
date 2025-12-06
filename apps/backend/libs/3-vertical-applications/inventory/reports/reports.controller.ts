@@ -1,14 +1,14 @@
 import { Controller, Get, Query, Res, HttpStatus } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { GetReportDto } from './dto/get-report.dto';
-import { Response } from 'express';
+// import { Response } from 'express';
 
 @Controller('reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Get('inventory-summary')
-  async getInventorySummaryReport(@Query() getReportDto: GetReportDto, @Res() res: Response) {
+  async getInventorySummaryReport(@Query() getReportDto: GetReportDto) {
     try {
       const reportData = await this.reportsService.generateInventorySummary(getReportDto);
       // في بيئة الإنتاج، يجب أن يتم إرسال الملف كـ Buffer أو Stream

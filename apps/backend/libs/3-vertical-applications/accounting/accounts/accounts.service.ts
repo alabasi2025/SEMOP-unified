@@ -89,7 +89,7 @@ export class AccountsService {
     this.accounts[index] = {
       ...this.accounts[index],
       ...data,
-    };
+    } as any;
     
     return this.accounts[index] as any;
   }
