@@ -33,6 +33,10 @@ export const appRoutes: Route[] = [
       },
       
       // Inventory Module Routes
+      {
+        path: 'inventory',
+        loadChildren: () => import('./features/inventory/inventory.module').then(m => m.InventoryModule)
+      },
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
       { path: 'item-categories', loadComponent: () => import('./pages/item-categories/item-categories.component').then(m => m.ItemCategoriesComponent) },
       { path: 'units', loadComponent: () => import('./pages/units/units.component').then(m => m.UnitsComponent) },
