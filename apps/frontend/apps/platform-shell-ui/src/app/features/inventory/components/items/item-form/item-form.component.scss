@@ -1,0 +1,291 @@
+/* item-form.component.scss */
+/* تنسيق مكون نموذج إضافة/تعديل صنف (ItemFormComponent) */
+
+// تعريف متغيرات الألوان الأساسية (افتراضية)
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$light-bg: #f8f9fa;
+$dark-text: #343a40;
+$border-color: #ced4da;
+
+// تعريف متغيرات التخطيط
+$spacing-unit: 1rem;
+$border-radius: 0.25rem;
+
+.item-form-container {
+  max-width: 900px;
+  margin: $spacing-unit auto;
+  padding: $spacing-unit * 2;
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+  direction: rtl; // دعم RTL للمكون بالكامل
+  text-align: right;
+}
+
+.form-header {
+  margin-bottom: $spacing-unit * 1.5;
+  border-bottom: 1px solid $light-bg;
+  padding-bottom: $spacing-unit;
+
+  h2 {
+    color: $dark-text;
+    font-size: 1.75rem;
+    margin: 0;
+  }
+}
+
+.item-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit * 1.5;
+}
+
+.form-section {
+  padding: $spacing-unit;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+
+  h3 {
+    font-size: 1.25rem;
+    color: $primary-color;
+    margin-top: 0;
+    margin-bottom: $spacing-unit;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid lighten($border-color, 5%);
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -$spacing-unit / 2;
+  margin-right: -$spacing-unit / 2;
+}
+
+.col-md-6, .col-sm-12, .col-12 {
+  padding-left: $spacing-unit / 2;
+  padding-right: $spacing-unit / 2;
+  margin-bottom: $spacing-unit;
+}
+
+// الاستجابة (Responsive)
+@media (min-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $dark-text;
+  }
+
+  .required {
+    color: $danger-color;
+    margin-right: 0.25rem;
+  }
+}
+
+.form-control {
+  padding: 0.75rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+
+  &:focus {
+    border-color: $primary-color;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+select.form-control {
+  appearance: none; // إزالة تنسيق المتصفح الافتراضي
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.8%2013.2%205.8s9.3-1.9%2013.2-5.8l128-128c3.9-3.9%205.8-8.4%205.8-13.2%200-4.8-1.9-9.3-5.8-13.2z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: left 1rem center; // تغيير الموضع لدعم RTL
+  background-size: 0.65rem 0.65rem;
+  padding-left: 2.5rem; // زيادة المسافة من اليسار
+  padding-right: 1rem; // تقليل المسافة من اليمين
+}
+
+// رسائل الأخطاء
+.error-message {
+  color: $danger-color;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+.group-error {
+  padding: 0.5rem;
+  background-color: lighten($danger-color, 40%);
+  border-radius: $border-radius;
+  margin-top: 0.5rem;
+}
+
+// تنسيق حقل الصورة
+.image-upload-group {
+  .image-preview-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed $border-color;
+    border-radius: $border-radius;
+    padding: $spacing-unit;
+    min-height: 150px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+
+    &:hover {
+      border-color: $primary-color;
+    }
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    margin-bottom: $spacing-unit / 2;
+    border-radius: $border-radius;
+  }
+
+  .remove-image-btn {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background-color: rgba($danger-color, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: $border-radius;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+
+    .icon-close {
+      margin-left: 0.25rem;
+      // محاكاة أيقونة إغلاق بسيطة
+      &::before { content: '×'; }
+    }
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: $secondary-color;
+    cursor: pointer;
+    text-align: center;
+    padding: $spacing-unit;
+
+    .icon-upload {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: $primary-color;
+      // محاكاة أيقونة رفع بسيطة
+      &::before { content: '↑'; }
+    }
+  }
+}
+
+// تنسيق حقل Checkbox
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+
+  input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+  }
+}
+
+// أزرار الإجراءات
+.form-actions {
+  display: flex;
+  justify-content: flex-start; // محاذاة الأزرار لليمين في RTL
+  gap: $spacing-unit;
+  padding-top: $spacing-unit;
+  border-top: 1px solid $border-color;
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: $border-radius;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  .btn-secondary {
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+
+  .spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: -0.125em;
+    border: 0.1em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+    margin-left: 0.5rem; // مسافة قبل النص في RTL
+  }
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}

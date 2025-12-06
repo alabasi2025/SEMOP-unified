@@ -1,0 +1,80 @@
+<!-- item-search.component.html -->
+
+<div class="item-search-container" dir="rtl">
+  <!-- حقل البحث الرئيسي -->
+  <div class="search-input-wrapper">
+    <!-- استخدام المكون المشترك SearchBarComponent -->
+    <app-search-bar
+      [placeholder]="placeholder"
+      [searchTerm]="selectedItem ? selectedItem.name : currentSearchTerm"
+      (searchChange)="onSearchChange($event)"
+      (keyDown)="items$ | async as items; handleKeyDown($event, items)"
+    ></app-search-bar>
+
+    <!-- زر مسح البحث -->
+    <button
+      *ngIf="currentSearchTerm || selectedItem"
+      (click)="clearSearch()"
+      class="clear-button"
+      aria-label="مسح البحث"
+    >
+      &times;
+    </button>
+  </div>
+
+  <!-- قائمة النتائج المنسدلة (Dropdown) -->
+  <div
+    *ngIf="showResults && (items$ | async) as items"
+    class="results-dropdown"
+    [class.visible]="items.length > 0 || isLoading"
+  >
+    <!-- حالة التحميل -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <span>جاري البحث...</span>
+    </div>
+
+    <!-- قائمة النتائج -->
+    <ul #resultsList class="results-list" role="listbox">
+      <li
+        *ngFor="let item of items; let i = index"
+        [attr.aria-selected]="i === selectedIndex"
+        [class.selected]="i === selectedIndex"
+        (click)="selectItem(item)"
+        (mouseenter)="selectedIndex = i"
+        class="result-item"
+        role="option"
+        tabindex="-1"
+      >
+        <div class="item-info">
+          <!-- الكود والاسم مع تمييز النص المطابق -->
+          <div class="item-header">
+            <span class="item-code" [innerHTML]="highlightMatch(item.code, currentSearchTerm)"></span>
+            <span class="item-name" [innerHTML]="highlightMatch(item.name, currentSearchTerm)"></span>
+          </div>
+
+          <!-- معلومات مختصرة إضافية -->
+          <div class="item-details">
+            <span class="detail-tag">
+              <i class="icon-category"></i>
+              {{ item.category.name }}
+            </span>
+            <span class="detail-tag">
+              <i class="icon-barcode"></i>
+              <span [innerHTML]="highlightMatch(item.barcode, currentSearchTerm)"></span>
+            </span>
+            <span class="detail-tag stock-info">
+              <i class="icon-stock"></i>
+              {{ item.stockQuantity }} {{ item.unit.name }}
+            </span>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <!-- حالة عدم وجود نتائج -->
+    <div *ngIf="!isLoading && items.length === 0 && currentSearchTerm" class="no-results">
+      <span>لا توجد نتائج مطابقة لـ "{{ currentSearchTerm }}"</span>
+    </div>
+  </div>
+</div>

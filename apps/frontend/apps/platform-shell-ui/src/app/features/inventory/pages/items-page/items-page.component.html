@@ -1,0 +1,100 @@
+<!-- items-page.component.html -->
+
+<!-- حاوية رئيسية للصفحة تدعم RTL -->
+<div class="items-page-container" dir="rtl">
+
+  <!-- عنوان الصفحة -->
+  <header class="page-header">
+    <h1>إدارة الأصناف</h1>
+    <p>عرض وإدارة جميع الأصناف في النظام.</p>
+  </header>
+
+  <!-- قسم إحصائيات الأصناف -->
+  <section class="stats-section" *ngIf="stats$ | async as stats">
+    <!-- استخدام مكون StatsCardComponent لعرض الإحصائيات -->
+    <app-stats-card
+      title="إجمالي الأصناف"
+      [value]="stats.totalItems"
+      icon="inventory_2"
+      color="primary"
+    ></app-stats-card>
+
+    <app-stats-card
+      title="الأصناف النشطة"
+      [value]="stats.activeItems"
+      icon="check_circle"
+      color="success"
+    ></app-stats-card>
+
+    <app-stats-card
+      title="أصناف ناقصة"
+      [value]="stats.lowStockItems"
+      icon="warning"
+      color="warn"
+    ></app-stats-card>
+  </section>
+
+  <!-- شريط الأدوات والبحث والفلترة -->
+  <section class="toolbar-section">
+    <div class="actions-container">
+      <!-- زر إضافة صنف جديد -->
+      <button mat-raised-button color="primary" (click)="openItemForm()">
+        <mat-icon>add</mat-icon>
+        إضافة صنف جديد
+      </button>
+
+      <!-- زر تصدير إلى Excel -->
+      <button mat-stroked-button (click)="exportToExcel()" [disabled]="(isLoading$ | async)">
+        <mat-icon>download</mat-icon>
+        تصدير Excel
+      </button>
+    </div>
+
+    <!-- مكون البحث (محاكاة) -->
+    <app-item-search
+      (searchChange)="onFilterChange({ searchTerm: $event })"
+    ></app-item-search>
+
+    <!-- مكون الفلترة (محاكاة) -->
+    <app-filter-panel
+      title="فلترة حسب الفئة"
+      [options]="categories"
+      (filterChange)="onFilterChange({ category: $event })"
+    ></app-filter-panel>
+  </section>
+
+  <!-- حالة التحميل والخطأ -->
+  <div class="status-area">
+    <!-- حالة التحميل -->
+    <div class="loading-overlay" *ngIf="isLoading$ | async">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>جاري تحميل البيانات...</p>
+    </div>
+
+    <!-- رسالة الخطأ -->
+    <div class="error-message" *ngIf="error">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-button color="warn" (click)="refresh$.next()">إعادة المحاولة</button>
+    </div>
+  </div>
+
+  <!-- عرض قائمة الأصناف -->
+  <section class="list-section">
+    <ng-container *ngIf="items$ | async as items">
+      <app-item-list
+        [items]="items"
+        (editItem)="openItemForm($event)"
+        (deleteItem)="deleteItem($event)"
+      ></app-item-list>
+
+      <!-- حالة عدم وجود بيانات -->
+      <div class="no-data-message" *ngIf="items.length === 0 && !(isLoading$ | async) && !error">
+        <mat-icon>info</mat-icon>
+        <p>لا توجد أصناف مطابقة لمعايير البحث أو الفلترة.</p>
+        <button mat-button color="primary" (click)="onFilterChange({ searchTerm: '', category: null })">مسح الفلاتر</button>
+      </div>
+    </ng-container>
+  </section>
+
+</div>

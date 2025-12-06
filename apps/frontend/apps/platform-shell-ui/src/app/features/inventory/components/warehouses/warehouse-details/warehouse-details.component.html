@@ -1,0 +1,126 @@
+<!-- warehouse-details.component.html -->
+
+<!-- حاوية رئيسية تدعم RTL وتنسيقات الاستجابة -->
+<div class="warehouse-details-container" dir="rtl">
+  <!-- مؤشر التحميل العام -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل بيانات المستودع...</p>
+  </div>
+
+  <!-- المحتوى الرئيسي للمكون -->
+  <div *ngIf="!loading && warehouse" class="content-wrapper">
+    <!-- #region رأس الصفحة (العنوان والإجراءات) -->
+    <header class="details-header">
+      <h1>
+        <i class="pi pi-building"></i>
+        {{ warehouse.name }}
+      </h1>
+      <div class="actions">
+        <button (click)="onEdit()" class="btn btn-primary">
+          <i class="pi pi-pencil"></i> تعديل
+        </button>
+        <button (click)="onDelete()" class="btn btn-danger">
+          <i class="pi pi-trash"></i> حذف
+        </button>
+      </div>
+    </header>
+    <!-- #endregion -->
+
+    <!-- #region البيانات الأساسية والإحصائيات -->
+    <section class="basic-info-stats">
+      <div class="card basic-info">
+        <h2>البيانات الأساسية</h2>
+        <p><strong>الموقع:</strong> {{ warehouse.location }}</p>
+        <p><strong>السعة الكلية:</strong> {{ warehouse.capacity | number }} وحدة</p>
+        <p><strong>المساحة المشغولة:</strong> {{ warehouse.occupiedSpace | number }} وحدة</p>
+      </div>
+
+      <!-- بطاقات الإحصائيات (StatsCardComponent) -->
+      <div class="stats-cards-grid">
+        <app-stats-card
+          icon="pi pi-box"
+          title="عدد الأصناف"
+          [value]="stats.itemCount | number"
+          unit="صنف"
+        ></app-stats-card>
+
+        <app-stats-card
+          icon="pi pi-dollar"
+          title="القيمة الإجمالية"
+          [value]="stats.totalValue | currency: 'SAR'"
+          unit="ريال"
+        ></app-stats-card>
+
+        <app-stats-card
+          icon="pi pi-chart-pie"
+          title="نسبة الإشغال"
+          [value]="stats.occupancyPercentage | number: '1.0-2'"
+          unit="%"
+          [isPercentage]="true"
+        ></app-stats-card>
+      </div>
+    </section>
+    <!-- #endregion -->
+
+    <!-- #region نسبة الإشغال (رسم بياني) -->
+    <section class="occupancy-chart-section">
+      <div class="card chart-card">
+        <h2>رسم بياني لنسبة الإشغال</h2>
+        <p-chart
+          type="doughnut"
+          [data]="occupancyChartData"
+          [options]="occupancyChartOptions"
+          class="occupancy-chart"
+        ></p-chart>
+      </div>
+    </section>
+    <!-- #endregion -->
+
+    <!-- #region رصيد الأصناف (جدول) -->
+    <section class="stock-balance-section">
+      <div class="card">
+        <header>
+          <h2>رصيد الأصناف في المستودع ({{ stockItems.length }})</h2>
+          <button (click)="onViewStock()" class="btn btn-secondary">
+            <i class="pi pi-list"></i> عرض كل الأصناف
+          </button>
+        </header>
+        <!-- استخدام المكون المشترك DataTableComponent -->
+        <app-data-table
+          [data]="stockItems"
+          [columns]="stockTableColumns"
+          [rows]="5"
+          emptyMessage="لا توجد أصناف مسجلة في هذا المستودع."
+        ></app-data-table>
+      </div>
+    </section>
+    <!-- #endregion -->
+
+    <!-- #region حركات المستودع الأخيرة (جدول) -->
+    <section class="recent-movements-section">
+      <div class="card">
+        <header>
+          <h2>حركات المستودع الأخيرة ({{ recentMovements.length }})</h2>
+          <button (click)="onViewMovements()" class="btn btn-secondary">
+            <i class="pi pi-history"></i> عرض كل الحركات
+          </button>
+        </header>
+        <!-- استخدام المكون المشترك DataTableComponent -->
+        <app-data-table
+          [data]="recentMovements"
+          [columns]="movementsTableColumns"
+          [rows]="5"
+          emptyMessage="لا توجد حركات مخزون حديثة."
+        ></app-data-table>
+      </div>
+    </section>
+    <!-- #endregion -->
+  </div>
+
+  <!-- رسالة في حالة عدم وجود بيانات -->
+  <div *ngIf="!loading && !warehouse" class="no-data-message">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h2>عذراً، لم يتم العثور على بيانات لهذا المستودع.</h2>
+  </div>
+</div>

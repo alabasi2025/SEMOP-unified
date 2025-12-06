@@ -1,0 +1,135 @@
+<!-- /home/ubuntu/movements-page.component.html -->
+
+<!--
+  @description قالب HTML لصفحة حركات المخزون (MovementsPageComponent)
+  يستخدم مكونات وهمية (DataTableComponent, StatsCardComponent, FilterPanelComponent, إلخ)
+  لتلبية متطلبات التصميم الاحترافي والتفاعلي.
+-->
+
+<div class="movements-page" dir="rtl">
+  <!-- رأس الصفحة -->
+  <header class="page-header">
+    <h1 class="page-title">حركات المخزون</h1>
+    <!-- زر التصدير -->
+    <app-button
+      (click)="exportToExcel()"
+      [disabled]="(isLoading | async)"
+      class="export-button"
+    >
+      <app-icon icon="download"></app-icon>
+      تصدير Excel
+    </app-button>
+  </header>
+
+  <!-- إحصائيات الحركات -->
+  <section class="stats-section">
+    <ng-container *ngIf="stats$ | async as stats">
+      <app-stats-card
+        title="إجمالي الحركات"
+        [value]="stats.totalMovements"
+        icon="list"
+      ></app-stats-card>
+      <app-stats-card
+        title="إجمالي الوارد"
+        [value]="stats.totalInbound"
+        icon="arrow-down"
+        color="success"
+      ></app-stats-card>
+      <app-stats-card
+        title="إجمالي الصادر"
+        [value]="stats.totalOutbound"
+        icon="arrow-up"
+        color="danger"
+      ></app-stats-card>
+    </ng-container>
+  </section>
+
+  <!-- لوحة الفلترة المتقدمة -->
+  <section class="filter-section">
+    <app-filter-panel
+      (filterChange)="onFilterChange($event)"
+      [isLoading]="(isLoading | async)"
+    >
+      <!-- حقول الفلترة المتقدمة -->
+      <div class="filter-fields">
+        <input type="date" placeholder="تاريخ البدء" />
+        <input type="date" placeholder="تاريخ الانتهاء" />
+        <select>
+          <option value="">نوع الحركة</option>
+          <option value="INBOUND">وارد</option>
+          <option value="OUTBOUND">صادر</option>
+          <option value="ADJUSTMENT">تسوية</option>
+        </select>
+        <app-warehouse-list placeholder="المستودع"></app-warehouse-list>
+        <app-item-list placeholder="الصنف"></app-item-list>
+      </div>
+    </app-filter-panel>
+  </section>
+
+  <!-- عرض حالة التحميل أو الخطأ -->
+  <div *ngIf="isLoading | async" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل البيانات...</p>
+  </div>
+
+  <div *ngIf="error | async as errorMessage" class="error-message">
+    <app-icon icon="alert"></app-icon>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- جدول حركات المخزون -->
+  <section class="data-table-section">
+    <app-data-table
+      [data]="movements$ | async"
+      [columns]="tableColumns"
+      [loading]="(isLoading | async)"
+      emptyMessage="لا توجد حركات مخزون مطابقة لمعايير البحث."
+    >
+      <!-- تخصيص عمود الإجراءات -->
+      <ng-template #actionsTemplate let-movement>
+        <app-button
+          size="small"
+          appearance="icon"
+          (click)="showMovementDetails(movement)"
+          title="عرض التفاصيل"
+        >
+          <app-icon icon="eye"></app-icon>
+        </app-button>
+      </ng-template>
+
+      <!-- تخصيص عمود نوع الحركة -->
+      <ng-template #typeTemplate let-movement>
+        <span [class]="'movement-type-' + movement.type.toLowerCase()">
+          {{ getMovementTypeLabel(movement.type) }}
+        </span>
+      </ng-template>
+    </app-data-table>
+  </section>
+
+  <!-- Dialog لعرض تفاصيل الحركة -->
+  <app-dialog
+    *ngIf="showDetailsDialog | async"
+    (close)="closeDetailsDialog()"
+    title="تفاصيل الحركة"
+  >
+    <ng-container *ngIf="selectedMovement | async as movement">
+      <div class="movement-details">
+        <p><strong>رقم الحركة:</strong> {{ movement.id }}</p>
+        <p><strong>التاريخ:</strong> {{ movement.date | date : 'medium' }}</p>
+        <p>
+          <strong>نوع الحركة:</strong>
+          <span [class]="'movement-type-' + movement.type.toLowerCase()">
+            {{ getMovementTypeLabel(movement.type) }}
+          </span>
+        </p>
+        <p><strong>الصنف:</strong> {{ movement.item.name }}</p>
+        <p><strong>المستودع:</strong> {{ movement.warehouse.name }}</p>
+        <p><strong>الكمية:</strong> {{ movement.quantity }}</p>
+        <p><strong>المستخدم:</strong> {{ movement.user.name }}</p>
+        <p *ngIf="movement.notes">
+          <strong>ملاحظات:</strong> {{ movement.notes }}
+        </p>
+      </div>
+    </ng-container>
+  </app-dialog>
+</div>

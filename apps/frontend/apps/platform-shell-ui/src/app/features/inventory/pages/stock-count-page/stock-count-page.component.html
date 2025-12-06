@@ -1,0 +1,181 @@
+<!--
+  @description قالب HTML لصفحة جرد المخزون (StockCountPageComponent)
+  يستخدم Angular Standalone Components ومنطق RxJS
+-->
+
+<div class="stock-count-page" dir="rtl">
+  <!-- رأس الصفحة والأزرار الرئيسية -->
+  <header class="page-header">
+    <h1>صفحة جرد المخزون</h1>
+    <div class="actions">
+      <button class="btn btn-primary" (click)="createNewCount()">
+        <i class="icon-add"></i> إنشاء جرد جديد
+      </button>
+      <button class="btn btn-secondary" (click)="exportToPdf()">
+        <i class="icon-export"></i> تصدير PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- قسم الإحصائيات -->
+  <section class="stats-section">
+    <ng-container *ngIf="stockCountStats$ | async as stats; else statsLoading">
+      <div class="stats-grid">
+        <!-- StatsCardComponent (وهمي) -->
+        <div class="stats-card">
+          <div class="card-title">إجمالي عمليات الجرد</div>
+          <div class="card-value">{{ stats.totalCounts }}</div>
+        </div>
+        <div class="stats-card">
+          <div class="card-title">قيد التنفيذ</div>
+          <div class="card-value">{{ stats.inProgress }}</div>
+        </div>
+        <div class="stats-card">
+          <div class="card-title">مكتمل/معتمد</div>
+          <div class="card-value">{{ stats.completed }}</div>
+        </div>
+        <div class="stats-card">
+          <div class="card-title">إجمالي الفروقات (قيمة)</div>
+          <div class="card-value">{{ stats.totalDifferenceValue | number }}</div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #statsLoading>
+      <div class="loading-placeholder" *ngIf="loadingStats$ | async">جاري تحميل الإحصائيات...</div>
+    </ng-template>
+  </section>
+
+  <!-- قسم الفلترة وقائمة الجرد -->
+  <section class="main-content">
+    <!-- لوحة الفلترة (FilterPanelComponent وهمي) -->
+    <div class="filter-panel">
+      <h3>مرشحات البحث</h3>
+      <div class="filter-controls">
+        <!-- فلترة حسب الحالة -->
+        <div class="form-group">
+          <label for="statusFilter">الحالة:</label>
+          <select id="statusFilter" [(ngModel)]="currentFilter.status" class="form-control">
+            <option [ngValue]="null">الكل</option>
+            <option *ngFor="let status of stockCountStatuses" [ngValue]="status">{{ status }}</option>
+          </select>
+        </div>
+
+        <!-- فلترة حسب التاريخ (بداية) -->
+        <div class="form-group">
+          <label for="startDateFilter">من تاريخ:</label>
+          <input id="startDateFilter" type="date" [(ngModel)]="currentFilter.startDate" class="form-control">
+        </div>
+
+        <!-- فلترة حسب التاريخ (نهاية) -->
+        <div class="form-group">
+          <label for="endDateFilter">إلى تاريخ:</label>
+          <input id="endDateFilter" type="date" [(ngModel)]="currentFilter.endDate" class="form-control">
+        </div>
+
+        <!-- أزرار التحكم بالفلترة -->
+        <div class="filter-actions">
+          <button class="btn btn-primary" (click)="applyFilter()">تطبيق</button>
+          <button class="btn btn-link" (click)="clearFilter()">مسح</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- جدول قائمة الجرد (DataTableComponent وهمي) -->
+    <div class="data-table-container">
+      <h2>قائمة عمليات الجرد</h2>
+      <ng-container *ngIf="stockCounts$ | async as counts; else listLoading">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>الرقم</th>
+              <th>التاريخ</th>
+              <th>المستودع</th>
+              <th>الحالة</th>
+              <th>عدد الأصناف</th>
+              <th>الفروقات</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let count of counts">
+              <td>{{ count.number }}</td>
+              <td>{{ count.date | date: 'shortDate' }}</td>
+              <td>{{ count.warehouse }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(count.status)">
+                  {{ count.status }}
+                </span>
+              </td>
+              <td>{{ count.itemCount }}</td>
+              <td>{{ count.totalDifferences }}</td>
+              <td>
+                <button class="btn btn-sm btn-info" (click)="viewDetails(count)">تفاصيل</button>
+                <button class="btn btn-sm btn-success" (click)="approveCount(count)"
+                        [disabled]="count.status !== 'مكتمل'">اعتماد</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="no-data" *ngIf="counts.length === 0">
+          لا توجد عمليات جرد مطابقة للمرشحات.
+        </div>
+      </ng-container>
+      <ng-template #listLoading>
+        <div class="loading-placeholder" *ngIf="loadingList$ | async">جاري تحميل قائمة الجرد...</div>
+      </ng-template>
+    </div>
+  </section>
+
+  <!-- نافذة عرض التفاصيل (DialogComponent وهمي) -->
+  <div class="dialog-overlay" *ngIf="isDetailsDialogOpen">
+    <div class="dialog-content">
+      <header class="dialog-header">
+        <h2>تفاصيل عملية الجرد: {{ (selectedCountDetails$ | async)?.number }}</h2>
+        <button class="close-btn" (click)="closeDetailsDialog()">X</button>
+      </header>
+      <div class="dialog-body">
+        <!-- عرض تفاصيل الجرد (StockCountDetails) -->
+        <ng-container *ngIf="selectedCountDetails$ | async as details">
+          <div class="details-summary">
+            <p><strong>المستودع:</strong> {{ details.warehouse }}</p>
+            <p><strong>الحالة:</strong> <span [ngClass]="getStatusClass(details.status)">{{ details.status }}</span></p>
+            <p><strong>ملاحظات:</strong> {{ details.notes || 'لا توجد ملاحظات' }}</p>
+          </div>
+
+          <!-- قائمة الأصناف (ItemListComponent وهمي) -->
+          <h3>الأصناف في الجرد</h3>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>الصنف</th>
+                <th>كمية النظام</th>
+                <th>الكمية الفعلية</th>
+                <th>الوحدة</th>
+                <th>الفرق</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of details.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.systemQuantity }}</td>
+                <td>
+                  <!-- إدخال الكميات الفعلية -->
+                  <input type="number" [(ngModel)]="item.actualQuantity" class="form-control-sm"
+                         placeholder="أدخل الكمية"
+                         (change)="inventoryService.updateItemQuantity(details.id, item.itemId, item.actualQuantity!)">
+                </td>
+                <td>{{ item.unit }}</td>
+                <td [class.diff-positive]="item.difference > 0" [class.diff-negative]="item.difference < 0">
+                  {{ item.difference }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-container>
+      </div>
+      <footer class="dialog-footer">
+        <button class="btn btn-secondary" (click)="closeDetailsDialog()">إغلاق</button>
+      </footer>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { TagModule } from 'primeng/tag';
 
 @NgModule({
-  declarations: [
+  imports: [
     MobileDashboardComponent
   ],
   imports: [

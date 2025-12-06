@@ -1,0 +1,113 @@
+<!--
+  ملف: reports-page.component.html
+  الوصف: قالب HTML لصفحة التقارير (ReportsPageComponent).
+  الميزات: قائمة التقارير، لوحة الفلترة، عرض نتائج التقرير (جدول/مخطط)، أزرار الإجراءات.
+  المتطلبات: دعم RTL، استجابة (Responsive).
+-->
+
+<div class="reports-page-container">
+  <!-- عنوان الصفحة -->
+  <header class="page-header">
+    <h1><i class="material-icons">analytics</i> صفحة التقارير</h1>
+    <p class="text-muted">إدارة وعرض التقارير المتعلقة بالمخزون والأصناف.</p>
+  </header>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="main-content">
+
+    <!-- 1. قائمة التقارير المتاحة (Sidebar/List) -->
+    <aside class="reports-list-panel">
+      <h2>التقارير المتاحة</h2>
+      <ul class="reports-list">
+        <li *ngFor="let report of availableReports"
+            [class.active]="(selectedReport$ | async)?.id === report.id"
+            (click)="selectReport(report)"
+            tabindex="0"
+            role="button"
+            aria-label="عرض تقرير {{ report.nameAr }}">
+          <i class="material-icons">{{ report.icon }}</i>
+          <div class="report-info">
+            <span class="report-name">{{ report.nameAr }}</span>
+            <small class="report-description">{{ report.descriptionAr }}</small>
+          </div>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- 2. منطقة عرض التقرير -->
+    <section class="report-view-area">
+
+      <ng-container *ngIf="selectedReport$ | async as selectedReport">
+        <!-- عنوان التقرير المحدد وأزرار الإجراءات -->
+        <div class="report-header">
+          <h2>{{ selectedReport.nameAr }}</h2>
+          <div class="report-actions">
+            <button class="btn btn-icon" (click)="exportToPdf()" title="تصدير PDF" aria-label="تصدير التقرير إلى PDF">
+              <i class="material-icons">picture_as_pdf</i>
+            </button>
+            <button class="btn btn-icon" (click)="exportToExcel()" title="تصدير Excel" aria-label="تصدير التقرير إلى Excel">
+              <i class="material-icons">table_view</i>
+            </button>
+            <button class="btn btn-icon" (click)="printReport()" title="طباعة" aria-label="طباعة التقرير">
+              <i class="material-icons">print</i>
+            </button>
+            <button class="btn btn-icon btn-schedule" (click)="scheduleReport()" title="جدولة" aria-label="جدولة التقرير">
+              <i class="material-icons">schedule</i>
+            </button>
+          </div>
+        </div>
+
+        <!-- لوحة الفلترة المتقدمة -->
+        <div class="filter-panel-wrapper">
+          <app-filter-panel [formGroup]="filterForm"></app-filter-panel>
+          <button class="btn btn-primary btn-apply-filter" (click)="applyFilters()" [disabled]="isLoading$ | async">
+            <i class="material-icons">search</i> تطبيق الفلاتر
+          </button>
+        </div>
+
+        <!-- حالة التحميل والخطأ -->
+        <div *ngIf="isLoading$ | async" class="loading-state">
+          <div class="spinner"></div>
+          <p>جاري تحميل بيانات التقرير...</p>
+        </div>
+
+        <div *ngIf="error$ | async as error" class="error-state alert alert-danger">
+          <i class="material-icons">error_outline</i>
+          <strong>خطأ:</strong> {{ error }}
+        </div>
+
+        <!-- عرض نتائج التقرير -->
+        <div class="report-results">
+          <ng-container *ngIf="reportData$ | async as data">
+            <ng-container *ngIf="!isLoading$ | async && !error$ | async">
+              <ng-container *ngIf="data.length > 0; else noData">
+                <!-- عرض جدول -->
+                <app-data-table
+                  *ngIf="selectedReport.componentType === 'table'"
+                  [data]="data"
+                  [columns]="getReportColumns(selectedReport.id)"
+                  [columnKeys]="getReportColumnKeys(selectedReport.id)">
+                </app-data-table>
+
+                <!-- عرض مخطط بياني -->
+                <app-charts
+                  *ngIf="selectedReport.componentType === 'chart'"
+                  [reportName]="selectedReport.nameAr">
+                </app-charts>
+              </ng-container>
+
+              <!-- حالة عدم وجود بيانات -->
+              <ng-template #noData>
+                <div class="no-data-state">
+                  <i class="material-icons">info_outline</i>
+                  <p>لا توجد بيانات لعرضها بناءً على الفلاتر المحددة.</p>
+                </div>
+              </ng-template>
+            </ng-container>
+          </ng-container>
+        </div>
+
+      </ng-container>
+    </section>
+  </div>
+</div>

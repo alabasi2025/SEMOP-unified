@@ -1,0 +1,407 @@
+// متغيرات الألوان
+$color-primary: #1976d2;
+$color-success: #4caf50;
+$color-danger: #f44336;
+$color-warning: #ff9800;
+$color-info: #2196f3;
+$color-text-primary: #212121;
+$color-text-secondary: #757575;
+$color-border: #e0e0e0;
+$color-background: #ffffff;
+$color-hover: #f5f5f5;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// بطاقة رصيد الصنف
+.item-stock-card {
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: $shadow-sm;
+  transition: all $transition-normal;
+  position: relative;
+  overflow: hidden;
+
+  // حالة التحميل
+  &.loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  // حالة قابلة للنقر
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+      background: $color-hover;
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  // حدود ملونة حسب الحالة
+  &[data-status="low"] {
+    border-right: 4px solid $color-danger;
+  }
+
+  &[data-status="high"] {
+    border-right: 4px solid $color-info;
+  }
+
+  &[data-status="normal"] {
+    border-right: 4px solid $color-success;
+  }
+
+  // محتوى البطاقة
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // رأس البطاقة
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+
+    .item-info {
+      flex: 1;
+      min-width: 0;
+
+      .item-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: $color-text-primary;
+        margin: 0 0 4px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .item-code {
+        font-size: 13px;
+        color: $color-text-secondary;
+        font-family: 'Courier New', monospace;
+      }
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+
+      &[data-status="low"] {
+        background: rgba($color-danger, 0.1);
+        color: $color-danger;
+      }
+
+      &[data-status="high"] {
+        background: rgba($color-info, 0.1);
+        color: $color-info;
+      }
+
+      &[data-status="normal"] {
+        background: rgba($color-success, 0.1);
+        color: $color-success;
+      }
+
+      .status-icon {
+        font-size: 16px;
+      }
+    }
+  }
+
+  // معلومات المستودع
+  .warehouse-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba($color-primary, 0.05);
+    border-radius: 8px;
+    font-size: 14px;
+    color: $color-text-secondary;
+
+    .warehouse-icon {
+      font-size: 16px;
+    }
+
+    .warehouse-name {
+      font-weight: 500;
+      color: $color-text-primary;
+    }
+  }
+
+  // الكمية الحالية
+  .stock-quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .quantity-label {
+      font-size: 13px;
+      color: $color-text-secondary;
+      font-weight: 500;
+    }
+
+    .quantity-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: $color-text-primary;
+      font-family: 'Arial', sans-serif;
+    }
+  }
+
+  // شريط التقدم
+  .progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: $color-border;
+      border-radius: 4px;
+      overflow: hidden;
+
+      .progress-fill {
+        height: 100%;
+        transition: width $transition-normal;
+        border-radius: 4px;
+
+        &[data-status="low"] {
+          background: linear-gradient(90deg, $color-danger, lighten($color-danger, 10%));
+        }
+
+        &[data-status="high"] {
+          background: linear-gradient(90deg, $color-info, lighten($color-info, 10%));
+        }
+
+        &[data-status="normal"] {
+          background: linear-gradient(90deg, $color-success, lighten($color-success, 10%));
+        }
+      }
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: $color-text-secondary;
+
+      .min-label,
+      .max-label {
+        font-weight: 500;
+      }
+    }
+  }
+
+  // معلومات الحد الأدنى/الأقصى (بدون شريط تقدم)
+  .min-max-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: rgba($color-border, 0.3);
+    border-radius: 8px;
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+
+      .info-label {
+        color: $color-text-secondary;
+        font-weight: 500;
+      }
+
+      .info-value {
+        color: $color-text-primary;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // Skeleton Loader
+  .skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        $color-border 25%,
+        lighten($color-border, 5%) 50%,
+        $color-border 75%
+      );
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+
+      &.skeleton-header {
+        height: 24px;
+        width: 70%;
+      }
+
+      &.skeleton-text {
+        height: 16px;
+        width: 50%;
+      }
+
+      &.skeleton-progress {
+        height: 8px;
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Animation
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .item-stock-card {
+    padding: 16px;
+
+    .card-header {
+      .item-info {
+        .item-name {
+          font-size: 16px;
+        }
+
+        .item-code {
+          font-size: 12px;
+        }
+      }
+
+      .status-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+      }
+    }
+
+    .stock-quantity {
+      .quantity-value {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .item-stock-card {
+    &[data-status="low"],
+    &[data-status="high"],
+    &[data-status="normal"] {
+      border-right: none;
+      border-left: 4px solid;
+    }
+
+    &[data-status="low"] {
+      border-left-color: $color-danger;
+    }
+
+    &[data-status="high"] {
+      border-left-color: $color-info;
+    }
+
+    &[data-status="normal"] {
+      border-left-color: $color-success;
+    }
+  }
+}
+
+// Dark Mode Support (optional)
+@media (prefers-color-scheme: dark) {
+  .item-stock-card {
+    background: #1e1e1e;
+    border-color: #424242;
+
+    .card-header {
+      .item-info {
+        .item-name {
+          color: #ffffff;
+        }
+
+        .item-code {
+          color: #b0b0b0;
+        }
+      }
+    }
+
+    .warehouse-info {
+      background: rgba($color-primary, 0.15);
+      color: #b0b0b0;
+
+      .warehouse-name {
+        color: #ffffff;
+      }
+    }
+
+    .stock-quantity {
+      .quantity-label {
+        color: #b0b0b0;
+      }
+
+      .quantity-value {
+        color: #ffffff;
+      }
+    }
+
+    .progress-container {
+      .progress-bar {
+        background: #424242;
+      }
+
+      .progress-labels {
+        color: #b0b0b0;
+      }
+    }
+
+    .min-max-info {
+      background: rgba(#424242, 0.5);
+
+      .info-item {
+        .info-label {
+          color: #b0b0b0;
+        }
+
+        .info-value {
+          color: #ffffff;
+        }
+      }
+    }
+  }
+}

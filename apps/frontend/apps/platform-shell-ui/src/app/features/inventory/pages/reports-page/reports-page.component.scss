@@ -1,0 +1,333 @@
+/*
+  ملف: reports-page.component.scss
+  الوصف: تنسيق SCSS لصفحة التقارير (ReportsPageComponent).
+  المتطلبات: استخدام متغيرات الألوان، دعم RTL، استجابة (Responsive).
+*/
+
+// -------------------------------------------------------------------
+// 1. متغيرات الألوان الأساسية (يمكن استبدالها بمتغيرات النظام العام)
+// -------------------------------------------------------------------
+$primary-color: #007bff; // أزرق أساسي
+$secondary-color: #6c757d; // رمادي ثانوي
+$success-color: #28a745; // أخضر للنجاح
+$danger-color: #dc3545; // أحمر للخطر
+$warning-color: #ffc107; // أصفر للتحذير
+$background-color: #f8f9fa; // خلفية خفيفة
+$border-color: #dee2e6; // لون الحدود
+$text-color: #343a40; // لون النص الأساسي
+
+// -------------------------------------------------------------------
+// 2. التنسيق العام ودعم RTL
+// -------------------------------------------------------------------
+:host {
+  display: block;
+  direction: rtl; // دعم اللغة العربية
+  text-align: right;
+}
+
+.reports-page-container {
+  padding: 20px;
+  background-color: $background-color;
+  min-height: 100vh;
+}
+
+.page-header {
+  margin-bottom: 25px;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 15px;
+
+  h1 {
+    color: $primary-color;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+
+    .material-icons {
+      margin-left: 10px;
+      font-size: 2rem;
+    }
+  }
+
+  .text-muted {
+    color: $secondary-color;
+    font-size: 0.9rem;
+  }
+}
+
+.main-content {
+  display: flex;
+  gap: 20px; // مسافة بين قائمة التقارير ومنطقة العرض
+}
+
+// -------------------------------------------------------------------
+// 3. قائمة التقارير (Sidebar)
+// -------------------------------------------------------------------
+.reports-list-panel {
+  flex: 0 0 280px; // عرض ثابت في الشاشات الكبيرة
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  height: fit-content; // لتجنب امتداد القائمة بشكل غير ضروري
+
+  h2 {
+    font-size: 1.2rem;
+    color: $text-color;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $border-color;
+  }
+}
+
+.reports-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    border: 1px solid transparent;
+
+    &:hover {
+      background-color: lighten($primary-color, 45%);
+      border-color: lighten($primary-color, 30%);
+    }
+
+    &.active {
+      background-color: $primary-color;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+      .material-icons {
+        color: #fff;
+      }
+
+      .report-description {
+        color: lighten(#fff, 20%);
+      }
+    }
+
+    .material-icons {
+      font-size: 24px;
+      margin-left: 10px;
+      color: $primary-color;
+      transition: color 0.2s;
+    }
+
+    .report-info {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
+    .report-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .report-description {
+      font-size: 0.75rem;
+      color: $secondary-color;
+      line-height: 1.2;
+    }
+  }
+}
+
+// -------------------------------------------------------------------
+// 4. منطقة عرض التقرير
+// -------------------------------------------------------------------
+.report-view-area {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    font-size: 1.5rem;
+    color: $text-color;
+    margin: 0;
+  }
+}
+
+.report-actions {
+  display: flex;
+  gap: 10px;
+
+  .btn-icon {
+    background: none;
+    border: 1px solid $border-color;
+    color: $secondary-color;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $primary-color;
+      color: #fff;
+      border-color: $primary-color;
+    }
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+}
+
+.filter-panel-wrapper {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  background-color: lighten($background-color, 2%);
+
+  .btn-apply-filter {
+    background-color: $success-color;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    &:disabled {
+      background-color: $secondary-color;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// -------------------------------------------------------------------
+// 5. حالات العرض (Loading, Error, No Data)
+// -------------------------------------------------------------------
+.loading-state, .error-state, .no-data-state {
+  padding: 20px;
+  text-align: center;
+  border-radius: 6px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-state {
+  background-color: lighten($primary-color, 40%);
+  color: darken($primary-color, 10%);
+  border: 1px solid lighten($primary-color, 30%);
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+}
+
+.error-state {
+  background-color: lighten($danger-color, 40%);
+  color: darken($danger-color, 10%);
+  border: 1px solid lighten($danger-color, 30%);
+
+  .material-icons {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+}
+
+.no-data-state {
+  background-color: lighten($warning-color, 40%);
+  color: darken($warning-color, 10%);
+  border: 1px solid lighten($warning-color, 30%);
+
+  .material-icons {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// -------------------------------------------------------------------
+// 6. الاستجابة (Responsive Design)
+// -------------------------------------------------------------------
+@media (max-width: 992px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .reports-list-panel {
+    flex: 0 0 auto; // السماح للقائمة بأخذ العرض الكامل
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .reports-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    li {
+      flex: 1 1 calc(50% - 10px); // عرض عنصرين في الصف
+      max-width: calc(50% - 10px);
+      text-align: center;
+      flex-direction: column;
+
+      .material-icons {
+        margin: 0 0 5px 0;
+      }
+
+      .report-info {
+        align-items: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .reports-list {
+    li {
+      flex: 1 1 100%; // عرض عنصر واحد في الصف
+      max-width: 100%;
+    }
+  }
+
+  .report-header {
+    flex-direction: column;
+    align-items: flex-end; // محاذاة لليمين في RTL
+
+    h2 {
+      margin-bottom: 10px;
+    }
+  }
+
+  .report-actions {
+    width: 100%;
+    justify-content: space-around;
+  }
+}

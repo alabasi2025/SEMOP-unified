@@ -1,0 +1,184 @@
+/* items-page.component.scss */
+
+// تعريف متغيرات الألوان الأساسية (محاكاة لمتغيرات نظام تصميم)
+$primary-color: #007bff; // أزرق
+$success-color: #28a745; // أخضر
+$warn-color: #dc3545; // أحمر
+$text-color: #333;
+$background-color: #f8f9fa;
+$card-background: #fff;
+$border-color: #dee2e6;
+
+// مزيج (Mixin) لدعم RTL
+@mixin rtl-support {
+  direction: rtl;
+  text-align: right;
+}
+
+.items-page-container {
+  @include rtl-support;
+  padding: 20px;
+  background-color: $background-color;
+  min-height: 100vh;
+  font-family: 'Arial', sans-serif; // استخدام خط يدعم العربية
+
+  // استجابة (Responsive) للهواتف
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+}
+
+.page-header {
+  margin-bottom: 20px;
+  border-bottom: 2px solid $border-color;
+  padding-bottom: 10px;
+
+  h1 {
+    color: $primary-color;
+    margin: 0;
+    font-size: 2em;
+  }
+
+  p {
+    color: $text-color;
+    margin-top: 5px;
+    font-size: 1em;
+  }
+}
+
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+
+  // استجابة (Responsive) للهواتف
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.toolbar-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .actions-container {
+    display: flex;
+    gap: 10px;
+
+    // دعم RTL للأزرار
+    button {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+  }
+
+  // استجابة (Responsive) للهواتف
+  @media (max-width: 992px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .actions-container {
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      button {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.status-area {
+  position: relative;
+  min-height: 50px; // لضمان ظهور رسالة التحميل/الخطأ
+  margin-bottom: 20px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: 8px;
+
+  p {
+    margin-top: 10px;
+    color: $primary-color;
+    font-weight: bold;
+  }
+}
+
+.error-message {
+  padding: 15px;
+  background-color: lighten($warn-color, 40%);
+  color: $warn-color;
+  border: 1px solid $warn-color;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  mat-icon {
+    font-size: 24px;
+  }
+
+  p {
+    margin: 0;
+    flex-grow: 1;
+  }
+}
+
+.no-data-message {
+  padding: 30px;
+  text-align: center;
+  background-color: $card-background;
+  border: 1px dashed $border-color;
+  border-radius: 8px;
+  color: $text-color;
+
+  mat-icon {
+    font-size: 48px;
+    color: $primary-color;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+}
+
+.list-section {
+  // تنسيق خاص لقائمة الأصناف إذا لزم الأمر
+}
+
+// محاكاة لتنسيق المكونات الفرعية (يجب أن تكون هذه التنسيقات في ملفات المكونات الفرعية الفعلية)
+app-stats-card {
+  // لضمان أن المكونات الفرعية تملأ المساحة المخصصة لها في grid
+  display: block;
+}
+
+app-item-list {
+  display: block;
+  // إضافة ظل خفيف للقائمة
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}

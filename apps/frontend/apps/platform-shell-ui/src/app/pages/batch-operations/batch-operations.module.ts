@@ -17,7 +17,7 @@ import { BatchOperationsComponent } from './batch-operations.component';
 import { BatchOperationsService } from './batch-operations.service';
 
 @NgModule({
-  declarations: [
+  imports: [
     BatchOperationsComponent
   ],
   imports: [

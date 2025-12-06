@@ -1,10 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MultiWarehouseTransferService } from './multi-warehouse-transfer.service';
 import { MultiWarehouseTransferResponseDto, CreateMultiWarehouseTransferDto, Warehouse, Item, TransferItem } from './multi-warehouse-transfer.model';
 import { MessageService } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-multi-warehouse-transfer',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    DialogModule,
+    DropdownModule,
+    InputTextModule,
+    InputTextareaModule,
+    ToastModule,
+    RippleModule,
+    DividerModule
+  ],
   templateUrl: './multi-warehouse-transfer.component.html',
   styleUrls: ['./multi-warehouse-transfer.component.css'],
   providers: [MessageService]

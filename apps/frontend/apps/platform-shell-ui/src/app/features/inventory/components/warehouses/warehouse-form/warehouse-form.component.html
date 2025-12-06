@@ -1,0 +1,111 @@
+<div class="warehouse-form-container">
+  <!-- عنوان النموذج -->
+  <h2 class="form-title">{{ formTitle }}</h2>
+
+  <!-- النموذج التفاعلي -->
+  <form [formGroup]="warehouseForm" (ngSubmit)="onSubmit()" class="warehouse-form">
+
+    <!-- حقول الكود والاسم (صف واحد - استجابي) -->
+    <div class="form-row">
+      <!-- حقل الكود -->
+      <div class="form-group col-md-4">
+        <label for="code">كود المستودع <span class="required">*</span></label>
+        <input id="code" type="text" class="form-control" formControlName="code" placeholder="أدخل كود المستودع">
+        <div *ngIf="getErrorMessage(code)" class="error-message">
+          {{ getErrorMessage(code) }}
+        </div>
+      </div>
+
+      <!-- حقل الاسم بالعربية -->
+      <div class="form-group col-md-4">
+        <label for="nameAr">الاسم بالعربية <span class="required">*</span></label>
+        <input id="nameAr" type="text" class="form-control" formControlName="nameAr" placeholder="أدخل الاسم بالعربية">
+        <div *ngIf="getErrorMessage(nameAr)" class="error-message">
+          {{ getErrorMessage(nameAr) }}
+        </div>
+      </div>
+
+      <!-- حقل الاسم بالإنجليزية -->
+      <div class="form-group col-md-4">
+        <label for="nameEn">الاسم بالإنجليزية <span class="required">*</span></label>
+        <input id="nameEn" type="text" class="form-control" formControlName="nameEn" placeholder="أدخل الاسم بالإنجليزية">
+        <div *ngIf="getErrorMessage(nameEn)" class="error-message">
+          {{ getErrorMessage(nameEn) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- حقول الموقع والسعة والمدير (صف واحد - استجابي) -->
+    <div class="form-row">
+      <!-- حقل الموقع -->
+      <div class="form-group col-md-4">
+        <label for="location">الموقع <span class="required">*</span></label>
+        <input id="location" type="text" class="form-control" formControlName="location" placeholder="أدخل الموقع (مثال: الطابق الأرضي)">
+        <div *ngIf="getErrorMessage(location)" class="error-message">
+          {{ getErrorMessage(location) }}
+        </div>
+      </div>
+
+      <!-- حقل السعة -->
+      <div class="form-group col-md-4">
+        <label for="capacity">السعة (وحدة) <span class="required">*</span></label>
+        <input id="capacity" type="number" class="form-control" formControlName="capacity" placeholder="أدخل سعة التخزين" min="1">
+        <div *ngIf="getErrorMessage(capacity)" class="error-message">
+          {{ getErrorMessage(capacity) }}
+        </div>
+      </div>
+
+      <!-- حقل اختيار المدير (Dropdown) -->
+      <div class="form-group col-md-4">
+        <label for="managerId">مدير المستودع <span class="required">*</span></label>
+        <select id="managerId" class="form-control" formControlName="managerId">
+          <option [ngValue]="null" disabled>-- اختر المدير --</option>
+          <option *ngFor="let manager of managers$ | async" [ngValue]="manager.id">
+            {{ manager.name }}
+          </option>
+        </select>
+        <div *ngIf="getErrorMessage(managerId)" class="error-message">
+          {{ getErrorMessage(managerId) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- حقل العنوان التفصيلي (صف كامل) -->
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="address">العنوان التفصيلي <span class="required">*</span></label>
+        <input id="address" type="text" class="form-control" formControlName="address" placeholder="أدخل العنوان التفصيلي للمستودع">
+        <div *ngIf="getErrorMessage(address)" class="error-message">
+          {{ getErrorMessage(address) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- حقل الوصف (صف كامل) -->
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="description">الوصف</label>
+        <textarea id="description" class="form-control" formControlName="description" rows="3" placeholder="وصف إضافي للمستودع (اختياري)"></textarea>
+      </div>
+    </div>
+
+    <!-- حقل نشط/غير نشط (صف كامل) -->
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <div class="checkbox-container">
+          <input id="isActive" type="checkbox" formControlName="isActive">
+          <label for="isActive" class="checkbox-label">المستودع نشط حالياً</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- أزرار الإجراءات -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">إلغاء</button>
+      <button type="submit" class="btn btn-primary" [disabled]="warehouseForm.invalid">
+        {{ mode === 'create' ? 'إضافة' : 'حفظ التعديلات' }}
+      </button>
+    </div>
+
+  </form>
+</div>

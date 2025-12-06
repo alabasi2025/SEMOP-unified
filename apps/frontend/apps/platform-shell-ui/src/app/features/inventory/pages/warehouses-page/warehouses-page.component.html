@@ -1,0 +1,104 @@
+<!-- warehouses-page.component.html -->
+
+<!--
+  ملف القالب لصفحة إدارة المستودعات (WarehousesPageComponent)
+  يستخدم async pipe للاشتراك في observable state$ وعرض الحالة الحالية.
+  يدعم RTL والاستجابة (Responsive).
+-->
+<div class="warehouses-page-container" *ngIf="state$ | async as state">
+
+  <!-- 1. العنوان وزر الإضافة -->
+  <header class="page-header">
+    <h1>إدارة المستودعات</h1>
+    <button mat-raised-button color="primary" (click)="openWarehouseForm()" matTooltip="إضافة مستودع جديد">
+      <mat-icon>add</mat-icon>
+      إضافة مستودع
+    </button>
+  </header>
+
+  <!-- 2. حالة التحميل -->
+  <div class="loading-overlay" *ngIf="state.loading && !state.error">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>جاري تحميل بيانات المستودعات...</p>
+  </div>
+
+  <!-- 3. رسالة الخطأ -->
+  <div class="error-message" *ngIf="state.error">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon color="warn">error_outline</mat-icon>
+        <h2>خطأ في النظام</h2>
+        <p>{{ state.error }}</p>
+        <button mat-button color="primary" (click)="refreshData()">إعادة المحاولة</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- 4. الإحصائيات (Stats Cards) -->
+  <section class="stats-section" *ngIf="state.stats && !state.loading && !state.error">
+    <!-- إجمالي المستودعات -->
+    <app-stats-card
+      [title]="'إجمالي المستودعات'"
+      [value]="state.stats.totalWarehouses | number"
+      [icon]="'warehouse'"
+      [color]="'#4CAF50'"
+    ></app-stats-card>
+    <!-- المستودعات النشطة -->
+    <app-stats-card
+      [title]="'المستودعات النشطة'"
+      [value]="state.stats.activeWarehouses | number"
+      [icon]="'check_circle'"
+      [color]="'#2196F3'"
+    ></app-stats-card>
+    <!-- إجمالي قيمة المخزون -->
+    <app-stats-card
+      [title]="'إجمالي قيمة المخزون'"
+      [value]="state.stats.totalInventoryValue | currency:'SAR':'symbol':'1.0-0'"
+      [icon]="'monetization_on'"
+      [color]="'#FF9800'"
+    ></app-stats-card>
+  </section>
+
+  <!-- 5. المحتوى الرئيسي (القائمة والتفاصيل) -->
+  <div class="main-content-grid" *ngIf="!state.loading && !state.error">
+    <!-- قائمة المستودعات -->
+    <mat-card class="warehouse-list-card">
+      <mat-card-title>قائمة المستودعات</mat-card-title>
+      <mat-card-content>
+        <!-- افتراض أن WarehouseListComponent يعرض القائمة ويطلق الأحداث -->
+        <app-warehouse-list
+          [warehouses]="state.warehouses"
+          [selectedWarehouse]="state.selectedWarehouse"
+          (warehouseSelected)="onWarehouseSelected($event)"
+          (editWarehouse)="openWarehouseForm($event)"
+          (deleteWarehouse)="deleteWarehouse($event)"
+        ></app-warehouse-list>
+
+        <!-- رسالة في حال عدم وجود مستودعات -->
+        <div *ngIf="state.warehouses.length === 0" class="no-data-message">
+          <mat-icon>info_outline</mat-icon>
+          <p>لا توجد مستودعات مسجلة حالياً.</p>
+          <button mat-button color="primary" (click)="openWarehouseForm()">أضف أول مستودع</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- تفاصيل المستودع المحدد -->
+    <mat-card class="warehouse-details-card">
+      <mat-card-title>تفاصيل المستودع</mat-card-title>
+      <mat-card-content>
+        <div *ngIf="state.selectedWarehouse; else noSelection">
+          <!-- افتراض أن WarehouseDetailsComponent يعرض التفاصيل -->
+          <app-warehouse-details [warehouse]="state.selectedWarehouse"></app-warehouse-details>
+        </div>
+        <ng-template #noSelection>
+          <div class="no-selection-message">
+            <mat-icon>touch_app</mat-icon>
+            <p>الرجاء اختيار مستودع من القائمة لعرض تفاصيله.</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>

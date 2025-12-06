@@ -1,0 +1,247 @@
+/* /home/ubuntu/item-details.component.scss */
+/* تنسيق مكون ItemDetailsComponent مع دعم RTL والتجاوبية */
+
+// تعريف متغيرات الألوان الأساسية (افتراضية)
+$primary-color: #007bff;
+$danger-color: #dc3545;
+$text-color: #333;
+$background-color: #f8f9fa;
+$card-background: #fff;
+$border-color: #dee2e6;
+$padding-base: 16px;
+$gap-base: 20px;
+
+:host {
+  display: block;
+  padding: $padding-base;
+  background-color: $background-color;
+  color: $text-color;
+  text-align: right; /* دعم RTL */
+}
+
+.item-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: $padding-base;
+  margin-bottom: $gap-base;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: $padding-base;
+  padding-bottom: 8px;
+  border-bottom: 2px solid $border-color;
+}
+
+// ------------------------------------------------------------------
+// رأس المكون (Header)
+// ------------------------------------------------------------------
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-base;
+  flex-wrap: wrap;
+
+  .item-name {
+    font-size: 2rem;
+    margin: 0;
+    color: $primary-color;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 10px;
+
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.3s;
+
+      &-primary {
+        background-color: $primary-color;
+        color: white;
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+
+      &-danger {
+        background-color: $danger-color;
+        color: white;
+        &:hover {
+          background-color: darken($danger-color, 10%);
+        }
+      }
+
+      &-link {
+        background: none;
+        color: $primary-color;
+        text-decoration: none;
+        padding: 0;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// ------------------------------------------------------------------
+// تفاصيل الصنف الأساسية (Item Info)
+// ------------------------------------------------------------------
+
+.item-info-section {
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $padding-base;
+
+    .info-item {
+      padding: 10px;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      background-color: lighten($background-color, 2%);
+
+      .label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: darken($text-color, 10%);
+      }
+
+      .value {
+        display: block;
+        font-size: 1.1rem;
+      }
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+}
+
+// ------------------------------------------------------------------
+// إحصائيات الصنف (Stats)
+// ------------------------------------------------------------------
+
+.item-stats-section {
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $gap-base;
+  }
+}
+
+// ------------------------------------------------------------------
+// الحركات والأرصدة (Movements & Balance)
+// ------------------------------------------------------------------
+
+.item-movements-section {
+  .movements-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $padding-base;
+  }
+}
+
+// ------------------------------------------------------------------
+// حالة التحميل (Loading State)
+// ------------------------------------------------------------------
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  font-size: 1.2rem;
+  color: $primary-color;
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// ------------------------------------------------------------------
+// التجاوبية (Responsiveness)
+// ------------------------------------------------------------------
+
+@media (max-width: 768px) {
+  .item-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .item-actions {
+      margin-top: 15px;
+      width: 100%;
+      .btn {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .item-info-section .info-grid {
+    grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة */
+  }
+
+  .item-stats-section .stats-grid {
+    grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة */
+  }
+}
+
+// ------------------------------------------------------------------
+// دعم RTL (افتراضياً SCSS يعمل بشكل جيد مع RTL في Angular لكن نؤكد التوجيه)
+// ------------------------------------------------------------------
+
+/* في بيئة RTL، الاتجاه الافتراضي هو اليمين لليسار.
+   نستخدم الخصائص المنطقية (مثل margin-inline-start) في المشاريع الأكبر،
+   لكن هنا نعتمد على توجيه النص الافتراضي (text-align: right) و flexbox.
+*/
+
+.item-movements-section .movements-header {
+  // عكس ترتيب العناصر في RTL
+  flex-direction: row-reverse;
+  .section-title {
+    margin-left: auto;
+  }
+  .btn-link {
+    i {
+      // عكس اتجاه السهم في RTL
+      transform: scaleX(-1);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .item-header {
+    align-items: flex-end; // محاذاة الأزرار لليمين في RTL
+  }
+}

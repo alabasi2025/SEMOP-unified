@@ -1,0 +1,96 @@
+<!--
+  ملف القالب HTML لمكون PaginationComponent
+  يحتوي على هيكل التنقل بين الصفحات، محدد حجم الصفحة، ومعلومات الإجمالي.
+-->
+<div class="pagination-container" [class.rtl]="true" role="navigation" aria-label="Pagination Navigation">
+
+  <!-- معلومات الإجمالي وحجم الصفحة -->
+  <div class="pagination-info">
+    <!-- عرض إجمالي العناصر -->
+    <span class="total-items" *ngIf="totalItems > 0">
+      {{ 'عرض ' + itemRange + ' من إجمالي ' + totalItems + ' عنصر' }}
+    </span>
+    <span class="total-items" *ngIf="totalItems === 0">
+      {{ 'لا توجد عناصر للعرض' }}
+    </span>
+
+    <!-- محدد حجم الصفحة -->
+    <div class="page-size-selector" *ngIf="pageSizeOptions.length > 0">
+      <label for="pageSizeSelect">{{ 'حجم الصفحة:' }}</label>
+      <select id="pageSizeSelect" [ngModel]="pageSize" (change)="onPageSizeChange($event)" aria-label="Select page size">
+        <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- أزرار التنقل الرئيسية -->
+  <div class="pagination-controls">
+
+    <!-- زر الصفحة الأولى -->
+    <button *ngIf="showFirstLast"
+            class="control-button first-page"
+            (click)="firstPage()"
+            [disabled]="currentPage === 1 || totalPages <= 1"
+            aria-label="First Page">
+      &laquo;
+    </button>
+
+    <!-- زر الصفحة السابقة -->
+    <button class="control-button prev-page"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1 || totalPages <= 1"
+            aria-label="Previous Page">
+      &lsaquo;
+    </button>
+
+    <!-- أرقام الصفحات -->
+    <ng-container *ngIf="showPageNumbers">
+      <ng-container *ngFor="let page of pages">
+        <!-- أرقام الصفحات القابلة للنقر -->
+        <button *ngIf="page !== '...'"
+                class="page-number"
+                [class.active]="page === currentPage"
+                (click)="goToPage(+page)"
+                [disabled]="page === currentPage"
+                aria-label="Page {{ page }}">
+          {{ page }}
+        </button>
+        <!-- علامات الحذف -->
+        <span *ngIf="page === '...'" class="ellipsis" aria-hidden="true">...</span>
+      </ng-container>
+    </ng-container>
+
+    <!-- زر الصفحة التالية -->
+    <button class="control-button next-page"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages || totalPages <= 1"
+            aria-label="Next Page">
+      &rsaquo;
+    </button>
+
+    <!-- زر الصفحة الأخيرة -->
+    <button *ngIf="showFirstLast"
+            class="control-button last-page"
+            (click)="lastPage()"
+            [disabled]="currentPage === totalPages || totalPages <= 1"
+            aria-label="Last Page">
+      &raquo;
+    </button>
+
+    <!-- القفز لصفحة محددة -->
+    <div class="jump-to-page" *ngIf="totalPages > 1">
+      <label for="jumpToPageInput">{{ 'القفز إلى:' }}</label>
+      <input id="jumpToPageInput"
+             type="number"
+             min="1"
+             [max]="totalPages"
+             [ngModel]="jumpToPageNumber"
+             (ngModelChange)="jumpToPageNumber = $event"
+             (keydown)="onJumpToPageKeydown($event)"
+             (blur)="onJumpToPage()"
+             aria-label="Jump to page number">
+      <span class="total-pages-display">{{ 'من ' + totalPages }}</span>
+    </div>
+
+  </div>
+</div>
