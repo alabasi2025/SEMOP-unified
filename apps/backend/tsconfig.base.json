@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@semop/contracts": ["node_modules/@semop/contracts"]
+      "@semop/contracts": ["libs/contracts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
