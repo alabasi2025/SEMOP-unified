@@ -713,7 +713,10 @@ model JournalEntryLine {
   updatedAt       DateTime  @updatedAt
 
   journalEntry    JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account         Account @relation("AccountLines", fields: [accountId], references: [id])
 
+  @@index([journalEntryId])
+  @@index([accountId])
   @@map("journal_entry_lines")
 }
 
@@ -904,4 +907,146 @@ model Unit {
   @@index([code])
   @@index([isActive])
   @@map("units")
+}
+
+
+// ============================================
+// Accounting System - Complete Models
+// Date: 2025-12-06
+// ============================================
+
+// 1. Accounts (Chart of Accounts)
+model Account {
+  id                String    @id @default(uuid())
+  code              String    @unique
+  nameAr            String    @map("name_ar")
+  nameEn            String    @map("name_en")
+  description       String?
+  accountType       String    @map("account_type") // ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE
+  accountNature     String    @map("account_nature") // DEBIT, CREDIT
+  level             Int       @default(1)
+  isParent          Boolean   @default(false) @map("is_parent")
+  isActive          Boolean   @default(true) @map("is_active")
+  allowManualEntry  Boolean   @default(true) @map("allow_manual_entry")
+  parentId          String?   @map("parent_id")
+  holdingId         String?   @map("holding_id")
+  unitId            String?   @map("unit_id")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdBy         String?   @map("created_by")
+  updatedBy         String?   @map("updated_by")
+
+  // Relations
+  parent            Account?  @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children          Account[] @relation("AccountHierarchy")
+  balances          AccountBalance[]
+  journalLines      JournalEntryLine[] @relation("AccountLines")
+
+  @@index([code])
+  @@index([accountType])
+  @@index([parentId])
+  @@index([isActive])
+  @@map("accounts")
+}
+
+// 2. Fiscal Years
+model FiscalYear {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  startDate   DateTime  @map("start_date")
+  endDate     DateTime  @map("end_date")
+  status      String    @default("ACTIVE") // ACTIVE, CLOSED
+  isCurrent   Boolean   @default(false) @map("is_current")
+  closedAt    DateTime? @map("closed_at")
+  closedBy    String?   @map("closed_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  periods     AccountingPeriod[]
+  balances    AccountBalance[]
+
+  @@index([status])
+  @@index([isCurrent])
+  @@map("fiscal_years")
+}
+
+// 3. Accounting Periods
+model AccountingPeriod {
+  id            String    @id @default(uuid())
+  fiscalYearId  String    @map("fiscal_year_id")
+  name          String
+  startDate     DateTime  @map("start_date")
+  endDate       DateTime  @map("end_date")
+  periodNumber  Int       @map("period_number")
+  status        String    @default("OPEN") // OPEN, CLOSED
+  closedAt      DateTime? @map("closed_at")
+  closedBy      String?   @map("closed_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  fiscalYear    FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+
+  @@unique([fiscalYearId, periodNumber])
+  @@index([fiscalYearId])
+  @@index([status])
+  @@map("accounting_periods")
+}
+
+// 4. Cost Centers
+model CostCenter {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  nameAr      String    @map("name_ar")
+  nameEn      String    @map("name_en")
+  description String?
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([isActive])
+  @@map("cost_centers")
+}
+
+// 5. Currencies
+model Currency {
+  id            String    @id @default(uuid())
+  code          String    @unique // SAR, USD, EUR
+  nameAr        String    @map("name_ar")
+  nameEn        String    @map("name_en")
+  symbol        String
+  exchangeRate  Float     @default(1.0) @map("exchange_rate")
+  isBase        Boolean   @default(false) @map("is_base")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([isBase])
+  @@index([isActive])
+  @@map("currencies")
+}
+
+// 6. Account Balances
+model AccountBalance {
+  id              String    @id @default(uuid())
+  accountId       String    @map("account_id")
+  fiscalYearId    String    @map("fiscal_year_id")
+  openingBalance  Float     @default(0) @map("opening_balance")
+  closingBalance  Float     @default(0) @map("closing_balance")
+  debitTotal      Float     @default(0) @map("debit_total")
+  creditTotal     Float     @default(0) @map("credit_total")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  account         Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  fiscalYear      FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, fiscalYearId])
+  @@index([accountId])
+  @@index([fiscalYearId])
+  @@map("account_balances")
 }
