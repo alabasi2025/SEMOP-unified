@@ -1,0 +1,47 @@
+/* /root/task_outputs/Task7_Dashboard_Analytics/frontend/dashboard-analytics.component.css */
+
+/* ضمان أن تكون الواجهة من اليمين لليسار */
+:host {
+  direction: rtl;
+}
+
+.card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.summary-card .p-card-body {
+  padding: 1rem;
+}
+
+.summary-card .p-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .p-card-subtitle {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.summary-card .p-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* محاذاة المحتوى لليمين */
+}
+
+.p-ml-2 {
+  margin-right: 0.5rem !important; /* عكس الهامش ليتناسب مع RTL */
+  margin-left: 0 !important;
+}
+
+.p-text-center {
+  text-align: center;
+}
+
+.p-justify-end {
+  justify-content: flex-end;
+}

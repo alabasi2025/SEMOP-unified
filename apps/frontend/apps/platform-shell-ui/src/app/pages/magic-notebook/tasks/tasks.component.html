@@ -1,0 +1,200 @@
+<div class="tasks-container">
+  <div class="tasks-header">
+    <button class="btn-back" (click)="goBack()">العودة</button>
+    <h1>المهام</h1>
+    <button class="btn-view" (click)="viewMode = viewMode === 'board' ? 'list' : 'board'">
+      {{ viewMode === 'board' ? 'قائمة' : 'لوحة' }}
+    </button>
+  </div>
+  
+  <!-- Statistics -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-label">الإجمالي</span>
+      <span class="stat-value">{{ stats.total }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">قيد الانتظار</span>
+      <span class="stat-value">{{ stats.todo }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">قيد التنفيذ</span>
+      <span class="stat-value">{{ stats.inProgress }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">مكتمل</span>
+      <span class="stat-value">{{ stats.done }}</span>
+    </div>
+    <div class="stat overdue" *ngIf="stats.overdue > 0">
+      <span class="stat-label">متأخر</span>
+      <span class="stat-value">{{ stats.overdue }}</span>
+    </div>
+  </div>
+  
+  <div *ngIf="loading" class="loading">جاري التحميل...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  
+  <div *ngIf="!loading && !error">
+    <!-- Quick Add -->
+    <div class="quick-add">
+      <input 
+        [(ngModel)]="quickAddText"
+        (keyup.enter)="quickAdd()"
+        placeholder="أضف مهمة جديدة..."
+      />
+      <button (click)="quickAdd()">إضافة</button>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters">
+      <select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+        <option value="all">كل الحالات</option>
+        <option value="TODO">قيد الانتظار</option>
+        <option value="IN_PROGRESS">قيد التنفيذ</option>
+        <option value="DONE">مكتمل</option>
+      </select>
+      <select [(ngModel)]="filterPriority" (ngModelChange)="applyFilters()">
+        <option value="all">كل الأولويات</option>
+        <option value="HIGH">عالية</option>
+        <option value="MEDIUM">متوسطة</option>
+        <option value="LOW">منخفضة</option>
+      </select>
+      <select [(ngModel)]="sortBy" (ngModelChange)="applyFilters()">
+        <option value="dueDate">تاريخ الاستحقاق</option>
+        <option value="priority">الأولوية</option>
+        <option value="createdAt">تاريخ الإنشاء</option>
+      </select>
+    </div>
+    
+    <!-- Board View -->
+    <div *ngIf="viewMode === 'board'" class="tasks-board">
+      <div class="board-column">
+        <h3>قيد الانتظار ({{ getTasksByStatus('TODO').length }})</h3>
+        <div class="tasks-list">
+          <div *ngFor="let task of getTasksByStatus('TODO')" class="task-card" (click)="editTask(task)">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-meta">
+              <span [style.color]="getPriorityColor(task.priority)">{{ task.priority }}</span>
+              <span *ngIf="task.dueDate" [class.overdue]="isOverdue(task)">
+                {{ getDaysUntilDue(task.dueDate) }} يوم
+              </span>
+            </div>
+            <div class="task-actions">
+              <button (click)="updateStatus(task, 'IN_PROGRESS', $event)">→ تنفيذ</button>
+              <button (click)="deleteTask(task, $event)">حذف</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="board-column">
+        <h3>قيد التنفيذ ({{ getTasksByStatus('IN_PROGRESS').length }})</h3>
+        <div class="tasks-list">
+          <div *ngFor="let task of getTasksByStatus('IN_PROGRESS')" class="task-card" (click)="editTask(task)">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-meta">
+              <span [style.color]="getPriorityColor(task.priority)">{{ task.priority }}</span>
+              <span *ngIf="task.dueDate" [class.overdue]="isOverdue(task)">
+                {{ getDaysUntilDue(task.dueDate) }} يوم
+              </span>
+            </div>
+            <div class="task-actions">
+              <button (click)="updateStatus(task, 'DONE', $event)">✓ إنهاء</button>
+              <button (click)="deleteTask(task, $event)">حذف</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="board-column">
+        <h3>مكتمل ({{ getTasksByStatus('DONE').length }})</h3>
+        <div class="tasks-list">
+          <div *ngFor="let task of getTasksByStatus('DONE')" class="task-card done" (click)="editTask(task)">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-meta">
+              <span [style.color]="getPriorityColor(task.priority)">{{ task.priority }}</span>
+            </div>
+            <div class="task-actions">
+              <button (click)="updateStatus(task, 'TODO', $event)">← إعادة</button>
+              <button (click)="deleteTask(task, $event)">حذف</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- List View -->
+    <div *ngIf="viewMode === 'list'" class="tasks-list-view">
+      <div *ngFor="let task of filteredTasks" class="task-item" (click)="editTask(task)">
+        <div class="task-checkbox">
+          <input 
+            type="checkbox" 
+            [checked]="task.status === 'DONE'"
+            (click)="updateStatus(task, task.status === 'DONE' ? 'TODO' : 'DONE', $event)"
+          />
+        </div>
+        <div class="task-content">
+          <h4 [class.done]="task.status === 'DONE'">{{ task.title }}</h4>
+          <p *ngIf="task.description">{{ task.description }}</p>
+          <div class="task-meta">
+            <span [style.color]="getPriorityColor(task.priority)">{{ task.priority }}</span>
+            <span>{{ task.status }}</span>
+            <span *ngIf="task.dueDate" [class.overdue]="isOverdue(task)">
+              {{ getDaysUntilDue(task.dueDate) }} يوم
+            </span>
+          </div>
+        </div>
+        <button class="btn-delete" (click)="deleteTask(task, $event)">حذف</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Modal -->
+  <div *ngIf="editingTask" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>تعديل المهمة</h2>
+        <button class="btn-close" (click)="cancelEdit()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>العنوان</label>
+          <input [(ngModel)]="editForm.title" />
+        </div>
+        <div class="form-group">
+          <label>الوصف</label>
+          <textarea [(ngModel)]="editForm.description" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الحالة</label>
+            <select [(ngModel)]="editForm.status">
+              <option value="TODO">قيد الانتظار</option>
+              <option value="IN_PROGRESS">قيد التنفيذ</option>
+              <option value="DONE">مكتمل</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>الأولوية</label>
+            <select [(ngModel)]="editForm.priority">
+              <option value="LOW">منخفضة</option>
+              <option value="MEDIUM">متوسطة</option>
+              <option value="HIGH">عالية</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>تاريخ الاستحقاق</label>
+          <input type="date" [(ngModel)]="editForm.dueDate" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelEdit()">إلغاء</button>
+        <button class="btn-primary" (click)="saveTask()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>

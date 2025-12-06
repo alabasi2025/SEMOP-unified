@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# PHASE: 1
+# COMPONENT: Husky Hooks  
+# IMPACT: Quality Control
+
+echo "🔍 Running pre-commit checks..."
+
+# Check 1: Contracts Version Sync
+echo "📦 Checking contracts version..."
+./scripts/check-contracts-version.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Contracts version check failed!"
+  exit 1
+fi
+
+# Check 2: No Local DTOs
+echo "🚫 Checking for local DTOs..."
+./scripts/verify-no-local-dtos.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Local DTOs detected!"
+  exit 1
+fi
+
+# Check 3: Layer Architecture
+echo "🏗️  Checking layer architecture..."
+./scripts/verify-layer-architecture.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Layer architecture violation!"
+  exit 1
+fi
+
+# Check 4: PHASE Comments
+echo "💬 Checking PHASE comments..."
+./scripts/check-phase-comments.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Missing PHASE comments!"
+  exit 1
+fi
+
+# Check 5: DTO Quality Check (PHASE-14)
+echo "🔍 Running DTO Quality Check..."
+python3 .github/scripts/dto_quality_analyzer.py 2>/dev/null
+if [ $? -eq 0 ]; then
+  COMPLIANCE_RATE=$(python3 -c "import json; data=json.load(open('dto_analysis_report.json')); print(data['summary']['compliance_rate'])" 2>/dev/null)
+  if [ ! -z "$COMPLIANCE_RATE" ]; then
+    echo "  Compliance Rate: $COMPLIANCE_RATE%"
+  fi
+fi
+
+echo "✅ All pre-commit checks passed!"

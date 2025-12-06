@@ -1,0 +1,58 @@
+<div class="container mt-4">
+  <h2>إنشاء قالب جديد</h2>
+  <form [formGroup]="templateForm" (ngSubmit)="onSubmit()">
+    
+    <!-- اسم القالب -->
+    <div class="form-group">
+      <label for="name">اسم القالب</label>
+      <input id="name" type="text" class="form-control" formControlName="name" placeholder="أدخل اسم القالب">
+      <div *ngIf="templateForm.get('name')?.invalid && templateForm.get('name')?.touched" class="text-danger">
+        <small *ngIf="templateForm.get('name')?.errors?.['required']">اسم القالب مطلوب.</small>
+        <small *ngIf="templateForm.get('name')?.errors?.['maxlength']">الحد الأقصى 100 حرف.</small>
+      </div>
+    </div>
+
+    <!-- وصف القالب -->
+    <div class="form-group">
+      <label for="description">الوصف (اختياري)</label>
+      <textarea id="description" class="form-control" formControlName="description" rows="3" placeholder="وصف مختصر للقالب"></textarea>
+      <div *ngIf="templateForm.get('description')?.errors?.['maxlength'] && templateForm.get('description')?.touched" class="text-danger">
+        <small>الحد الأقصى 500 حرف.</small>
+      </div>
+    </div>
+
+    <!-- نوع القالب -->
+    <div class="form-group">
+      <label for="type">نوع القالب</label>
+      <select id="type" class="form-control" formControlName="type">
+        <option value="" disabled>اختر نوع القالب</option>
+        <option value="JournalEntry">قيد يومية</option>
+        <option value="Report">تقرير</option>
+        <option value="Document">مستند</option>
+      </select>
+      <div *ngIf="templateForm.get('type')?.invalid && templateForm.get('type')?.touched" class="text-danger">
+        <small *ngIf="templateForm.get('type')?.errors?.['required']">نوع القالب مطلوب.</small>
+      </div>
+    </div>
+
+    <!-- محتوى القالب (للتجربة المبدئية) -->
+    <div class="form-group">
+      <label for="content">محتوى القالب (JSON)</label>
+      <textarea id="content" class="form-control" formControlName="content" rows="5" placeholder="{ &quot;key&quot;: &quot;value&quot; }"></textarea>
+      <div *ngIf="templateForm.get('content')?.invalid && templateForm.get('content')?.touched" class="text-danger">
+        <small *ngIf="templateForm.get('content')?.errors?.['required']">محتوى القالب مطلوب.</small>
+        <small *ngIf="templateForm.get('content')?.errors?.['invalidJson']">يجب أن يكون المحتوى بتنسيق JSON صالح.</small>
+      </div>
+    </div>
+
+    <!-- رسالة الإرسال -->
+    <div *ngIf="submissionMessage" class="alert" [ngClass]="{'alert-success': submissionMessage.type === 'success', 'alert-danger': submissionMessage.type === 'error'}">
+      {{ submissionMessage.message }}
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="templateForm.invalid || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      {{ isLoading ? 'جاري الإنشاء...' : 'إنشاء القالب' }}
+    </button>
+  </form>
+</div>

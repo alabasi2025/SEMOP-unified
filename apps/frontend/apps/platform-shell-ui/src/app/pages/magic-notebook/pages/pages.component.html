@@ -1,0 +1,199 @@
+<div class="pages-container">
+  <!-- Header -->
+  <div class="pages-header">
+    <div class="header-top">
+      <button class="btn-back" (click)="goBack()">
+        <i class="icon-arrow-right"></i>
+        العودة
+      </button>
+      <h1 class="page-title">الصفحات</h1>
+      <button class="btn-primary" (click)="createPage()">
+        <i class="icon-plus"></i>
+        صفحة جديدة
+      </button>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="statistics-bar">
+      <div class="stat-item">
+        <span class="stat-label">إجمالي الصفحات</span>
+        <span class="stat-value">{{ totalPages }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">إجمالي الكلمات</span>
+        <span class="stat-value">{{ totalWords }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">متوسط الكلمات</span>
+        <span class="stat-value">{{ averageWords }}</span>
+      </div>
+    </div>
+    
+    <!-- Search & Filters -->
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="icon-search"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()"
+          placeholder="ابحث في الصفحات..."
+          class="search-input"
+        />
+      </div>
+      
+      <div class="filter-controls">
+        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="select-sort">
+          <option value="updatedAt">آخر تحديث</option>
+          <option value="createdAt">تاريخ الإنشاء</option>
+          <option value="title">العنوان</option>
+          <option value="wordCount">عدد الكلمات</option>
+        </select>
+        
+        <button class="btn-icon" (click)="toggleSortOrder()" title="عكس الترتيب">
+          <i [class]="sortOrder === 'asc' ? 'icon-arrow-up' : 'icon-arrow-down'"></i>
+        </button>
+        
+        <button class="btn-icon" (click)="toggleViewMode()" title="تغيير العرض">
+          <i [class]="viewMode === 'grid' ? 'icon-list' : 'icon-grid'"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>جاري التحميل...</p>
+  </div>
+  
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="icon-alert"></i>
+    <p>{{ error }}</p>
+    <button class="btn-secondary" (click)="loadPages()">إعادة المحاولة</button>
+  </div>
+  
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && filteredPages.length === 0 && pages.length === 0" class="empty-state">
+    <i class="icon-file"></i>
+    <h3>لا توجد صفحات</h3>
+    <p>ابدأ بإنشاء أول صفحة في دفترك</p>
+    <button class="btn-primary" (click)="createPage()">
+      <i class="icon-plus"></i>
+      إنشاء صفحة
+    </button>
+  </div>
+  
+  <!-- No Results State -->
+  <div *ngIf="!loading && !error && filteredPages.length === 0 && pages.length > 0" class="empty-state">
+    <i class="icon-search"></i>
+    <h3>لا توجد نتائج</h3>
+    <p>لم يتم العثور على صفحات تطابق بحثك</p>
+    <button class="btn-secondary" (click)="searchQuery = ''; onSearchChange()">مسح البحث</button>
+  </div>
+  
+  <!-- Pages Grid View -->
+  <div *ngIf="!loading && !error && filteredPages.length > 0 && viewMode === 'grid'" class="pages-grid">
+    <div *ngFor="let page of filteredPages" class="page-card" (click)="goToPage(page.id)">
+      <div class="page-card-header">
+        <h3 class="page-card-title">{{ page.title }}</h3>
+        <div class="page-card-actions">
+          <button class="btn-icon-small" (click)="editPage(page); $event.stopPropagation()" title="تعديل">
+            <i class="icon-edit"></i>
+          </button>
+          <button class="btn-icon-small" (click)="duplicatePage(page, $event)" title="نسخ">
+            <i class="icon-copy"></i>
+          </button>
+          <button class="btn-icon-small btn-danger" (click)="deletePage(page, $event)" title="حذف">
+            <i class="icon-delete"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="page-card-content">
+        <p class="page-preview">{{ page.content.substring(0, 150) }}{{ page.content.length > 150 ? '...' : '' }}</p>
+      </div>
+      
+      <div class="page-card-footer">
+        <span class="page-meta">
+          <i class="icon-text"></i>
+          {{ page.wordCount || 0 }} كلمة
+        </span>
+        <span class="page-meta">
+          <i class="icon-clock"></i>
+          {{ getRelativeTime(page.updatedAt) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pages List View -->
+  <div *ngIf="!loading && !error && filteredPages.length > 0 && viewMode === 'list'" class="pages-list">
+    <div *ngFor="let page of filteredPages" class="page-list-item" (click)="goToPage(page.id)">
+      <div class="page-list-main">
+        <h3 class="page-list-title">{{ page.title }}</h3>
+        <p class="page-list-preview">{{ page.content.substring(0, 200) }}{{ page.content.length > 200 ? '...' : '' }}</p>
+      </div>
+      
+      <div class="page-list-meta">
+        <span class="meta-item">
+          <i class="icon-text"></i>
+          {{ page.wordCount || 0 }} كلمة
+        </span>
+        <span class="meta-item">
+          <i class="icon-clock"></i>
+          {{ getRelativeTime(page.updatedAt) }}
+        </span>
+      </div>
+      
+      <div class="page-list-actions">
+        <button class="btn-icon-small" (click)="editPage(page); $event.stopPropagation()" title="تعديل">
+          <i class="icon-edit"></i>
+        </button>
+        <button class="btn-icon-small" (click)="duplicatePage(page, $event)" title="نسخ">
+          <i class="icon-copy"></i>
+        </button>
+        <button class="btn-icon-small btn-danger" (click)="deletePage(page, $event)" title="حذف">
+          <i class="icon-delete"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Modal -->
+  <div *ngIf="editingPage" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>تعديل الصفحة</h2>
+        <button class="btn-close" (click)="cancelEdit()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>العنوان</label>
+          <input 
+            type="text" 
+            [(ngModel)]="editForm.title"
+            class="form-input"
+            placeholder="عنوان الصفحة"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label>المحتوى</label>
+          <app-rich-text-editor
+            [(ngModel)]="editForm.content"
+            [placeholder]="'اكتب محتوى الصفحة هنا...'"
+            [height]="'450px'"
+          ></app-rich-text-editor>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelEdit()">إلغاء</button>
+        <button class="btn-primary" (click)="savePage()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>

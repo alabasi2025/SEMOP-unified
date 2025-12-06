@@ -1,0 +1,27 @@
+/* /root/task_outputs/Task2_Advanced_Search_Filters/frontend/advanced-search.component.css */
+/* يمكن إضافة تنسيقات مخصصة هنا إذا لزم الأمر */
+.p-card-header {
+  text-align: right;
+}
+
+.p-formgrid label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.p-d-flex {
+  display: flex !important;
+}
+
+.p-jc-end {
+  justify-content: flex-end !important;
+}
+
+.p-ai-end {
+  align-items: flex-end !important;
+}
+
+.p-mr-2 {
+  margin-right: 0.5rem !important;
+}

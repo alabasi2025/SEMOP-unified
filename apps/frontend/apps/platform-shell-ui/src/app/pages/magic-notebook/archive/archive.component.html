@@ -1,0 +1,88 @@
+<div class="archive-container">
+  <!-- Header -->
+  <div class="archive-header">
+    <button class="back-btn" (click)="goBack()">
+      <span>←</span>
+      <span>العودة</span>
+    </button>
+    <h2>📦 الأرشيف</h2>
+    <div class="header-actions">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (input)="applyFilter()"
+        placeholder="بحث في الأرشيف..."
+        class="search-input"
+      />
+      <select [(ngModel)]="filterType" (change)="applyFilter()" class="filter-select">
+        <option value="all">كل الأنواع</option>
+        <option value="page">صفحة</option>
+        <option value="section">قسم</option>
+        <option value="idea">فكرة</option>
+        <option value="task">مهمة</option>
+        <option value="note">ملاحظة</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="archive-stats">
+    <div class="stat-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-info">
+        <div class="stat-value">{{items.length}}</div>
+        <div class="stat-label">إجمالي العناصر</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔍</div>
+      <div class="stat-info">
+        <div class="stat-value">{{filteredItems.length}}</div>
+        <div class="stat-label">نتائج البحث</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Items Grid -->
+  <div class="archive-grid">
+    <div *ngFor="let item of filteredItems" class="archive-item">
+      <div class="item-header">
+        <div class="item-icon" [style.background]="getTypeColor(item.type)">
+          {{item.icon}}
+        </div>
+        <div class="item-type" [style.background]="getTypeColor(item.type)">
+          {{getTypeLabel(item.type)}}
+        </div>
+      </div>
+      
+      <h3 class="item-title">{{item.title}}</h3>
+      <p class="item-description">{{item.description}}</p>
+      
+      <div class="item-footer">
+        <div class="item-meta">
+          <span class="meta-icon">👤</span>
+          <span>{{item.archivedBy}}</span>
+          <span class="meta-separator">•</span>
+          <span>{{formatDate(item.archivedAt)}}</span>
+        </div>
+        
+        <div class="item-actions">
+          <button class="action-btn restore-btn" (click)="restoreItem(item)" title="استرجاع">
+            <span>↩️</span>
+          </button>
+          <button class="action-btn delete-btn" (click)="deleteItem(item)" title="حذف نهائي">
+            <span>🗑️</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="filteredItems.length === 0" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h3>لا توجد عناصر مؤرشفة</h3>
+    <p *ngIf="searchQuery">لم يتم العثور على نتائج للبحث "{{searchQuery}}"</p>
+    <p *ngIf="!searchQuery">الأرشيف فارغ حالياً</p>
+  </div>
+</div>

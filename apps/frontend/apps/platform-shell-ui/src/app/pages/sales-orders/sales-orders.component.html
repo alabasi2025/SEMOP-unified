@@ -1,0 +1,375 @@
+<div class="page-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="pi pi-shopping-cart"></i>
+      </div>
+      <div class="header-text">
+        <h1>{{ 'SALES.TITLE' | translate }}</h1>
+        <p>{{ 'SALES.SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+    <button pButton label="{{ 'SALES.ADD_ORDER' | translate }}" icon="pi pi-plus" class="add-btn" (click)="openNew()"></button>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="statistics-grid">
+    <p-card styleClass="stat-card stat-card-primary">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="pi pi-shopping-cart"></i>
+        </div>
+        <div class="stat-details">
+          <h3>{{ statistics.totalOrders }}</h3>
+          <p>{{ 'SALES.TOTAL_ORDERS' | translate }}</p>
+        </div>
+      </div>
+    </p-card>
+    
+    <p-card styleClass="stat-card stat-card-success">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="pi pi-dollar"></i>
+        </div>
+        <div class="stat-details">
+          <h3>{{ statistics.totalSalesAmount | number:'1.2-2' }}</h3>
+          <p>{{ 'SALES.TOTAL_SALES' | translate }}</p>
+        </div>
+      </div>
+    </p-card>
+    
+    <p-card styleClass="stat-card stat-card-info">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="stat-details">
+          <h3>{{ statistics.approvedOrders }}</h3>
+          <p>{{ 'SALES.APPROVED_ORDERS' | translate }}</p>
+        </div>
+      </div>
+    </p-card>
+    
+    <p-card styleClass="stat-card stat-card-warning">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="pi pi-file"></i>
+        </div>
+        <div class="stat-details">
+          <h3>{{ statistics.invoicedOrders }}</h3>
+          <p>{{ 'SALES.INVOICED_ORDERS' | translate }}</p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Filters Toolbar -->
+  <p-toolbar styleClass="toolbar">
+    <ng-template pTemplate="left">
+      <div class="filters-container">
+        <span class="p-input-icon-left search-box">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" [(ngModel)]="searchText" (input)="applyFilters()" 
+                 placeholder="{{ 'SALES.SEARCH_PLACEHOLDER' | translate }}" />
+        </span>
+        
+        <p-select [options]="customers" [(ngModel)]="selectedCustomer" 
+                    optionLabel="name" placeholder="{{ 'SALES.SELECT_CUSTOMER' | translate }}" 
+                    [showClear]="true" (onChange)="applyFilters()"></p-select>
+        
+        <p-select [options]="statuses" [(ngModel)]="selectedStatus" 
+                    optionLabel="label" placeholder="{{ 'SALES.SELECT_STATUS' | translate }}" 
+                    [showClear]="true" (onChange)="applyFilters()"></p-select>
+        
+        <p-datePicker [(ngModel)]="startDate" placeholder="{{ 'SALES.FROM_DATE' | translate }}" 
+                    dateFormat="yy-mm-dd" [showIcon]="true" 
+                    (onSelect)="applyFilters()"></p-datePicker>
+        
+        <p-datePicker [(ngModel)]="endDate" placeholder="{{ 'SALES.TO_DATE' | translate }}" 
+                    dateFormat="yy-mm-dd" [showIcon]="true" 
+                    (onSelect)="applyFilters()"></p-datePicker>
+        
+        <button pButton icon="pi pi-filter-slash" label="{{ 'SALES.CLEAR_FILTERS' | translate }}" 
+                class="p-button-outlined" (click)="clearFilters()"></button>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <button pButton label="{{ 'SALES.REFRESH' | translate }}" icon="pi pi-refresh" 
+              class="p-button-outlined" (click)="loadData()"></button>
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Main Table -->
+  <div class="table-container">
+    <p-table [value]="filteredOrders" [loading]="loading" [paginator]="true" [rows]="10" 
+             [rowsPerPageOptions]="[10,25,50]" [showCurrentPageReport]="true"
+             currentPageReportTemplate="{{ 'SALES.PAGINATOR_REPORT' | translate: { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' } }}"
+             styleClass="custom-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="orderNumber">{{ 'SALES.ORDER_ID' | translate }} <p-sortIcon field="orderNumber"></p-sortIcon></th>
+          <th pSortableColumn="orderDate">{{ 'SALES.DATE' | translate }} <p-sortIcon field="orderDate"></p-sortIcon></th>
+          <th>{{ 'SALES.CUSTOMER' | translate }}</th>
+          <th pSortableColumn="status">{{ 'SALES.STATUS' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="totalAmount">{{ 'SALES.TOTAL' | translate }} <p-sortIcon field="totalAmount"></p-sortIcon></th>
+          <th>{{ 'SALES.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-order>
+        <tr>
+          <td>
+            <strong>{{ order.orderNumber }}</strong>
+          </td>
+          <td>{{ order.orderDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ order.customerName || order.customerId }}</td>
+          <td>
+            <p-badge [value]="getStatusLabel(order.status)" 
+                     [severity]="getStatusSeverity(order.status)"></p-badge>
+          </td>
+          <td>
+            <strong>{{ order.totalAmount | number:'1.2-2' }}</strong>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info" 
+                      pTooltip="{{ 'SALES.VIEW_DETAILS' | translate }}" (click)="viewDetails(order)"></button>
+              
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning" 
+                      pTooltip="{{ 'SALES.EDIT' | translate }}" (click)="editOrder(order)"
+                      [disabled]="order.status !== 'DRAFT' && order.status !== 'PENDING'"></button>
+              
+              <button pButton icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" 
+                      pTooltip="{{ 'SALES.APPROVE' | translate }}" (click)="approveOrder(order)"
+                      [disabled]="order.status !== 'DRAFT' && order.status !== 'PENDING'"></button>
+              
+              <button pButton icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" 
+                      pTooltip="{{ 'SALES.CANCEL' | translate }}" (click)="cancelOrder(order)"
+                      [disabled]="order.status === 'INVOICED'"></button>
+              
+              <button pButton icon="pi pi-print" class="p-button-rounded p-button-text" 
+                      pTooltip="{{ 'SALES.PRINT' | translate }}" (click)="printOrder(order)"></button>
+              
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
+                      pTooltip="{{ 'SALES.DELETE' | translate }}" (click)="deleteOrder(order)"
+                      [disabled]="order.status !== 'DRAFT'"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            <div class="empty-state">
+              <i class="pi pi-shopping-cart"></i>
+              <h3>{{ 'SALES.NO_ORDERS_TITLE' | translate }}</h3>
+              <p>{{ 'SALES.NO_ORDERS_MESSAGE' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Add/Edit Dialog -->
+  <p-dialog [(visible)]="orderDialog" [header]="dialogTitle" [modal]="true" 
+            [style]="{width: '90vw', maxWidth: '1200px'}" styleClass="custom-dialog">
+    <div class="dialog-content">
+      <!-- Order Info Section -->
+      <div class="form-section">
+        <h3>{{ 'SALES.ORDER_INFO_TITLE' | translate }}</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="orderNumber">{{ 'SALES.ORDER_NUMBER_LABEL' | translate }}</label>
+            <input pInputText id="orderNumber" [(ngModel)]="currentOrder.orderNumber" 
+                   [disabled]="true" class="w-full" />
+          </div>
+          
+          <div class="form-group">
+            <label for="orderDate">{{ 'SALES.ORDER_DATE_LABEL' | translate }} <span class="required">*</span></label>
+            <p-datePicker id="orderDate" [(ngModel)]="currentOrder.orderDate" 
+                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-datePicker>
+          </div>
+          
+          <div class="form-group">
+            <label for="customer">{{ 'SALES.CUSTOMER_LABEL' | translate }} <span class="required">*</span></label>
+            <p-select id="customer" [options]="customers" [(ngModel)]="currentOrder.customerId" 
+                        optionLabel="name" optionValue="id" placeholder="{{ 'SALES.SELECT_CUSTOMER' | translate }}" 
+                        class="w-full"></p-select>
+          </div>
+          
+          <div class="form-group">
+            <label for="expectedDeliveryDate">{{ 'SALES.EXPECTED_DELIVERY_DATE_LABEL' | translate }}</label>
+            <p-datePicker id="expectedDeliveryDate" [(ngModel)]="currentOrder.expectedDeliveryDate" 
+                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-datePicker>
+          </div>
+          
+          <div class="form-group">
+            <label for="paymentTerms">{{ 'SALES.PAYMENT_TERMS_LABEL' | translate }}</label>
+            <input pInputText id="paymentTerms" [(ngModel)]="currentOrder.paymentTerms" 
+                   placeholder="{{ 'SALES.PAYMENT_TERMS_PLACEHOLDER' | translate }}" class="w-full" />
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="notes">{{ 'SALES.NOTES_LABEL' | translate }}</label>
+            <textarea pInputText id="notes" [(ngModel)]="currentOrder.notes" 
+                      rows="2" class="w-full" placeholder="{{ 'SALES.NOTES_PLACEHOLDER' | translate }}"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lines Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3>{{ 'SALES.ORDER_LINES_TITLE' | translate }}</h3>
+          <button pButton label="{{ 'SALES.ADD_LINE' | translate }}" icon="pi pi-plus" 
+                  class="p-button-sm" (click)="addLine()"></button>
+        </div>
+        
+        <div class="lines-table">
+          <table class="lines-grid">
+            <thead>
+              <tr>
+                <th>{{ 'SALES.ITEM' | translate }}</th>
+                <th>{{ 'SALES.QUANTITY' | translate }}</th>
+                <th>{{ 'SALES.PRICE' | translate }}</th>
+                <th>{{ 'SALES.DISCOUNT_PERCENT' | translate }}</th>
+                <th>{{ 'SALES.TAX_PERCENT' | translate }}</th>
+                <th>{{ 'SALES.TOTAL' | translate }}</th>
+                <th>{{ 'SALES.INVENTORY' | translate }}</th>
+                <th>{{ 'SALES.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let line of currentOrder.lines; let i = index">
+                <td>
+                  <p-select [options]="items" [(ngModel)]="line.itemId" 
+                              optionLabel="name" optionValue="id" 
+                              placeholder="اختر الصنف" 
+                              (onChange)="onItemChange(line)" class="w-full"></p-select>
+                </td>
+                <td>
+                  <p-inputNumber [(ngModel)]="line.quantity" [min]="1" 
+                                 (onInput)="calculateLineTotal(line)" class="w-full"></p-inputNumber>
+                </td>
+                <td>
+                  <p-inputNumber [(ngModel)]="line.unitPrice" [min]="0" mode="decimal" 
+                                 [minFractionDigits]="2" (onInput)="calculateLineTotal(line)" 
+                                 class="w-full"></p-inputNumber>
+                </td>
+                <td>
+                  <p-inputNumber [(ngModel)]="line.discountRate" [min]="0" [max]="100" 
+                                 (onInput)="calculateLineTotal(line)" class="w-full"></p-inputNumber>
+                </td>
+                <td>
+                  <p-inputNumber [(ngModel)]="line.taxRate" [min]="0" [max]="100" 
+                                 (onInput)="calculateLineTotal(line)" class="w-full"></p-inputNumber>
+                </td>
+                <td>
+                  <strong>{{ line.lineTotal | number:'1.2-2' }}</strong>
+                </td>
+                <td>
+                  <p-badge [value]="line.availableStock || 0" 
+                           [severity]="(line.availableStock || 0) > 0 ? 'success' : 'danger'"></p-badge>
+                </td>
+                <td>
+                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
+                          (click)="removeLine(i)"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="empty-lines" *ngIf="!currentOrder.lines || currentOrder.lines.length === 0">
+            <p>لا توجد سطور. اضغط "إضافة سطر" لإضافة سطر جديد.</p>
+          </div>
+        </div>
+        
+        <!-- Total -->
+        <div class="total-section">
+          <h3>الإجمالي الكلي: <strong>{{ currentOrder.totalAmount | number:'1.2-2' }}</strong></h3>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" 
+              (click)="orderDialog = false"></button>
+      <button pButton label="حفظ" icon="pi pi-check" (click)="saveOrder()" 
+              [loading]="saving"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Details Dialog -->
+  <p-dialog [(visible)]="detailsDialog" header="تفاصيل أمر البيع" [modal]="true" 
+            [style]="{width: '800px'}" styleClass="custom-dialog">
+    <div class="details-content" *ngIf="selectedOrder">
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>رقم الأمر:</label>
+          <span>{{ selectedOrder.orderNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <label>التاريخ:</label>
+          <span>{{ selectedOrder.orderDate | date:'yyyy-MM-dd' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>العميل:</label>
+          <span>{{ selectedOrder.customerName }}</span>
+        </div>
+        <div class="detail-item">
+          <label>الحالة:</label>
+          <p-badge [value]="getStatusLabel(selectedOrder.status)" 
+                   [severity]="getStatusSeverity(selectedOrder.status)"></p-badge>
+        </div>
+        <div class="detail-item">
+          <label>تاريخ التسليم المتوقع:</label>
+          <span>{{ selectedOrder.expectedDeliveryDate | date:'yyyy-MM-dd' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>شروط الدفع:</label>
+          <span>{{ selectedOrder.paymentTerms || '-' }}</span>
+        </div>
+      </div>
+      
+      <div class="details-section">
+        <h4>السطور</h4>
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th>{{ 'SALES.ITEM' | translate }}</th>
+              <th>{{ 'SALES.QUANTITY' | translate }}</th>
+              <th>{{ 'SALES.PRICE' | translate }}</th>
+              <th>{{ 'SALES.TOTAL' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of selectedOrder.lines">
+              <td>{{ line.itemName }}</td>
+              <td>{{ line.quantity }}</td>
+              <td>{{ line.unitPrice | number:'1.2-2' }}</td>
+              <td>{{ line.lineTotal | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="details-total">
+        <h3>الإجمالي: {{ selectedOrder.totalAmount | number:'1.2-2' }}</h3>
+      </div>
+      
+      <div class="details-notes" *ngIf="selectedOrder.notes">
+        <h4>ملاحظات:</h4>
+        <p>{{ selectedOrder.notes }}</p>
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <button pButton label="إغلاق" icon="pi pi-times" (click)="detailsDialog = false"></button>
+      <button pButton label="طباعة" icon="pi pi-print" (click)="printOrder(selectedOrder)"></button>
+    </ng-template>
+  </p-dialog>
+</div>

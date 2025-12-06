@@ -1,0 +1,63 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-8 p-lg-6">
+    <p-card header="ماسح الباركود (Barcode Scanner)" [style]="{ width: '100%' }">
+      <p-messages></p-messages>
+
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-col-12 p-field">
+          <label for="barcode">أدخل الباركود</label>
+          <input
+            id="barcode"
+            type="text"
+            pInputText
+            [(ngModel)]="barcode"
+            (keyup.enter)="scanBarcode()"
+            placeholder="امسح أو أدخل الباركود هنا"
+            [disabled]="loading"
+          />
+        </div>
+        <div class="p-col-12">
+          <button
+            pButton
+            type="button"
+            label="مسح الباركود"
+            icon="pi pi-search"
+            (click)="scanBarcode()"
+            [loading]="loading"
+            [disabled]="!barcode || loading"
+            class="p-button-success p-button-block"
+          ></button>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div *ngIf="itemDetails" class="p-mt-4">
+        <p-fieldset legend="تفاصيل المنتج" [toggleable]="true">
+          <div class="p-grid p-nogutter">
+            <div class="p-col-12 p-md-6 p-field">
+              <label class="p-d-block p-text-bold">اسم المنتج:</label>
+              <span>{{ itemDetails.name }}</span>
+            </div>
+            <div class="p-col-12 p-md-6 p-field">
+              <label class="p-d-block p-text-bold">رمز المنتج (SKU):</label>
+              <span>{{ itemDetails.sku }}</span>
+            </div>
+            <div class="p-col-12 p-md-6 p-field">
+              <label class="p-d-block p-text-bold">الباركود:</label>
+              <span>{{ itemDetails.barcode }}</span>
+            </div>
+            <div class="p-col-12 p-md-6 p-field">
+              <label class="p-d-block p-text-bold">سعر الوحدة:</label>
+              <span>{{ itemDetails.unitPrice | currency : 'SAR' }}</span>
+            </div>
+            <div class="p-col-12 p-md-6 p-field">
+              <label class="p-d-block p-text-bold">الكمية المتوفرة:</label>
+              <span>{{ itemDetails.quantityInStock }}</span>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+    </p-card>
+  </div>
+</div>

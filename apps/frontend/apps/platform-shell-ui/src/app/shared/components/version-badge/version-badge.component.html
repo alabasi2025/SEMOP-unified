@@ -1,0 +1,106 @@
+<!-- يظهر فقط في Development Mode -->
+<div class="version-badge-wrapper" *ngIf="isDevMode && !hidden">
+  <div class="version-badge" [class.expanded]="expanded">
+    
+    <!-- Header - دائماً مرئي -->
+    <div class="badge-header" (click)="toggle()">
+      <div class="badge-version">
+        <span class="version-icon">🏷️</span>
+        <span class="version-text">v{{ version }}</span>
+      </div>
+      <button class="badge-toggle" [class.rotated]="expanded">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Body - يظهر عند التوسيع -->
+    <div class="badge-body" *ngIf="expanded">
+      
+      <!-- Component Name -->
+      <div class="badge-row">
+        <span class="badge-icon">📝</span>
+        <span class="badge-label">الصفحة:</span>
+        <span class="badge-value">{{ componentName || 'غير محدد' }}</span>
+      </div>
+      
+      <!-- Status -->
+      <div class="badge-row">
+        <span class="badge-icon">{{ getStatusIcon() }}</span>
+        <span class="badge-label">الحالة:</span>
+        <span class="badge-value" [style.color]="getStatusColor()">
+          {{ getStatusText() }}
+        </span>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div class="badge-row">
+        <span class="badge-icon">📊</span>
+        <span class="badge-label">التقدم:</span>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width.%]="progress"
+              [style.background-color]="getProgressColor()"
+            ></div>
+          </div>
+          <span class="progress-text">{{ progress }}%</span>
+        </div>
+      </div>
+      
+      <!-- Last Update -->
+      <div class="badge-row">
+        <span class="badge-icon">📅</span>
+        <span class="badge-label">آخر تحديث:</span>
+        <span class="badge-value">{{ lastUpdate }}</span>
+      </div>
+      
+      <!-- Commit Hash (إذا كان موجود) -->
+      <div class="badge-row" *ngIf="commitHash">
+        <span class="badge-icon">🔗</span>
+        <span class="badge-label">Commit:</span>
+        <span class="badge-value commit-hash">{{ commitHash.substring(0, 7) }}</span>
+      </div>
+      
+      <!-- Author -->
+      <div class="badge-row">
+        <span class="badge-icon">👤</span>
+        <span class="badge-label">الفريق:</span>
+        <span class="badge-value">{{ author }}</span>
+      </div>
+      
+      <!-- Actions -->
+      <div class="badge-actions">
+        <button class="badge-btn" (click)="copyInfo()" title="نسخ المعلومات">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2z"/>
+            <path d="M2 6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1H6a3 3 0 0 1-3-3V6H2z"/>
+          </svg>
+          نسخ
+        </button>
+        <button class="badge-btn badge-btn-danger" (click)="hide()" title="إخفاء">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M2 2l12 12M2 14L14 2" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          إخفاء
+        </button>
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <!-- Show Button (عند الإخفاء) -->
+  <button class="show-badge-btn" *ngIf="hidden" (click)="show()" title="إظهار معلومات الإصدار">
+    <span>🏷️</span>
+  </button>
+  
+</div>
+
+<!-- Development Mode Indicator -->
+<div class="dev-mode-indicator" *ngIf="isDevMode">
+  <span class="dev-icon">🔧</span>
+  <span class="dev-text">Development</span>
+</div>

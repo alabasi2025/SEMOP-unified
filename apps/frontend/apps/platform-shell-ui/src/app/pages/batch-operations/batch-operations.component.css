@@ -1,0 +1,12 @@
+/* يمكن إضافة تنسيقات PrimeNG المخصصة هنا */
+.p-card-content {
+    padding: 1.5rem;
+}
+
+.p-listbox {
+    width: 100%;
+}
+
+.p-field {
+    margin-bottom: 1.5rem;
+}

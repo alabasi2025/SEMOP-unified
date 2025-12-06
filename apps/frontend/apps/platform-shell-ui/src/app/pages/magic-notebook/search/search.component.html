@@ -1,0 +1,110 @@
+<div class="search-container">
+  <!-- Header -->
+  <div class="search-header">
+    <button class="back-btn" (click)="goBack()">
+      <span>←</span>
+      <span>العودة</span>
+    </button>
+    <h2>🔍 البحث المتقدم</h2>
+  </div>
+
+  <!-- Search Box -->
+  <div class="search-box">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (keyup.enter)="performSearch()"
+        placeholder="ابحث في الصفحات، الأفكار، المهام..."
+        class="search-input"
+        autofocus
+      />
+      <button 
+        class="search-btn" 
+        (click)="performSearch()"
+        [disabled]="!searchQuery.trim() || isSearching"
+      >
+        <span *ngIf="!isSearching">بحث</span>
+        <span *ngIf="isSearching">جاري البحث...</span>
+      </button>
+    </div>
+    
+    <div class="search-filters">
+      <button 
+        *ngFor="let type of ['all', 'page', 'section', 'idea', 'task', 'note']"
+        class="filter-btn"
+        [class.active]="filterType === type"
+        (click)="filterType = type; applyFilter()"
+      >
+        {{type === 'all' ? 'الكل' : getTypeLabel(type)}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Stats -->
+  <div *ngIf="results.length > 0" class="results-stats">
+    <div class="stat-card">
+      <span class="stat-icon">📊</span>
+      <span class="stat-text">
+        تم العثور على <strong>{{filteredResults.length}}</strong> نتيجة
+        <span *ngIf="filterType !== 'all'"> في {{getTypeLabel(filterType)}}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Results List -->
+  <div class="results-list">
+    <div 
+      *ngFor="let result of filteredResults" 
+      class="result-item"
+      (click)="openResult(result)"
+    >
+      <div class="result-icon" [style.background]="getTypeColor(result.type)">
+        {{result.icon}}
+      </div>
+      
+      <div class="result-content">
+        <div class="result-header">
+          <h3 class="result-title" [innerHTML]="highlightMatch(result.title)"></h3>
+          <div class="result-type" [style.background]="getTypeColor(result.type)">
+            {{getTypeLabel(result.type)}}
+          </div>
+        </div>
+        
+        <p class="result-description" [innerHTML]="highlightMatch(result.description)"></p>
+        <p class="result-match" [innerHTML]="highlightMatch(result.matchedText)"></p>
+      </div>
+      
+      <div class="result-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isSearching && searchQuery && filteredResults.length === 0" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>لم يتم العثور على نتائج</h3>
+    <p>جرب كلمات بحث مختلفة أو قم بتغيير الفلتر</p>
+  </div>
+
+  <!-- Initial State -->
+  <div *ngIf="!searchQuery && results.length === 0" class="initial-state">
+    <div class="initial-icon">🔍</div>
+    <h3>ابدأ البحث</h3>
+    <p>اكتب كلمة أو عبارة للبحث في جميع محتويات الدفتر</p>
+    <div class="search-tips">
+      <h4>نصائح البحث:</h4>
+      <ul>
+        <li>استخدم كلمات مفتاحية واضحة</li>
+        <li>جرب البحث بكلمات مختلفة</li>
+        <li>استخدم الفلاتر لتضييق النتائج</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isSearching" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>جاري البحث...</p>
+  </div>
+</div>

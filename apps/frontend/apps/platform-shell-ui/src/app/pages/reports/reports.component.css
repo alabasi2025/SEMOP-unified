@@ -1,0 +1,34 @@
+/* تنسيقات خاصة بمكون التقارير */
+.p-card {
+  margin-bottom: 1.5rem;
+}
+
+.p-datatable-gridlines {
+  border: 1px solid #dee2e6;
+}
+
+/* لضمان عرض العناصر بشكل صحيح في الاتجاه من اليمين لليسار */
+:host ::ng-deep .p-dropdown {
+  width: 100%;
+}
+
+:host ::ng-deep .p-calendar {
+  width: 100%;
+}
+
+:host ::ng-deep .p-button {
+  width: 100%;
+}
+
+/* تعديل اتجاه الجدول ليتناسب مع اللغة العربية */
+:host ::ng-deep .p-datatable {
+  direction: rtl;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: right;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: right;
+}

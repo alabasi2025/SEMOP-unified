@@ -1,0 +1,106 @@
+<!-- /root/task_outputs/Task7_Dashboard_Analytics/frontend/dashboard-analytics.component.html -->
+
+<div class="p-grid p-fluid">
+  <p-toast></p-toast>
+  <div class="p-col-12">
+    <div class="card">
+      <h5 class="text-right">لوحة تحكم المخزون والإحصائيات</h5>
+
+      <!-- مرشحات الفترة الزمنية -->
+      <div class="p-grid p-justify-end p-mb-3">
+        <div class="p-col-12 p-md-4 p-lg-3">
+          <p-calendar
+            [(ngModel)]="dateRange"
+            selectionMode="range"
+            [readonlyInput]="true"
+            dateFormat="yy/mm/dd"
+            placeholder="اختر الفترة الزمنية"
+            (onSelect)="onDateRangeChange($event)"
+            [showIcon]="true"
+            [locale]="{
+              firstDayOfWeek: 0,
+              dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+              dayNamesShort: ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'],
+              dayNamesMin: ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
+              monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+              monthNamesShort: ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس'],
+              today: 'اليوم',
+              clear: 'مسح'
+            }"
+          ></p-calendar>
+        </div>
+        <div class="p-col-12 p-md-2 p-lg-1">
+          <button pButton type="button" label="تطبيق" icon="pi pi-filter" (click)="loadAnalytics()" [loading]="loading"></button>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div *ngIf="loading" class="p-text-center">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>جاري تحميل البيانات...</p>
+      </div>
+
+      <div *ngIf="analyticsData && !loading" class="p-grid">
+        <!-- ملخصات علوية (Cards) -->
+        <div class="p-col-12 p-lg-4">
+          <div class="p-card p-shadow-2 summary-card">
+            <div class="p-card-body">
+              <div class="p-card-title text-right">إجمالي الأصناف</div>
+              <div class="p-card-subtitle text-right">العدد الكلي للأصناف المسجلة</div>
+              <div class="p-card-content text-right">
+                <span class="text-xl font-bold text-blue-500">{{ analyticsData.totalItems | number }}</span>
+                <i class="pi pi-box text-blue-500 text-2xl p-ml-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-col-12 p-lg-4">
+          <div class="p-card p-shadow-2 summary-card">
+            <div class="p-card-body">
+              <div class="p-card-title text-right">إجمالي كمية المخزون</div>
+              <div class="p-card-subtitle text-right">الكمية الكلية المتوفرة في المخازن</div>
+              <div class="p-card-content text-right">
+                <span class="text-xl font-bold text-green-500">{{ analyticsData.totalStockQuantity | number }}</span>
+                <i class="pi pi-chart-bar text-green-500 text-2xl p-ml-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-col-12 p-lg-4">
+          <div class="p-card p-shadow-2 summary-card">
+            <div class="p-card-body">
+              <div class="p-card-title text-right">القيمة الكلية للمخزون</div>
+              <div class="p-card-subtitle text-right">القيمة التقديرية للمخزون (ريال سعودي)</div>
+              <div class="p-card-content text-right">
+                <span class="text-xl font-bold text-orange-500">{{ analyticsData.totalStockValue | currency:'SAR':'symbol':'1.2-2' }}</span>
+                <i class="pi pi-dollar text-orange-500 text-2xl p-ml-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- الرسوم البيانية -->
+        <div class="p-col-12 p-lg-6">
+          <div class="p-card p-shadow-2">
+            <div class="p-card-title text-right">توزيع الأصناف حسب الفئة</div>
+            <div class="p-card-content">
+              <p-chart type="pie" [data]="categoryChartData" [options]="chartOptions" height="300px"></p-chart>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-col-12 p-lg-6">
+          <div class="p-card p-shadow-2">
+            <div class="p-card-title text-right">حركة المخزون الشهرية (وارد/صادر)</div>
+            <div class="p-card-content">
+              <p-chart type="line" [data]="monthlyMovementChartData" [options]="chartOptions" height="300px"></p-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

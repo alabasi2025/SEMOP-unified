@@ -1,0 +1,64 @@
+<div class="p-grid p-fluid">
+  <div class="p-col-12">
+    <p-card header="العمليات المجمعة على المخزون" subheader="حدد المنتجات ونوع العملية لتنفيذها دفعة واحدة">
+      <div class="p-grid">
+        <!-- قائمة المنتجات للاختيار -->
+        <div class="p-col-12 p-md-6">
+          <div class="p-field">
+            <label for="items">المنتجات المتاحة</label>
+            <p-listbox [options]="availableItems" [(ngModel)]="selectedItems" optionLabel="name" [multiple]="true"
+              [checkbox]="true" [filter]="true" [listStyle]="{'max-height':'300px'}"
+              placeholder="اختر المنتجات لتطبيق العملية عليها"></p-listbox>
+            <small class="p-d-block p-mt-2">تم اختيار: {{ selectedItems.length }} منتج</small>
+          </div>
+        </div>
+
+        <!-- خيارات العملية المجمعة -->
+        <div class="p-col-12 p-md-6">
+          <div class="p-field">
+            <label for="operationType">نوع العملية المجمعة</label>
+            <p-dropdown [options]="operationTypes" [(ngModel)]="selectedOperationType" optionLabel="label"
+              optionValue="value" placeholder="اختر نوع العملية" (onChange)="onOperationTypeChange($event)"></p-dropdown>
+          </div>
+
+          <!-- حقل القيمة الإضافية (يظهر حسب نوع العملية) -->
+          <div class="p-field" *ngIf="showValueInput">
+            <label for="operationValue">{{ valueInputLabel }}</label>
+            <input id="operationValue" type="text" pInputText [(ngModel)]="operationValue"
+              [placeholder]="valueInputPlaceholder">
+          </div>
+
+          <div class="p-field p-mt-4">
+            <p-button label="تنفيذ العملية المجمعة" icon="pi pi-bolt" (onClick)="executeBatchOperation()"
+              [disabled]="!selectedItems.length || !selectedOperationType || (showValueInput && !operationValue) || isProcessing"
+              [loading]="isProcessing"></p-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- رسائل التنبيه والنتائج -->
+      <p-messages [(value)]="messages"></p-messages>
+
+      <!-- جدول الأخطاء (يظهر عند وجود أخطاء) -->
+      <div *ngIf="batchResult && batchResult.errors && batchResult.errors.length > 0" class="p-mt-4">
+        <p-fieldset legend="تفاصيل الأخطاء" [toggleable]="true">
+          <p-table [value]="batchResult.errors" [paginator]="true" [rows]="5">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>معرف المنتج</th>
+                <th>سبب الخطأ</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-error>
+              <tr>
+                <td>{{ error.itemId }}</td>
+                <td>{{ error.reason }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-fieldset>
+      </div>
+
+    </p-card>
+  </div>
+</div>

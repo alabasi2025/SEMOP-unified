@@ -1,0 +1,21 @@
+/* يمكن إضافة تنسيقات إضافية هنا إذا لزم الأمر */
+.p-listbox-item {
+  padding: 1rem;
+}
+
+.p-listbox-item:hover {
+  background-color: var(--surface-hover);
+}
+
+.notification-unread {
+  font-weight: bold;
+}
+
+.notification-read {
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+.p-text-wrap {
+  white-space: normal;
+}

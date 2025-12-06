@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# PHASE: 1
+# COMPONENT: Husky Hooks
+# IMPACT: Quality Control
+
+echo "🔍 Running pre-commit checks..."
+
+# Check 1: Contracts Version Sync
+echo "📦 Checking contracts version..."
+./scripts/check-contracts-version.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Contracts version check failed!"
+  exit 1
+fi
+
+# Check 2: No Local DTOs
+echo "🚫 Checking for local DTOs..."
+./scripts/verify-no-local-dtos.sh
+if [ $? -ne 0 ]; then
+  echo "❌ Local DTOs detected!"
+  exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"

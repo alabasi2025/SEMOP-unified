@@ -1,0 +1,69 @@
+<div class="list-container" [class.grid-mode]="viewMode === 'grid'">
+  <!-- Bulk Actions Toolbar -->
+  <div class="bulk-toolbar" *ngIf="hasSelections()">
+    <div class="bulk-info">
+      <span class="selection-count">{{ getSelectedCount() }} محدد</span>
+      <button class="clear-selection-btn" (click)="clearSelection()">
+        ✖ إلغاء التحديد
+      </button>
+    </div>
+    <div class="bulk-actions">
+      <button class="bulk-btn mark-read" (click)="onBulkMarkAsRead()">
+        <span class="btn-icon">✅</span>
+        تحديد كمقروء
+      </button>
+      <button class="bulk-btn delete" (click)="onBulkDelete()">
+        <span class="btn-icon">🗑️</span>
+        حذف
+      </button>
+    </div>
+  </div>
+
+  <!-- Select All Header -->
+  <div class="select-all-header" *ngIf="notifications.length > 0 && !loading">
+    <label class="select-all-checkbox">
+      <input
+        type="checkbox"
+        [checked]="selectAll"
+        (change)="toggleSelectAll()">
+      <span class="checkbox-label">تحديد الكل ({{ notifications.length }})</span>
+    </label>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p class="loading-text">جاري التحميل...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && notifications.length === 0">
+    <div class="empty-icon">📭</div>
+    <h3 class="empty-title">لا توجد إشعارات</h3>
+    <p class="empty-text">لم يتم العثور على أي إشعارات</p>
+  </div>
+
+  <!-- Notifications List -->
+  <div class="notifications-list" *ngIf="!loading && notifications.length > 0">
+    <div
+      *ngFor="let notification of notifications"
+      class="notification-wrapper"
+      [class.selected]="isSelected(notification.id)">
+      
+      <!-- Selection Checkbox -->
+      <div class="selection-checkbox">
+        <input
+          type="checkbox"
+          [checked]="isSelected(notification.id)"
+          (change)="toggleSelection(notification.id)">
+      </div>
+
+      <!-- Notification Item -->
+      <app-notification-item
+        [notification]="notification"
+        (read)="handleNotificationRead($event)"
+        (delete)="handleNotificationDelete($event)">
+      </app-notification-item>
+    </div>
+  </div>
+</div>

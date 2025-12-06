@@ -1,0 +1,43 @@
+<div 
+  class="notification-item"
+  [class.unread]="!notification.isRead"
+  [ngClass]="getTypeClass()"
+  (click)="markAsRead()">
+  
+  <!-- Icon -->
+  <div class="notification-icon">
+    <span class="icon">{{ getIconClass() }}</span>
+  </div>
+
+  <!-- Content -->
+  <div class="notification-content">
+    <div class="notification-header">
+      <h4 class="notification-title">{{ notification.title }}</h4>
+      <span class="notification-time">{{ getRelativeTime() }}</span>
+    </div>
+    
+    <p class="notification-message">{{ notification.message }}</p>
+    
+    <!-- Link if available -->
+    <a 
+      *ngIf="notification.link" 
+      [href]="notification.link"
+      class="notification-link"
+      (click)="$event.stopPropagation()">
+      عرض التفاصيل →
+    </a>
+  </div>
+
+  <!-- Actions -->
+  <div class="notification-actions">
+    <button 
+      class="btn-delete"
+      (click)="deleteNotification($event)"
+      title="حذف">
+      🗑️
+    </button>
+  </div>
+
+  <!-- Unread indicator -->
+  <div *ngIf="!notification.isRead" class="unread-indicator"></div>
+</div>

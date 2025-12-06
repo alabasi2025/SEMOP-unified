@@ -1,0 +1,51 @@
+<div class="pagination-container" *ngIf="totalItems > 0">
+  <!-- Info -->
+  <div class="pagination-info">
+    <span class="info-text">
+      عرض {{ getStartItem() }}-{{ getEndItem() }} من {{ totalItems }} إشعار
+    </span>
+  </div>
+
+  <!-- Page Numbers -->
+  <div class="pagination-controls">
+    <!-- Previous Button -->
+    <button
+      class="page-btn prev-btn"
+      [disabled]="!hasPreviousPage()"
+      (click)="previousPage()">
+      <span class="arrow">◀</span>
+    </button>
+
+    <!-- Page Numbers -->
+    <button
+      *ngFor="let page of pages"
+      class="page-btn"
+      [class.active]="page === currentPage"
+      [class.ellipsis]="page === '...'"
+      [disabled]="page === '...'"
+      (click)="goToPage(page)">
+      {{ page }}
+    </button>
+
+    <!-- Next Button -->
+    <button
+      class="page-btn next-btn"
+      [disabled]="!hasNextPage()"
+      (click)="nextPage()">
+      <span class="arrow">▶</span>
+    </button>
+  </div>
+
+  <!-- Items Per Page -->
+  <div class="items-per-page">
+    <label class="items-label">عدد العناصر:</label>
+    <select
+      class="items-select"
+      [(ngModel)]="itemsPerPage"
+      (change)="onItemsPerPageChange()">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+        {{ option }}
+      </option>
+    </select>
+  </div>
+</div>

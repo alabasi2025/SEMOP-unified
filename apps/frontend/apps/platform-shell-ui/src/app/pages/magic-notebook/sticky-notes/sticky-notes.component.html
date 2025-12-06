@@ -1,0 +1,45 @@
+<div class="sticky-notes-container">
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">العودة</button>
+    <h1>الملاحظات اللاصقة</h1>
+    <button class="btn-add" (click)="createNote()">+ ملاحظة جديدة</button>
+  </div>
+  
+  <div *ngIf="loading" class="loading">جاري التحميل...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  
+  <div *ngIf="!loading && !error" class="notes-grid">
+    <div *ngFor="let note of notes" 
+         class="sticky-note" 
+         [style.background]="note.color"
+         (click)="editNote(note)">
+      <button class="btn-delete" (click)="deleteNote(note, $event)">×</button>
+      <p>{{ note.content }}</p>
+    </div>
+  </div>
+  
+  <!-- Edit/Create Modal -->
+  <div *ngIf="editingNote !== undefined" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>{{ editingNote ? 'تعديل الملاحظة' : 'ملاحظة جديدة' }}</h2>
+      <textarea 
+        [(ngModel)]="editForm.content" 
+        placeholder="اكتب ملاحظتك هنا..."
+        rows="6"
+      ></textarea>
+      <div class="colors">
+        <div *ngFor="let color of colors"
+             class="color-option"
+             [class.selected]="editForm.color === color.value"
+             [style.background]="color.value"
+             (click)="editForm.color = color.value"
+             [title]="color.name">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelEdit()">إلغاء</button>
+        <button class="btn-save" (click)="saveNote()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>

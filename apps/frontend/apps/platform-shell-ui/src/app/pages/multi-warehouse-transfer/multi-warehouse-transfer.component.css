@@ -1,0 +1,14 @@
+/* يمكن إضافة تنسيقات خاصة بالمكون هنا */
+.p-datatable-gridlines .p-tag {
+    font-weight: bold;
+}
+
+.p-dialog .p-field {
+    margin-bottom: 1.5rem;
+}
+
+.p-dialog .p-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}

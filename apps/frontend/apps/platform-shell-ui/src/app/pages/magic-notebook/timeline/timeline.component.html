@@ -1,0 +1,93 @@
+<div class="timeline-container">
+  <!-- Header -->
+  <div class="timeline-header">
+    <button class="back-btn" (click)="goBack()">
+      <span>←</span>
+      <span>العودة</span>
+    </button>
+    <h2>⏱️ الخط الزمني</h2>
+    <div class="header-actions">
+      <select [(ngModel)]="filterType" (change)="applyFilter()" class="filter-select">
+        <option value="all">كل الأنواع</option>
+        <option value="page">صفحة</option>
+        <option value="section">قسم</option>
+        <option value="idea">فكرة</option>
+        <option value="task">مهمة</option>
+        <option value="note">ملاحظة</option>
+      </select>
+      <select [(ngModel)]="filterPeriod" (change)="applyFilter()" class="filter-select">
+        <option value="all">كل الفترات</option>
+        <option value="today">اليوم</option>
+        <option value="week">هذا الأسبوع</option>
+        <option value="month">هذا الشهر</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="timeline-stats">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">{{getTotalEntries()}}</div>
+        <div class="stat-label">إجمالي الأحداث</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-info">
+        <div class="stat-value">{{getTodayEntries()}}</div>
+        <div class="stat-label">أحداث اليوم</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-info">
+        <div class="stat-value">{{getWeekEntries()}}</div>
+        <div class="stat-label">هذا الأسبوع</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-content">
+    <div class="timeline-line"></div>
+    
+    <div *ngFor="let entry of filteredEntries; let i = index" 
+         class="timeline-entry"
+         [class.entry-left]="i % 2 === 0"
+         [class.entry-right]="i % 2 !== 0">
+      
+      <div class="entry-dot" [style.background]="getTypeColor(entry.entryType)">
+        <span>{{entry.icon}}</span>
+      </div>
+      
+      <div class="entry-card">
+        <div class="entry-header">
+          <div class="entry-type" [style.background]="getTypeColor(entry.entryType)">
+            {{getTypeLabel(entry.entryType)}}
+          </div>
+          <div class="entry-time">{{formatTime(entry.timestamp)}}</div>
+        </div>
+        
+        <h3 class="entry-title">{{entry.title}}</h3>
+        <p class="entry-description">{{entry.description}}</p>
+        
+        <div class="entry-footer">
+          <div class="entry-user">
+            <span class="user-icon">👤</span>
+            <span>{{entry.user}}</span>
+          </div>
+          <div class="entry-date">{{formatDate(entry.timestamp)}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredEntries.length === 0" class="empty-state">
+      <div class="empty-icon">⏱️</div>
+      <h3>لا توجد أحداث</h3>
+      <p>لم يتم تسجيل أي أحداث في الخط الزمني بعد</p>
+    </div>
+  </div>
+</div>

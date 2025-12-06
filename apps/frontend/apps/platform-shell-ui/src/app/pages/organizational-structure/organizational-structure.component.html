@@ -1,0 +1,226 @@
+<!-- PHASE-10: Add Organizational Structure Template -->
+<div class="page-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="pi pi-sitemap"></i>
+      </div>
+      <div class="header-text">
+        <h1>الهيكل التنظيمي</h1>
+        <p>إدارة الأقسام والموظفين والمناصب</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid" *ngIf="statistics">
+    <p-card>
+      <div class="stat-card">
+        <i class="pi pi-building stat-icon"></i>
+        <div class="stat-content">
+          <h3>{{ statistics.totalDepartments || 0 }}</h3>
+          <p>الأقسام</p>
+        </div>
+      </div>
+    </p-card>
+    <p-card>
+      <div class="stat-card">
+        <i class="pi pi-users stat-icon"></i>
+        <div class="stat-content">
+          <h3>{{ statistics.totalEmployees || 0 }}</h3>
+          <p>الموظفين</p>
+        </div>
+      </div>
+    </p-card>
+    <p-card>
+      <div class="stat-card">
+        <i class="pi pi-briefcase stat-icon"></i>
+        <div class="stat-content">
+          <h3>{{ statistics.totalPositions || 0 }}</h3>
+          <p>المناصب</p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <!-- Departments Tab -->
+    <div class="tab-panel">
+      <h2><i class="pi pi-building"></i> الأقسام</h2>
+      <p-toolbar styleClass="toolbar">
+        <ng-template pTemplate="left">
+          <button pButton label="إضافة قسم" icon="pi pi-plus" class="add-btn" (click)="openNewDepartment()"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton label="تحديث" icon="pi pi-refresh" class="p-button-outlined" (click)="loadDepartments()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <div class="table-container">
+        <p-table [value]="departments" [loading]="loading" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الرقم</th>
+              <th>الاسم</th>
+              <th>الوصف</th>
+              <th>القسم الرئيسي</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-dept>
+            <tr>
+              <td>{{ dept.id }}</td>
+              <td>{{ dept.name }}</td>
+              <td>{{ dept.description || '-' }}</td>
+              <td>{{ dept.parentDepartmentId || '-' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" 
+                          pTooltip="تعديل" (click)="editDepartment(dept)"></button>
+                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
+                          pTooltip="حذف" (click)="deleteDepartment(dept)"></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Employees Tab -->
+    <div class="tab-panel">
+      <h2><i class="pi pi-users"></i> الموظفين</h2>
+      <p-toolbar styleClass="toolbar">
+        <ng-template pTemplate="left">
+          <button pButton label="إضافة موظف" icon="pi pi-plus" class="add-btn" (click)="openNewEmployee()"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton label="تحديث" icon="pi pi-refresh" class="p-button-outlined" (click)="loadEmployees()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <div class="table-container">
+        <p-table [value]="employees" [loading]="loading" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الرقم</th>
+              <th>الاسم</th>
+              <th>البريد الإلكتروني</th>
+              <th>الهاتف</th>
+              <th>القسم</th>
+              <th>المنصب</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-emp>
+            <tr>
+              <td>{{ emp.id }}</td>
+              <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+              <td>{{ emp.email }}</td>
+              <td>{{ emp.phone || '-' }}</td>
+              <td>{{ emp.departmentId }}</td>
+              <td>{{ emp.positionId }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" 
+                          pTooltip="تعديل" (click)="editEmployee(emp)"></button>
+                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
+                          pTooltip="حذف" (click)="deleteEmployee(emp)"></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Positions Tab -->
+    <div class="tab-panel">
+      <h2><i class="pi pi-briefcase"></i> المناصب</h2>
+      <p-toolbar styleClass="toolbar">
+        <ng-template pTemplate="left">
+          <button pButton label="إضافة منصب" icon="pi pi-plus" class="add-btn"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton label="تحديث" icon="pi pi-refresh" class="p-button-outlined" (click)="loadPositions()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <div class="table-container">
+        <p-table [value]="positions" [loading]="loading" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الرقم</th>
+              <th>الاسم</th>
+              <th>الوصف</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-pos>
+            <tr>
+              <td>{{ pos.id }}</td>
+              <td>{{ pos.title }}</td>
+              <td>{{ pos.description || '-' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" 
+                          pTooltip="تعديل"></button>
+                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
+                          pTooltip="حذف"></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Department Dialog -->
+<p-dialog [(visible)]="departmentDialog" header="قسم" [modal]="true" [style]="{width: '450px'}">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="deptName">الاسم</label>
+      <input pInputText id="deptName" [(ngModel)]="selectedDepartment.name" required />
+    </div>
+    <div class="field">
+      <label for="deptDesc">الوصف</label>
+      <input pInputText id="deptDesc" [(ngModel)]="selectedDepartment.description" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="departmentDialog = false"></button>
+    <button pButton label="حفظ" icon="pi pi-check" (click)="saveDepartment()"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Employee Dialog -->
+<p-dialog [(visible)]="employeeDialog" header="موظف" [modal]="true" [style]="{width: '450px'}">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="empFirstName">الاسم الأول</label>
+      <input pInputText id="empFirstName" [(ngModel)]="selectedEmployee.firstName" required />
+    </div>
+    <div class="field">
+      <label for="empLastName">الاسم الأخير</label>
+      <input pInputText id="empLastName" [(ngModel)]="selectedEmployee.lastName" required />
+    </div>
+    <div class="field">
+      <label for="empEmail">البريد الإلكتروني</label>
+      <input pInputText id="empEmail" [(ngModel)]="selectedEmployee.email" type="email" />
+    </div>
+    <div class="field">
+      <label for="empPhone">الهاتف</label>
+      <input pInputText id="empPhone" [(ngModel)]="selectedEmployee.phone" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="employeeDialog = false"></button>
+    <button pButton label="حفظ" icon="pi pi-check" (click)="saveEmployee()"></button>
+  </ng-template>
+</p-dialog>

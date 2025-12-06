@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+
+// Quill Editor Styles
+@import "quill/dist/quill.snow.css";
+
+// Custom Quill RTL Enhancements
+.ql-editor {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}

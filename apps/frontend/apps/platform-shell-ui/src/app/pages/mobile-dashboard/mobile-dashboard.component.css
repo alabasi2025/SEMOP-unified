@@ -1,0 +1,49 @@
+/* ملف CSS لضمان الاستجابة للهواتف المحمولة */
+
+.mobile-dashboard-container {
+  max-width: 100%;
+  padding: 10px;
+}
+
+/* تعديلات PrimeNG Grid للاستجابة */
+.p-grid > [class*="p-col-"] {
+  padding: 0.5rem; /* تقليل التباعد بين الأعمدة */
+}
+
+/* تحسين عرض البطاقات على الشاشات الصغيرة */
+@media screen and (max-width: 768px) {
+  .p-card {
+    margin-bottom: 1rem !important;
+  }
+
+  /* جعل عناصر الملخص تظهر بشكل عمودي على الشاشات الصغيرة */
+  .p-grid.p-nogutter > div {
+    flex-basis: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* تنسيق خاص لعناصر الملخص داخل البطاقة */
+.p-card .p-d-flex {
+  align-items: center;
+  justify-content: center;
+}
+
+.p-card .p-text-4xl {
+  font-size: 2.5rem;
+}
+
+.p-card .p-text-lg {
+  font-size: 1.25rem;
+}
+
+/* تنسيق قائمة الأنشطة */
+p-listbox .p-listbox-list {
+  padding: 0;
+}
+
+p-listbox .p-listbox-item {
+  padding: 10px;
+  border-bottom: 1px solid var(--surface-border);
+}

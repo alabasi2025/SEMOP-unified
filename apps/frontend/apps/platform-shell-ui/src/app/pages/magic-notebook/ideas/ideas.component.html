@@ -1,0 +1,39 @@
+<div class="ideas-container">
+  <div class="ideas-header">
+    <button class="btn-back" (click)="goBack()">العودة</button>
+    <h1>الأفكار</h1>
+  </div>
+  
+  <div *ngIf="loading" class="loading">جاري التحميل...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  
+  <div *ngIf="!loading && !error">
+    <div class="quick-add">
+      <input 
+        [(ngModel)]="quickAddText"
+        (keyup.enter)="quickAdd()"
+        placeholder="أضف فكرة سريعة..."
+      />
+      <button (click)="quickAdd()">إضافة</button>
+    </div>
+    
+    <div class="ideas-list">
+      <div *ngFor="let idea of filteredIdeas" class="idea-card">
+        <h3>{{ idea.title }}</h3>
+        <p *ngIf="idea.description">{{ idea.description }}</p>
+        <div class="idea-meta">
+          <span [style.color]="getPriorityColor(idea.priority)">{{ idea.priority }}</span>
+          <span [style.color]="getStatusColor(idea.status)">{{ getStatusLabel(idea.status) }}</span>
+          <span>{{ getRelativeTime(idea.updatedAt) }}</span>
+        </div>
+        <div *ngIf="idea.tags && idea.tags.length > 0" class="tags">
+          <span *ngFor="let tag of idea.tags" class="tag">{{ tag }}</span>
+        </div>
+        <div class="actions">
+          <button (click)="editIdea(idea)">تعديل</button>
+          <button (click)="deleteIdea(idea, $event)">حذف</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

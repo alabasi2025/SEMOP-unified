@@ -1,0 +1,76 @@
+<div class="markdown-editor">
+  <div class="editor-toolbar">
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('**', '**')" title="غامق">
+      <strong>B</strong>
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('*', '*')" title="مائل">
+      <em>I</em>
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('# ', '')" title="عنوان">
+      H1
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('## ', '')" title="عنوان فرعي">
+      H2
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('- ', '')" title="قائمة">
+      • List
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('[', '](url)')" title="رابط">
+      🔗
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('![alt](', ')')" title="صورة">
+      🖼️
+    </button>
+    <button type="button" class="toolbar-btn" (click)="insertMarkdown('```&#10;', '&#10;```')" title="كود">
+      &lt;/&gt;
+    </button>
+    <div class="toolbar-divider"></div>
+    <button 
+      type="button" 
+      class="toolbar-btn" 
+      [class.active]="viewMode === 'edit'"
+      (click)="viewMode = 'edit'"
+      title="محرر"
+    >
+      ✏️ محرر
+    </button>
+    <button 
+      type="button" 
+      class="toolbar-btn" 
+      [class.active]="viewMode === 'split'"
+      (click)="viewMode = 'split'"
+      title="مقسم"
+    >
+      ⚡ مقسم
+    </button>
+    <button 
+      type="button" 
+      class="toolbar-btn" 
+      [class.active]="viewMode === 'preview'"
+      (click)="viewMode = 'preview'"
+      title="معاينة"
+    >
+      👁️ معاينة
+    </button>
+  </div>
+
+  <div class="editor-content" [class.split]="viewMode === 'split'">
+    <div class="editor-pane" *ngIf="viewMode !== 'preview'">
+      <textarea
+        #textarea
+        [(ngModel)]="value"
+        (ngModelChange)="onChange($event)"
+        (blur)="onTouched()"
+        [style.height.px]="height"
+        class="editor-textarea"
+        placeholder="اكتب محتوى Markdown هنا..."
+      ></textarea>
+    </div>
+
+    <div class="preview-pane" *ngIf="viewMode !== 'edit'">
+      <div class="markdown-preview" [style.height.px]="height">
+        <markdown [data]="value || '*لا يوجد محتوى للمعاينة*'"></markdown>
+      </div>
+    </div>
+  </div>
+</div>

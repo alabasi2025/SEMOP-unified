@@ -1,0 +1,34 @@
+<div class="magic-notebook-container">
+  <div class="header">
+    <h1>📔 الدفتر السحري</h1>
+    <button class="btn-create" (click)="createNotebook()">
+      ➕ إنشاء دفتر جديد
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>جاري التحميل...</p>
+  </div>
+
+  <div class="notebooks-grid" *ngIf="!loading">
+    <div class="notebook-card" *ngFor="let notebook of notebooks">
+      <div class="card-header">
+        <h3>{{ notebook.title }}</h3>
+      </div>
+      <div class="card-body">
+        <p>تاريخ الإنشاء: {{ notebook.createdAt | date:'short' }}</p>
+        <p>بواسطة: {{ notebook.createdBy }}</p>
+      </div>
+      <div class="card-actions">
+        <button>عرض</button>
+        <button>تعديل</button>
+        <button>حذف</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="notebooks.length === 0">
+      <p>لا توجد دفاتر حالياً</p>
+      <p>ابدأ بإنشاء دفتر جديد!</p>
+    </div>
+  </div>
+</div>

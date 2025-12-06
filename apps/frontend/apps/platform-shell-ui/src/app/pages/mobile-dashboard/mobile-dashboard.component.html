@@ -1,0 +1,62 @@
+<div class="p-fluid p-p-2 mobile-dashboard-container">
+  <p-toast></p-toast>
+
+  <div class="p-text-center p-mb-4">
+    <h2 class="p-text-bold">لوحة التحكم المتجاوبة</h2>
+    <p class="p-text-secondary">ملخص سريع لحالة المخزون</p>
+  </div>
+
+  <p-card *ngIf="summary" class="p-mb-3">
+    <div class="p-grid p-nogutter p-justify-between p-align-center">
+      <div class="p-col-12 p-md-6 p-lg-3 p-mb-2">
+        <div class="p-d-flex p-flex-column p-align-center p-text-center">
+          <i class="pi pi-box p-text-4xl p-text-blue-500 p-mb-2"></i>
+          <span class="p-text-lg p-text-bold">{{ summary.totalItems | number }}</span>
+          <span class="p-text-sm p-text-secondary">إجمالي الأصناف</span>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-lg-3 p-mb-2">
+        <div class="p-d-flex p-flex-column p-align-center p-text-center">
+          <i class="pi pi-building p-text-4xl p-text-green-500 p-mb-2"></i>
+          <span class="p-text-lg p-text-bold">{{ summary.totalWarehouses | number }}</span>
+          <span class="p-text-sm p-text-secondary">إجمالي المخازن</span>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-lg-3 p-mb-2">
+        <div class="p-d-flex p-flex-column p-align-center p-text-center">
+          <i class="pi pi-exclamation-triangle p-text-4xl p-text-red-500 p-mb-2"></i>
+          <span class="p-text-lg p-text-bold">{{ summary.lowStockItems | number }}</span>
+          <span class="p-text-sm p-text-secondary">مخزون منخفض</span>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-lg-3 p-mb-2">
+        <div class="p-d-flex p-flex-column p-align-center p-text-center">
+          <i class="pi pi-clock p-text-4xl p-text-600 p-mb-2"></i>
+          <span class="p-text-sm p-text-secondary">آخر تحديث</span>
+          <span class="p-text-lg p-text-bold">{{ summary.lastUpdate | date:'short' }}</span>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card header="أحدث الأنشطة" class="p-mb-3">
+    <p-listbox [options]="activities" optionLabel="description" [loading]="loading" [style]="{'width':'100%'}">
+      <ng-template let-activity pTemplate="item">
+        <div class="p-d-flex p-jc-between p-ai-center">
+          <div class="p-d-flex p-flex-column">
+            <span class="p-text-bold">{{ activity.description }}</span>
+            <span class="p-text-sm p-text-secondary">{{ activity.date }}</span>
+          </div>
+          <p-tag [value]="activity.type" [severity]="getActivitySeverity(activity.type)"></p-tag>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="empty">
+        <div class="p-text-center p-text-secondary">لا توجد أنشطة حديثة.</div>
+      </ng-template>
+    </p-listbox>
+  </p-card>
+
+  <div class="p-text-center p-mt-4">
+    <p-button label="تحديث البيانات" icon="pi pi-refresh" (onClick)="loadDashboardData()" [loading]="loading"></p-button>
+  </div>
+</div>

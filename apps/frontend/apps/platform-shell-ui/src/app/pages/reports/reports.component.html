@@ -1,0 +1,120 @@
+<div class="p-grid p-fluid">
+  <p-toast></p-toast>
+
+  <div class="p-col-12">
+    <p-card header="وحدة التقارير">
+      <div class="p-formgrid p-grid">
+        <!-- اختيار نوع التقرير -->
+        <div class="p-col-12 p-md-4">
+          <label for="reportType">نوع التقرير</label>
+          <p-dropdown
+            [options]="[
+              { label: 'ملخص المخزون', value: 'inventory-summary' },
+              { label: 'المبيعات حسب الصنف', value: 'sales-by-item' },
+              { label: 'حركة المخزون', value: 'stock-movement' }
+            ]"
+            [(ngModel)]="selectedReport"
+            placeholder="اختر تقريراً"
+            optionLabel="label"
+            optionValue="value"
+          ></p-dropdown>
+        </div>
+
+        <!-- فلاتر التاريخ -->
+        <div class="p-col-12 p-md-4">
+          <label for="startDate">تاريخ البدء</label>
+          <p-calendar
+            [(ngModel)]="filter.startDate"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            placeholder="تاريخ البدء"
+          ></p-calendar>
+        </div>
+
+        <div class="p-col-12 p-md-4">
+          <label for="endDate">تاريخ الانتهاء</label>
+          <p-calendar
+            [(ngModel)]="filter.endDate"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            placeholder="تاريخ الانتهاء"
+          ></p-calendar>
+        </div>
+
+        <!-- فلاتر إضافية (الصنف والمستودع) -->
+        <div class="p-col-12 p-md-4">
+          <label for="itemId">رقم الصنف</label>
+          <input
+            id="itemId"
+            type="text"
+            pInputText
+            [(ngModel)]="filter.itemId"
+            placeholder="أدخل رقم الصنف"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-4">
+          <label for="warehouseId">رقم المستودع</label>
+          <input
+            id="warehouseId"
+            type="text"
+            pInputText
+            [(ngModel)]="filter.warehouseId"
+            placeholder="أدخل رقم المستودع"
+          />
+        </div>
+
+        <!-- زر توليد التقرير -->
+        <div class="p-col-12 p-md-4 p-d-flex p-jc-end p-ai-end">
+          <p-button
+            label="توليد التقرير"
+            icon="pi pi-file-excel"
+            (onClick)="generateReport()"
+            [loading]="loading"
+            styleClass="p-button-success"
+          ></p-button>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <div class="p-col-12">
+    <p-card header="نتائج التقرير">
+      <p-table
+        [value]="reportData"
+        [columns]="getReportColumns()"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} مدخل"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [loading]="loading"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-gridlines"
+        dir="rtl"
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+              {{ col.header }} <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              {{ rowData[col.field] }}
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="getReportColumns().length" class="p-text-center">
+              لا توجد بيانات لعرضها. يرجى توليد التقرير.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>

@@ -1,0 +1,218 @@
+<div class="sections-container">
+  <!-- Header -->
+  <div class="sections-header">
+    <button class="btn-back" (click)="goBack()">
+      <i class="icon-arrow-right"></i>
+      العودة
+    </button>
+    <h1 class="page-title">الأقسام</h1>
+    <button class="btn-primary" (click)="showCreate()">
+      <i class="icon-plus"></i>
+      قسم جديد
+    </button>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>جاري التحميل...</p>
+  </div>
+  
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="icon-alert"></i>
+    <p>{{ error }}</p>
+    <button class="btn-secondary" (click)="loadData()">إعادة المحاولة</button>
+  </div>
+  
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && sections.length === 0" class="empty-state">
+    <i class="icon-folder"></i>
+    <h3>لا توجد أقسام</h3>
+    <p>قم بإنشاء أقسام لتنظيم صفحاتك بشكل أفضل</p>
+    <button class="btn-primary" (click)="showCreate()">
+      <i class="icon-plus"></i>
+      إنشاء قسم
+    </button>
+  </div>
+  
+  <!-- Sections List -->
+  <div *ngIf="!loading && !error && sections.length > 0" class="sections-list">
+    <!-- Section Cards -->
+    <div *ngFor="let section of sections" 
+         class="section-card"
+         [style.border-color]="section.color"
+         draggable="true"
+         (dragstart)="onSectionDragStart(section)"
+         (dragend)="onSectionDragEnd()"
+         (dragover)="onSectionDragOver($event, section)"
+         (drop)="onSectionDrop($event, section)">
+      
+      <div class="section-header" [style.background]="section.color">
+        <div class="section-info">
+          <h3 class="section-title">{{ section.title }}</h3>
+          <p *ngIf="section.description" class="section-description">{{ section.description }}</p>
+        </div>
+        
+        <div class="section-actions">
+          <span class="pages-count">{{ getPagesInSection(section.id).length }} صفحة</span>
+          <button class="btn-icon-white" (click)="editSection(section)" title="تعديل">
+            <i class="icon-edit"></i>
+          </button>
+          <button class="btn-icon-white btn-danger" (click)="deleteSection(section)" title="حذف">
+            <i class="icon-delete"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="section-drop-zone"
+           [class.drag-over]="dragOverSectionId === section.id"
+           (dragover)="onSectionDropZoneOver($event, section.id)"
+           (dragleave)="onSectionDropZoneLeave()"
+           (drop)="onPageDropToSection($event, section.id)">
+        
+        <div *ngIf="getPagesInSection(section.id).length === 0" class="drop-zone-empty">
+          <i class="icon-drag"></i>
+          <p>اسحب الصفحات هنا</p>
+        </div>
+        
+        <div *ngIf="getPagesInSection(section.id).length > 0" class="pages-in-section">
+          <div *ngFor="let page of getPagesInSection(section.id)"
+               class="page-item"
+               draggable="true"
+               (dragstart)="onPageDragStart(page)"
+               (dragend)="onPageDragEnd()"
+               (click)="goToPage(page.id)">
+            <i class="icon-file"></i>
+            <span class="page-title">{{ page.title }}</span>
+            <span class="page-words">{{ page.wordCount || 0 }} كلمة</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Pages without Section -->
+    <div *ngIf="getPagesWithoutSection().length > 0" class="section-card no-section">
+      <div class="section-header">
+        <div class="section-info">
+          <h3 class="section-title">بدون قسم</h3>
+          <p class="section-description">صفحات غير مصنفة</p>
+        </div>
+        <span class="pages-count">{{ getPagesWithoutSection().length }} صفحة</span>
+      </div>
+      
+      <div class="pages-in-section">
+        <div *ngFor="let page of getPagesWithoutSection()"
+             class="page-item"
+             draggable="true"
+             (dragstart)="onPageDragStart(page)"
+             (dragend)="onPageDragEnd()"
+             (click)="goToPage(page.id)">
+          <i class="icon-file"></i>
+          <span class="page-title">{{ page.title }}</span>
+          <span class="page-words">{{ page.wordCount || 0 }} كلمة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Create Modal -->
+  <div *ngIf="showCreateForm" class="modal-overlay" (click)="cancelCreate()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>قسم جديد</h2>
+        <button class="btn-close" (click)="cancelCreate()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>العنوان *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="createForm.title"
+            class="form-input"
+            placeholder="عنوان القسم"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label>الوصف</label>
+          <textarea 
+            [(ngModel)]="createForm.description"
+            class="form-textarea"
+            rows="3"
+            placeholder="وصف القسم (اختياري)"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>اللون</label>
+          <div class="color-picker">
+            <div *ngFor="let color of availableColors"
+                 class="color-option"
+                 [class.selected]="createForm.color === color.value"
+                 [style.background]="color.value"
+                 (click)="createForm.color = color.value"
+                 [title]="color.name">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelCreate()">إلغاء</button>
+        <button class="btn-primary" (click)="createSection()">إنشاء</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Modal -->
+  <div *ngIf="editingSection" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>تعديل القسم</h2>
+        <button class="btn-close" (click)="cancelEdit()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>العنوان *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="editForm.title"
+            class="form-input"
+            placeholder="عنوان القسم"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label>الوصف</label>
+          <textarea 
+            [(ngModel)]="editForm.description"
+            class="form-textarea"
+            rows="3"
+            placeholder="وصف القسم (اختياري)"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>اللون</label>
+          <div class="color-picker">
+            <div *ngFor="let color of availableColors"
+                 class="color-option"
+                 [class.selected]="editForm.color === color.value"
+                 [style.background]="color.value"
+                 (click)="editForm.color = color.value"
+                 [title]="color.name">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelEdit()">إلغاء</button>
+        <button class="btn-primary" (click)="saveSection()">حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>

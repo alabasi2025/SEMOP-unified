@@ -1,0 +1,157 @@
+<div class="settings-panel">
+  <div class="settings-header">
+    <h3 class="settings-title">
+      <span class="title-icon">⚙️</span>
+      إعدادات الإشعارات
+    </h3>
+    <button class="close-btn" (click)="cancel()">✖</button>
+  </div>
+
+  <div class="settings-body">
+    <!-- Sound Settings -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">🔊</span>
+        الصوت
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label">
+          <input
+            type="checkbox"
+            class="setting-checkbox"
+            [(ngModel)]="settings.soundEnabled">
+          <span>تفعيل الصوت</span>
+        </label>
+      </div>
+
+      <div class="setting-item" *ngIf="settings.soundEnabled">
+        <label class="setting-label-block">
+          <span>مستوى الصوت: {{ getVolumePercentage() }}</span>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="100"
+            [(ngModel)]="settings.soundVolume">
+        </label>
+      </div>
+    </div>
+
+    <!-- Desktop Notifications -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">🖥️</span>
+        إشعارات سطح المكتب
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label">
+          <input
+            type="checkbox"
+            class="setting-checkbox"
+            [(ngModel)]="settings.desktopNotifications">
+          <span>تفعيل إشعارات سطح المكتب</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Auto Refresh -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">🔄</span>
+        التحديث التلقائي
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label-block">
+          <span>فترة التحديث</span>
+          <select
+            class="setting-select"
+            [(ngModel)]="settings.autoRefreshInterval">
+            <option *ngFor="let option of autoRefreshOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- View Mode -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">📋</span>
+        وضع العرض الافتراضي
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label-block">
+          <span>وضع العرض</span>
+          <select
+            class="setting-select"
+            [(ngModel)]="settings.defaultViewMode">
+            <option *ngFor="let option of viewModeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- Items Per Page -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">📄</span>
+        عدد العناصر في الصفحة
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label-block">
+          <span>العناصر لكل صفحة</span>
+          <select
+            class="setting-select"
+            [(ngModel)]="settings.itemsPerPage">
+            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+              {{ option }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- Retention -->
+    <div class="setting-section">
+      <h4 class="section-title">
+        <span class="section-icon">🗑️</span>
+        الاحتفاظ بالإشعارات
+      </h4>
+      
+      <div class="setting-item">
+        <label class="setting-label-block">
+          <span>مدة الاحتفاظ</span>
+          <select
+            class="setting-select"
+            [(ngModel)]="settings.retentionDays">
+            <option *ngFor="let option of retentionOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-footer">
+    <button class="reset-btn" (click)="resetToDefaults()">
+      <span class="btn-icon">↺</span>
+      إعادة تعيين
+    </button>
+    <div class="action-buttons">
+      <button class="cancel-btn" (click)="cancel()">إلغاء</button>
+      <button class="save-btn" (click)="saveSettings()">
+        <span class="btn-icon">💾</span>
+        حفظ
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="filter-panel">
+  <div class="filter-header">
+    <h3 class="filter-title">
+      <span class="filter-icon">🔍</span>
+      تصفية الإشعارات
+    </h3>
+    <button 
+      *ngIf="getActiveFiltersCount() > 0"
+      class="clear-btn"
+      (click)="clearFilters()">
+      <span class="clear-icon">✖</span>
+      مسح الكل
+      <span class="filter-count">({{ getActiveFiltersCount() }})</span>
+    </button>
+  </div>
+
+  <div class="filter-body">
+    <!-- Type Filter -->
+    <div class="filter-section">
+      <label class="filter-label">النوع</label>
+      <div class="type-buttons">
+        <button
+          *ngFor="let type of notificationTypes"
+          class="type-btn"
+          [class.active]="isTypeSelected(type)"
+          (click)="toggleType(type)">
+          <span class="type-icon">{{ getTypeIcon(type) }}</span>
+          <span class="type-label">{{ getTypeLabel(type) }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Filter -->
+    <div class="filter-section">
+      <label class="filter-label">الحالة</label>
+      <select 
+        class="filter-select"
+        [(ngModel)]="selectedStatus"
+        (change)="onStatusChange()">
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="filter-section">
+      <label class="filter-label">الفترة الزمنية</label>
+      <select 
+        class="filter-select"
+        [(ngModel)]="selectedDateRange"
+        (change)="onDateRangeChange()">
+        <option *ngFor="let option of dateRangeOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      
+      <!-- Custom Date Range -->
+      <div *ngIf="selectedDateRange === 'custom'" class="custom-date-range">
+        <input 
+          type="date" 
+          class="date-input"
+          [(ngModel)]="customDateFrom"
+          (change)="onDateRangeChange()"
+          placeholder="من تاريخ">
+        <span class="date-separator">-</span>
+        <input 
+          type="date" 
+          class="date-input"
+          [(ngModel)]="customDateTo"
+          (change)="onDateRangeChange()"
+          placeholder="إلى تاريخ">
+      </div>
+    </div>
+
+    <!-- Priority Filter -->
+    <div class="filter-section">
+      <label class="filter-label">الأولوية</label>
+      <select 
+        class="filter-select"
+        [(ngModel)]="selectedPriority"
+        (change)="onPriorityChange()">
+        <option *ngFor="let option of priorityOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>

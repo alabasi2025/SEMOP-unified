@@ -1,0 +1,49 @@
+<div class="notifications-page">
+  <!-- Settings Panel (Modal) -->
+  <div class="settings-modal" *ngIf="showSettings">
+    <div class="modal-overlay" (click)="onSettingsClose()"></div>
+    <div class="modal-content">
+      <app-notification-settings-panel
+        (settingsSave)="onSettingsSave($event)"
+        (settingsClose)="onSettingsClose()">
+      </app-notification-settings-panel>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <app-notification-header
+    [statistics]="statistics"
+    [viewMode]="viewMode"
+    [sortBy]="sortBy"
+    (searchChange)="onSearchChange($event)"
+    (viewModeChange)="onViewModeChange($event)"
+    (sortChange)="onSortChange($event)"
+    (refresh)="onRefresh()"
+    (openSettings)="onOpenSettings()">
+  </app-notification-header>
+
+  <!-- Filter Panel -->
+  <app-notification-filter-panel
+    (filterChange)="onFilterChange($event)">
+  </app-notification-filter-panel>
+
+  <!-- Notifications List -->
+  <app-notification-list
+    [notifications]="paginatedNotifications"
+    [loading]="loading"
+    [viewMode]="viewMode"
+    (notificationRead)="onNotificationRead($event)"
+    (notificationDelete)="onNotificationDelete($event)"
+    (bulkMarkAsRead)="onBulkMarkAsRead($event)"
+    (bulkDelete)="onBulkDelete($event)">
+  </app-notification-list>
+
+  <!-- Pagination -->
+  <app-notification-pagination
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+    (itemsPerPageChange)="onItemsPerPageChange($event)">
+  </app-notification-pagination>
+</div>

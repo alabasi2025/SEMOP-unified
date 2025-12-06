@@ -1,0 +1,19 @@
+<div class="rich-text-editor-container" [style.height]="height">
+  <quill-editor
+    [(ngModel)]="content"
+    [modules]="quillModules"
+    [formats]="quillFormats"
+    [placeholder]="placeholder"
+    [readOnly]="readOnly"
+    (onEditorCreated)="onEditorCreated($event)"
+    (onContentChanged)="onContentChanged($event)"
+    class="quill-editor-rtl"
+  ></quill-editor>
+  
+  <div class="editor-footer" *ngIf="!readOnly">
+    <div class="word-count">
+      <i class="pi pi-file"></i>
+      <span>عدد الكلمات: {{ getWordCount() }}</span>
+    </div>
+  </div>
+</div>

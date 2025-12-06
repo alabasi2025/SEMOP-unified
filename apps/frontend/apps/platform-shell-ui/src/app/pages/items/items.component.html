@@ -1,0 +1,168 @@
+<div class="items-page">
+  <p-toast position="top-center"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="page-header">
+    <h2>الأصناف</h2>
+    <div class="header-actions">
+      <button pButton label="أصناف منخفضة المخزون" icon="pi pi-exclamation-triangle" 
+              class="p-button-warning" (click)="showLowStock()"></button>
+      <button pButton label="صنف جديد" icon="pi pi-plus" (click)="openNew()"></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p-table 
+      #itemsTable
+      [value]="items" 
+      [paginator]="true" 
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} صنف"
+      [globalFilterFields]="['code', 'nameAr', 'categoryName', 'barcode']"
+      styleClass="p-datatable-gridlines">
+      
+      <ng-template pTemplate="caption">
+        <div class="table-header">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input 
+              pInputText 
+              type="text" 
+              #searchInput
+              (input)="itemsTable.filterGlobal(searchInput.value, 'contains')" 
+              placeholder="بحث..." />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="code">الرمز <p-sortIcon field="code"></p-sortIcon></th>
+          <th pSortableColumn="nameAr">اسم الصنف <p-sortIcon field="nameAr"></p-sortIcon></th>
+          <th pSortableColumn="categoryName">التصنيف <p-sortIcon field="categoryName"></p-sortIcon></th>
+          <th pSortableColumn="unitName">الوحدة <p-sortIcon field="unitName"></p-sortIcon></th>
+          <th pSortableColumn="barcode">الباركود <p-sortIcon field="barcode"></p-sortIcon></th>
+          <th pSortableColumn="costPrice">سعر التكلفة <p-sortIcon field="costPrice"></p-sortIcon></th>
+          <th pSortableColumn="sellingPrice">سعر البيع <p-sortIcon field="sellingPrice"></p-sortIcon></th>
+          <th pSortableColumn="isActive">نشط <p-sortIcon field="isActive"></p-sortIcon></th>
+          <th>الإجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.code }}</td>
+          <td>{{ item.nameAr }}</td>
+          <td>{{ item.categoryName || '-' }}</td>
+          <td>{{ item.unitName || '-' }}</td>
+          <td>{{ item.barcode || '-' }}</td>
+          <td>{{ item.costPrice | number:'1.2-2' }}</td>
+          <td>{{ item.sellingPrice | number:'1.2-2' }}</td>
+          <td>
+            <span [class]="'status-badge ' + (item.isActive ? 'status-active' : 'status-inactive')">
+              {{ item.isActive ? 'نشط' : 'غير نشط' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info"
+                      (click)="viewItem(item)" pTooltip="عرض"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning"
+                      (click)="editItem(item)" pTooltip="تعديل"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
+                      (click)="deleteItem(item)" pTooltip="حذف"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="text-center">لا توجد أصناف</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog للإضافة/التعديل -->
+  <p-dialog [(visible)]="itemDialog" [header]="dialogTitle" [modal]="true" 
+            [style]="{width: '700px'}" [draggable]="false" [resizable]="false">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="code">رمز الصنف *</label>
+        <input pInputText id="code" [(ngModel)]="item.code" required placeholder="مثال: ITEM-001" />
+      </div>
+
+      <div class="form-field">
+        <label for="nameAr">الاسم بالعربية *</label>
+        <input pInputText id="nameAr" [(ngModel)]="item.nameAr" required placeholder="مثال: لابتوب ديل" />
+      </div>
+
+      <div class="form-field">
+        <label for="nameEn">الاسم بالإنجليزية</label>
+        <input pInputText id="nameEn" [(ngModel)]="item.nameEn" placeholder="Example: Dell Laptop" />
+      </div>
+
+      <div class="form-field full-width">
+        <label for="description">الوصف</label>
+        <textarea pInputTextarea id="description" [(ngModel)]="item.description" rows="3"></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="categoryName">التصنيف</label>
+        <input pInputText id="categoryName" [(ngModel)]="item.categoryName" placeholder="مثال: أجهزة إلكترونية" />
+      </div>
+
+      <div class="form-field">
+        <label for="unitName">الوحدة</label>
+        <input pInputText id="unitName" [(ngModel)]="item.unitName" placeholder="مثال: قطعة" />
+      </div>
+
+      <div class="form-field">
+        <label for="barcode">الباركود</label>
+        <input pInputText id="barcode" [(ngModel)]="item.barcode" placeholder="مثال: 123456789" />
+      </div>
+
+      <div class="form-field">
+        <label for="sku">SKU</label>
+        <input pInputText id="sku" [(ngModel)]="item.sku" placeholder="مثال: SKU-001" />
+      </div>
+
+      <div class="form-field">
+        <label for="minStock">الحد الأدنى للمخزون</label>
+        <p-inputNumber id="minStock" [(ngModel)]="item.minStock" [min]="0"></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="maxStock">الحد الأقصى للمخزون</label>
+        <p-inputNumber id="maxStock" [(ngModel)]="item.maxStock" [min]="0"></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="reorderPoint">نقطة إعادة الطلب</label>
+        <p-inputNumber id="reorderPoint" [(ngModel)]="item.reorderPoint" [min]="0"></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="costPrice">سعر التكلفة</label>
+        <p-inputNumber id="costPrice" [(ngModel)]="item.costPrice" mode="currency" currency="YER" locale="ar-YE"></p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="sellingPrice">سعر البيع</label>
+        <p-inputNumber id="sellingPrice" [(ngModel)]="item.sellingPrice" mode="currency" currency="YER" locale="ar-YE"></p-inputNumber>
+      </div>
+
+      <div class="form-field checkbox-field">
+        <p-checkbox [(ngModel)]="item.isActive" [binary]="true" inputId="isActive"></p-checkbox>
+        <label for="isActive">صنف نشط</label>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+      <button pButton label="حفظ" icon="pi pi-check" (click)="saveItem()" [disabled]="!isValid()"></button>
+    </ng-template>
+  </p-dialog>
+</div>

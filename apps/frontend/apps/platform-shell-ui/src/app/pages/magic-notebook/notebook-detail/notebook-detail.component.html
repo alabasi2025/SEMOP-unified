@@ -1,0 +1,253 @@
+<div class="notebook-detail-container" *ngIf="!loading && notebook">
+  <!-- Header -->
+  <div class="notebook-header">
+    <div class="header-content">
+      <div class="notebook-icon" [style.background-color]="notebook.color">
+        {{ notebook.icon }}
+      </div>
+      <div class="notebook-info">
+        <h1 *ngIf="!editMode" class="notebook-title">{{ notebook.title }}</h1>
+        <input 
+          *ngIf="editMode" 
+          type="text" 
+          [(ngModel)]="editForm.title" 
+          class="edit-title-input"
+          placeholder="عنوان الدفتر"
+        />
+        
+        <p *ngIf="!editMode && notebook.description" class="notebook-description">
+          {{ notebook.description }}
+        </p>
+        <textarea 
+          *ngIf="editMode" 
+          [(ngModel)]="editForm.description" 
+          class="edit-description-input"
+          placeholder="وصف الدفتر (اختياري)"
+          rows="2"
+        ></textarea>
+        
+        <div class="notebook-meta">
+          <span class="meta-item">
+            <i class="icon-user"></i>
+            {{ notebook.user?.username || notebook.createdBy }}
+          </span>
+          <span class="meta-item">
+            <i class="icon-clock"></i>
+            آخر تحديث: {{ lastUpdated ? getRelativeTime(lastUpdated) : 'غير معروف' }}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button 
+        *ngIf="!editMode" 
+        class="btn btn-primary" 
+        (click)="toggleEditMode()"
+      >
+        <i class="icon-edit"></i>
+        تعديل
+      </button>
+      <button 
+        *ngIf="editMode" 
+        class="btn btn-success" 
+        (click)="saveNotebook()"
+        [disabled]="loading"
+      >
+        <i class="icon-save"></i>
+        حفظ
+      </button>
+      <button 
+        *ngIf="editMode" 
+        class="btn btn-secondary" 
+        (click)="toggleEditMode()"
+      >
+        <i class="icon-x"></i>
+        إلغاء
+      </button>
+      <!-- Export/Import Buttons -->
+      <div *ngIf="!editMode" class="export-import-group">
+        <button class="btn btn-info" (click)="exportAsJSON()" title="تصدير JSON">
+          <i class="icon-download"></i>
+          JSON
+        </button>
+        <button class="btn btn-info" (click)="exportAsPDF()" title="تصدير PDF">
+          <i class="icon-file"></i>
+          PDF
+        </button>
+        <label class="btn btn-success" title="استيراد JSON">
+          <i class="icon-upload"></i>
+          استيراد
+          <input type="file" accept=".json" (change)="importFromJSON($event)" style="display: none;" />
+        </label>
+      </div>
+      
+      <button 
+        *ngIf="!editMode" 
+        class="btn btn-danger" 
+        (click)="deleteNotebook()"
+      >
+        <i class="icon-trash"></i>
+        حذف
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics -->
+  <div class="statistics-section">
+    <div class="stat-card">
+      <div class="stat-icon">📄</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalPages }}</div>
+        <div class="stat-label">صفحة</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📝</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ totalWords }}</div>
+        <div class="stat-label">كلمة</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📁</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ sections.length }}</div>
+        <div class="stat-label">قسم</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Tabs -->
+  <div class="content-tabs">
+    <div class="tabs-header">
+      <button class="tab-btn active">
+        <i class="icon-file-text"></i>
+        الصفحات
+      </button>
+      <button class="tab-btn">
+        <i class="icon-folder"></i>
+        الأقسام
+      </button>
+    </div>
+
+    <!-- Pages Section -->
+    <div class="tab-content">
+      <div class="section-header">
+        <h2>الصفحات</h2>
+        <button class="btn btn-primary btn-sm" (click)="createPage()">
+          <i class="icon-plus"></i>
+          صفحة جديدة
+        </button>
+      </div>
+
+      <div class="pages-grid" *ngIf="pages.length > 0">
+        <div 
+          *ngFor="let page of pages" 
+          class="page-card"
+          (click)="goToPage(page.id)"
+        >
+          <div class="page-card-header">
+            <h3 class="page-title">{{ page.title }}</h3>
+            <button 
+              class="btn-icon btn-danger-icon" 
+              (click)="deletePage(page, $event)"
+              title="حذف"
+            >
+              <i class="icon-trash"></i>
+            </button>
+          </div>
+          <div class="page-card-content">
+            <p class="page-preview">{{ page.content.substring(0, 100) }}...</p>
+          </div>
+          <div class="page-card-footer">
+            <span class="page-meta">
+              <i class="icon-type"></i>
+              {{ page.wordCount || 0 }} كلمة
+            </span>
+            <span class="page-meta">
+              <i class="icon-clock"></i>
+              {{ getRelativeTime(page.updatedAt) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="pages.length === 0">
+        <div class="empty-icon">📄</div>
+        <h3>لا توجد صفحات بعد</h3>
+        <p>ابدأ بإنشاء صفحة جديدة لتدوين أفكارك وملاحظاتك</p>
+        <button class="btn btn-primary" (click)="createPage()">
+          <i class="icon-plus"></i>
+          إنشاء أول صفحة
+        </button>
+      </div>
+    </div>
+
+    <!-- Sections Section -->
+    <div class="tab-content" style="display: none;">
+      <div class="section-header">
+        <h2>الأقسام</h2>
+        <button class="btn btn-primary btn-sm" (click)="createSection()">
+          <i class="icon-plus"></i>
+          قسم جديد
+        </button>
+      </div>
+
+      <div class="sections-list" *ngIf="sections.length > 0">
+        <div *ngFor="let section of sections" class="section-item">
+          <div class="section-icon">📁</div>
+          <div class="section-info">
+            <h4>{{ section.title }}</h4>
+            <span class="section-meta">{{ section.createdAt | date:'short' }}</span>
+          </div>
+          <button 
+            class="btn-icon btn-danger-icon" 
+            (click)="deleteSection(section, $event)"
+            title="حذف"
+          >
+            <i class="icon-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="sections.length === 0">
+        <div class="empty-icon">📁</div>
+        <h3>لا توجد أقسام بعد</h3>
+        <p>نظم صفحاتك بإنشاء أقسام</p>
+        <button class="btn btn-primary" (click)="createSection()">
+          <i class="icon-plus"></i>
+          إنشاء أول قسم
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Version Badge -->
+<app-version-badge
+  componentName="Notebook Detail"
+  status="complete"
+  [progress]="100"
+  lastUpdate="2024-11-28"
+  commitHash="d86ec20"
+></app-version-badge>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>جاري التحميل...</p>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="error && !loading">
+  <div class="error-icon">⚠️</div>
+  <h3>حدث خطأ</h3>
+  <p>{{ error }}</p>
+  <button class="btn btn-primary" (click)="loadNotebook(notebook?.id || '')">
+    <i class="icon-refresh"></i>
+    إعادة المحاولة
+  </button>
+</div>

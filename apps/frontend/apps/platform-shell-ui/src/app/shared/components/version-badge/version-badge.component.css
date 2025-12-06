@@ -1,0 +1,354 @@
+/* Version Badge Wrapper */
+.version-badge-wrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  direction: rtl;
+}
+
+/* Version Badge */
+.version-badge {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  max-width: 350px;
+}
+
+.version-badge:hover {
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+.badge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  user-select: none;
+}
+
+.badge-version {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.version-icon {
+  font-size: 18px;
+}
+
+.version-text {
+  font-family: 'Courier New', monospace;
+}
+
+.badge-toggle {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.badge-toggle.rotated {
+  transform: rotate(180deg);
+}
+
+.badge-toggle:hover {
+  opacity: 0.8;
+}
+
+/* Body */
+.badge-body {
+  padding: 16px;
+  background: white;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge Row */
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.badge-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.badge-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.badge-label {
+  color: #718096;
+  font-weight: 500;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.badge-value {
+  color: #2d3748;
+  font-weight: 600;
+  flex: 1;
+}
+
+.commit-hash {
+  font-family: 'Courier New', monospace;
+  background: #f7fafc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+/* Progress Bar */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a5568;
+  min-width: 35px;
+  text-align: left;
+}
+
+/* Actions */
+.badge-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.badge-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  background: white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a5568;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.badge-btn:hover {
+  background: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.badge-btn-danger {
+  color: #e53e3e;
+  border-color: #fc8181;
+}
+
+.badge-btn-danger:hover {
+  background: #fff5f5;
+  border-color: #e53e3e;
+}
+
+/* Show Button (عند الإخفاء) */
+.show-badge-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+.show-badge-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Development Mode Indicator */
+.dev-mode-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(237, 137, 54, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9998;
+  animation: fadeIn 0.5s ease;
+}
+
+.dev-icon {
+  font-size: 14px;
+}
+
+.dev-text {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .version-badge-wrapper {
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  .version-badge {
+    min-width: 180px;
+    max-width: 280px;
+  }
+  
+  .badge-header {
+    padding: 10px 12px;
+  }
+  
+  .badge-body {
+    padding: 12px;
+  }
+  
+  .badge-row {
+    font-size: 12px;
+  }
+  
+  .show-badge-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
+  .dev-mode-indicator {
+    top: 5px;
+    right: 5px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .version-badge {
+    background: rgba(26, 32, 44, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .badge-body {
+    background: #1a202c;
+  }
+  
+  .badge-label {
+    color: #a0aec0;
+  }
+  
+  .badge-value {
+    color: #e2e8f0;
+  }
+  
+  .commit-hash {
+    background: #2d3748;
+  }
+  
+  .progress-bar {
+    background: #2d3748;
+  }
+  
+  .badge-btn {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .badge-btn:hover {
+    background: #4a5568;
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@semop/contracts",
+  "version": "0.2.2",
+  "description": "مستودع العقود المشترك بين الواجهة الأمامية والخلفية لمنصة SEMOP",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "contracts",
+    "dto",
+    "validation",
+    "semop"
+  ],
+  "author": "SEMOP Development Team",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "zod": "^3.22.4"
+  }
+}

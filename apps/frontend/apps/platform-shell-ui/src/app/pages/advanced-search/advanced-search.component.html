@@ -1,0 +1,136 @@
+<!-- /root/task_outputs/Task2_Advanced_Search_Filters/frontend/advanced-search.component.html -->
+<div class="p-grid p-fluid">
+  <div class="p-col-12">
+    <p-card header="البحث المتقدم عن الأصناف" [style]="{'text-align': 'right'}">
+      <div class="p-grid p-formgrid">
+
+        <!-- البحث العام -->
+        <div class="p-col-12 p-md-6 p-lg-3">
+          <label for="searchTerm">مصطلح البحث (الاسم/الكود)</label>
+          <input id="searchTerm" type="text" pInputText [(ngModel)]="filter.searchTerm" (keyup.enter)="performSearch()">
+        </div>
+
+        <!-- فلتر الفئة -->
+        <div class="p-col-12 p-md-6 p-lg-3">
+          <label for="category">الفئة</label>
+          <p-multiSelect [options]="categories" [(ngModel)]="filter.category" optionLabel="label"
+            placeholder="اختر الفئات" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
+            (onChange)="performSearch()">
+          </p-multiSelect>
+        </div>
+
+        <!-- فلتر الحالة -->
+        <div class="p-col-12 p-md-6 p-lg-3">
+          <label for="status">الحالة</label>
+          <p-multiSelect [options]="statuses" [(ngModel)]="filter.status" optionLabel="label"
+            placeholder="اختر الحالات" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
+            (onChange)="performSearch()">
+          </p-multiSelect>
+        </div>
+
+        <!-- أزرار البحث وإعادة التعيين -->
+        <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-jc-end p-ai-end">
+          <p-button label="بحث" icon="pi pi-search" (onClick)="performSearch()" [loading]="loading"
+            styleClass="p-button-success p-mr-2"></p-button>
+          <p-button label="إعادة تعيين" icon="pi pi-refresh" (onClick)="resetFilters()"
+            styleClass="p-button-secondary"></p-button>
+        </div>
+
+        <!-- فلاتر الكمية والسعر (قابلة للطي) -->
+        <p-accordion class="p-col-12 p-mt-2">
+          <p-accordionTab header="فلاتر إضافية (الكمية والسعر)">
+            <div class="p-grid p-formgrid">
+              <!-- الحد الأدنى للكمية -->
+              <div class="p-col-12 p-md-6 p-lg-3">
+                <label for="minQuantity">الحد الأدنى للكمية</label>
+                <p-inputNumber id="minQuantity" [(ngModel)]="filter.minQuantity" mode="decimal" [min]="0"
+                  (onBlur)="performSearch()">
+                </p-inputNumber>
+              </div>
+
+              <!-- الحد الأقصى للكمية -->
+              <div class="p-col-12 p-md-6 p-lg-3">
+                <label for="maxQuantity">الحد الأقصى للكمية</label>
+                <p-inputNumber id="maxQuantity" [(ngModel)]="filter.maxQuantity" mode="decimal" [min]="0"
+                  (onBlur)="performSearch()">
+                </p-inputNumber>
+              </div>
+
+              <!-- الحد الأدنى للسعر -->
+              <div class="p-col-12 p-md-6 p-lg-3">
+                <label for="minPrice">الحد الأدنى للسعر</label>
+                <p-inputNumber id="minPrice" [(ngModel)]="filter.minPrice" mode="currency" currency="SAR" locale="ar-SA"
+                  (onBlur)="performSearch()">
+                </p-inputNumber>
+              </div>
+
+              <!-- الحد الأقصى للسعر -->
+              <div class="p-col-12 p-md-6 p-lg-3">
+                <label for="maxPrice">الحد الأقصى للسعر</label>
+                <p-inputNumber id="maxPrice" [(ngModel)]="filter.maxPrice" mode="currency" currency="SAR" locale="ar-SA"
+                  (onBlur)="performSearch()">
+                </p-inputNumber>
+              </div>
+            </div>
+          </p-accordionTab>
+        </p-accordion>
+
+      </div>
+    </p-card>
+  </div>
+
+  <!-- جدول عرض النتائج -->
+  <div class="p-col-12 p-mt-3">
+    <p-table [value]="items" [paginator]="true" [rows]="filter.pageSize" [loading]="loading" [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)" [totalRecords]="100" [style]="{'text-align': 'right'}"
+      paginatorPosition="bottom" [rowsPerPageOptions]="[10, 25, 50]"
+      currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} سجل" [showCurrentPageReport]="true">
+      <ng-template pTemplate="caption">
+        قائمة الأصناف المفلترة
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">المعرف <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="nameAr">اسم الصنف <p-sortIcon field="nameAr"></p-sortIcon></th>
+          <th pSortableColumn="code">الكود <p-sortIcon field="code"></p-sortIcon></th>
+          <th pSortableColumn="category">الفئة <p-sortIcon field="category"></p-sortIcon></th>
+          <th pSortableColumn="currentQuantity">الكمية الحالية <p-sortIcon field="currentQuantity"></p-sortIcon></th>
+          <th pSortableColumn="unitPrice">سعر الوحدة <p-sortIcon field="unitPrice"></p-sortIcon></th>
+          <th pSortableColumn="status">الحالة <p-sortIcon field="status"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.nameAr }}</td>
+          <td>{{ item.code }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.currentQuantity }}</td>
+          <td>{{ item.unitPrice | currency:'SAR':'symbol':'1.2-2':'ar-SA' }}</td>
+          <td>
+            <p-tag [value]="item.status" [severity]="item.status === 'نشط' ? 'success' : (item.status === 'نفد' ? 'danger' : 'warning')"></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="p-text-center">لا توجد أصناف مطابقة لمعايير البحث.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- ملاحظة: يجب استيراد وحدات PrimeNG التالية في AppModule:
+- CardModule
+- InputTextModule
+- MultiSelectModule
+- ButtonModule
+- InputNumberModule
+- AccordionModule
+- TableModule
+- TagModule
+- HttpClientModule (في AppModule)
+- FormsModule (في AppModule)
+- BrowserAnimationsModule (في AppModule)
+-->

@@ -1,0 +1,57 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-10 p-lg-8">
+    <p-card header="نظام الإشعارات" [style]="{ 'margin-top': '20px' }">
+      <p-toast></p-toast>
+
+      <div class="p-d-flex p-jc-between p-ai-center p-mb-3">
+        <span class="p-text-bold">لديك <p-badge [value]="unreadCount" severity="warning"></p-badge> إشعار غير مقروء</span>
+        <button pButton type="button" label="تعليم الكل كمقروء" icon="pi pi-check-circle" (click)="markAllAsRead()"
+          [disabled]="unreadCount === 0" class="p-button-sm p-button-secondary"></button>
+      </div>
+
+      <p-divider></p-divider>
+
+      <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" styleClass="p-d-block p-mx-auto">
+      </p-progressSpinner>
+
+      <p-listbox [options]="notifications" optionLabel="title" [listStyle]="{'max-height':'400px'}" *ngIf="!loading">
+        <ng-template let-notification pTemplate="item">
+          <div class="p-d-flex p-jc-between p-ai-center" [ngClass]="{'notification-read': notification.isRead, 'notification-unread': !notification.isRead}">
+            <div class="p-d-flex p-flex-column">
+              <div class="p-text-bold p-mb-1">
+                <p-tag [value]="notification.type | translateNotificationType" [severity]="getSeverity(notification.type)"
+                  class="p-mr-2"></p-tag>
+                {{ notification.title }}
+              </div>
+              <div class="p-text-wrap p-text-secondary">{{ notification.message }}</div>
+              <small class="p-text-muted">{{ notification.createdAt | date:'short' }}</small>
+            </div>
+            <div class="p-d-flex p-ai-center">
+              <button pButton type="button" icon="pi pi-eye" (click)="markAsRead(notification)"
+                [disabled]="notification.isRead" class="p-button-rounded p-button-text p-button-sm"
+                pTooltip="تعليم كمقروء"></button>
+            </div>
+          </div>
+        </ng-template>
+      </p-listbox>
+
+      <div *ngIf="notifications.length === 0 && !loading" class="p-text-center p-py-5">
+        <i class="pi pi-bell p-text-secondary p-text-4xl p-mb-3"></i>
+        <p class="p-text-secondary">لا توجد إشعارات حالياً.</p>
+      </div>
+
+    </p-card>
+  </div>
+</div>
+
+<style>
+  .notification-unread {
+    background-color: var(--surface-hover);
+    border-right: 5px solid var(--primary-color);
+    padding-right: 10px;
+  }
+
+  .notification-read {
+    opacity: 0.7;
+  }
+</style>

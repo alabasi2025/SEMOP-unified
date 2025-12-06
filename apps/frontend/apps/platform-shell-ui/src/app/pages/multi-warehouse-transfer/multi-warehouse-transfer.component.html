@@ -1,0 +1,109 @@
+<div class="p-grid p-fluid">
+  <div class="p-col-12">
+    <p-card header="إدارة عمليات النقل بين المخازن">
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="طلب نقل جديد" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="showNewTransferDialog()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table [value]="transfers" [paginator]="true" [rows]="10" [rowHover]="true" dataKey="id" styleClass="p-datatable-gridlines">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">المعرف <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="transferDate">تاريخ النقل <p-sortIcon field="transferDate"></p-sortIcon></th>
+            <th pSortableColumn="sourceWarehouseId">المخزن المصدر <p-sortIcon field="sourceWarehouseId"></p-sortIcon></th>
+            <th pSortableColumn="destinationWarehouseId">المخزن الوجهة <p-sortIcon field="destinationWarehouseId"></p-sortIcon></th>
+            <th pSortableColumn="status">الحالة <p-sortIcon field="status"></p-sortIcon></th>
+            <th>الإجراءات</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-transfer>
+          <tr>
+            <td>{{ transfer.id }}</td>
+            <td>{{ transfer.transferDate | date: 'yyyy/MM/dd' }}</td>
+            <td>{{ getWarehouseName(transfer.sourceWarehouseId) }}</td>
+            <td>{{ getWarehouseName(transfer.destinationWarehouseId) }}</td>
+            <td>
+              <p-tag [value]="transfer.status === 'Completed' ? 'مكتمل' : transfer.status === 'Pending' ? 'معلق' : 'ملغي'"
+                     [severity]="transfer.status === 'Completed' ? 'success' : transfer.status === 'Pending' ? 'warning' : 'danger'"></p-tag>
+            </td>
+            <td>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-info p-mr-2" (click)="showEditTransferDialog(transfer)" [disabled]="transfer.status !== 'Pending'" pTooltip="تعديل"></button>
+              <button pButton pRipple icon="pi pi-check" class="p-button-rounded p-button-success p-mr-2" (click)="completeTransfer(transfer.id)" [disabled]="transfer.status !== 'Pending'" pTooltip="اعتماد"></button>
+              <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-warning p-mr-2" (click)="cancelTransfer(transfer.id)" [disabled]="transfer.status !== 'Pending'" pTooltip="إلغاء"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteTransfer(transfer.id)" [disabled]="transfer.status !== 'Pending'" pTooltip="حذف"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="empty">
+          <tr>
+            <td colspan="6">لا توجد طلبات نقل مسجلة.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>
+
+<p-dialog [(visible)]="displayDialog" [style]="{width: '600px'}" header="{{ isEditMode ? 'تعديل طلب النقل' : 'طلب نقل جديد' }}" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <label for="transferDate">تاريخ النقل</label>
+      <input id="transferDate" type="date" pInputText [(ngModel)]="newTransfer.transferDate" required autofocus>
+    </div>
+
+    <div class="p-field">
+      <label for="sourceWarehouse">المخزن المصدر</label>
+      <p-dropdown id="sourceWarehouse" [options]="warehouses" [(ngModel)]="newTransfer.sourceWarehouseId" optionLabel="name" optionValue="id" placeholder="اختر المخزن المصدر" [filter]="true" required></p-dropdown>
+    </div>
+
+    <div class="p-field">
+      <label for="destinationWarehouse">المخزن الوجهة</label>
+      <p-dropdown id="destinationWarehouse" [options]="warehouses" [(ngModel)]="newTransfer.destinationWarehouseId" optionLabel="name" optionValue="id" placeholder="اختر المخزن الوجهة" [filter]="true" required></p-dropdown>
+    </div>
+
+    <p-divider align="left">
+      <div class="p-d-inline-flex p-ai-center">
+        <i class="pi pi-list p-mr-2"></i>
+        <b>أصناف النقل</b>
+      </div>
+    </p-divider>
+
+    <div *ngFor="let item of newTransfer.items; let i = index" class="p-grid p-formgrid p-mb-3 p-nogutter p-align-center" style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+      <div class="p-col-5">
+        <label for="item-{{i}}">الصنف</label>
+        <p-dropdown id="item-{{i}}" [options]="items" [(ngModel)]="item.itemId" optionLabel="name" optionValue="id" placeholder="اختر الصنف" [filter]="true" required></p-dropdown>
+      </div>
+      <div class="p-col-3 p-ml-2">
+        <label for="quantity-{{i}}">الكمية ({{ getItemUnit(item.itemId) }})</label>
+        <input id="quantity-{{i}}" type="number" pInputText [(ngModel)]="item.quantity" required min="1">
+      </div>
+      <div class="p-col-3 p-ml-2">
+        <label for="notes-{{i}}">ملاحظات</label>
+        <input id="notes-{{i}}" type="text" pInputText [(ngModel)]="item.notes">
+      </div>
+      <div class="p-col-1 p-d-flex p-jc-center p-ai-end">
+        <button pButton pRipple icon="pi pi-minus" class="p-button-rounded p-button-danger" (click)="removeItem(i)" pTooltip="حذف الصنف"></button>
+      </div>
+    </div>
+
+    <div class="p-col-12 p-p-0 p-mt-3">
+      <button pButton pRipple label="إضافة صنف" icon="pi pi-plus" class="p-button-secondary p-button-sm" (click)="addItem()"></button>
+    </div>
+
+    <p-divider></p-divider>
+
+    <div class="p-field">
+      <label for="notes">ملاحظات عامة</label>
+      <textarea id="notes" pInputTextarea [(ngModel)]="newTransfer.notes" rows="3"></textarea>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="displayDialog=false"></button>
+    <button pButton pRipple label="{{ isEditMode ? 'حفظ التعديلات' : 'إنشاء طلب النقل' }}" icon="pi pi-check" class="p-button-success" (click)="saveTransfer()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

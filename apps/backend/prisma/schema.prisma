@@ -1,0 +1,907 @@
+// Prisma Schema for SEMOP ERP System
+// Version: 2.1.10
+// Date: 2025-11-27
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Cycle 4 - New Models (6 tables)
+// ============================================
+
+// 1. Genes System
+model Gene {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  symbol      String   @unique
+  description String?
+  category    String   // ACCOUNTING, INVENTORY, SALES, PURCHASES
+  geneType    String   @map("gene_type") // PUBLIC, PRIVATE
+  sectorId    String?  @map("sector_id")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([sectorId])
+  @@index([isActive])
+  @@map("genes")
+}
+
+// 2. Latitude Points (Maps System)
+model LatitudePoint {
+  id          Int      @id @default(autoincrement())
+  latitude    Float
+  longitude   Float
+  pointName   String   @unique @map("point_name")
+  description String?
+  address     String?
+  city        String?
+  country     String?  @default("Yemen")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([city])
+  @@index([country])
+  @@map("latitude_points")
+}
+
+// 3. Purchase Orders
+model PurchaseOrder {
+  id           String   @id @default(uuid())
+  orderNumber  String   @unique @map("order_number")
+  supplierId   String   @map("supplier_id")
+  orderDate    DateTime @default(now()) @map("order_date")
+  deliveryDate DateTime? @map("delivery_date")
+  status       String   @default("Pending") // Pending, Approved, Rejected, Completed
+  totalAmount  Float    @map("total_amount")
+  notes        String?
+  createdBy    String?  @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([supplierId])
+  @@index([status])
+  @@index([orderDate])
+  @@map("purchase_orders")
+}
+
+// 4. Account Hierarchy
+model AccountHierarchy {
+  id            String   @id @default(uuid())
+  accountId     String   @unique @map("account_id")
+  parentId      String?  @map("parent_id")
+  level         Int      @default(1)
+  path          String   // e.g., "1.2.3"
+  name          String
+  description   String?
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([parentId])
+  @@index([path])
+  @@index([isActive])
+  @@map("account_hierarchy")
+}
+
+// 5. Role Permissions
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  canCreate    Boolean  @default(false) @map("can_create")
+  canRead      Boolean  @default(true) @map("can_read")
+  canUpdate    Boolean  @default(false) @map("can_update")
+  canDelete    Boolean  @default(false) @map("can_delete")
+  assignedBy   String?  @map("assigned_by")
+  assignedAt   DateTime @default(now()) @map("assigned_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+// 6. Customer Contacts
+model CustomerContact {
+  id          Int      @id @default(autoincrement())
+  customerId  String   @map("customer_id")
+  contactName String   @map("contact_name")
+  email       String?
+  phone       String?
+  position    String?
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([isPrimary])
+  @@map("customer_contacts")
+}
+
+
+// ============================================
+// Magic Notebook System (11 tables)
+// Date: 2025-11-27
+// ============================================
+
+// 1. Notebooks
+model Notebook {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  title       String    @db.VarChar(255)
+  description String?   @db.Text
+  color       String?   @db.VarChar(50)
+  isArchived  Boolean   @default(false) @map("is_archived")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  pages           Page[]
+  sections        Section[]
+  tasks           Task[]
+  reports         NotebookReport[]
+
+  @@index([userId])
+  @@map("notebooks")
+}
+
+// 2. Pages
+model Page {
+  id          String   @id @default(uuid())
+  notebookId  String   @map("notebook_id")
+  sectionId   String?  @map("section_id")
+  title       String   @default("Untitled Page")
+  content     String   @default("") @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  notebook    Notebook  @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+  section     Section?  @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  @@index([notebookId])
+  @@index([sectionId])
+  @@map("pages")
+}
+
+// 3. Sections
+model Section {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(255)
+  order       Int      @default(0)
+  notebookId  String   @map("notebook_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  notebook    Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+  pages       Page[]
+
+  @@index([notebookId])
+  @@map("sections")
+}
+
+// 4. Sticky Notes
+model StickyNote {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  content   String   @db.Text
+  color     String   @default("#FFFF00")
+  isPinned  Boolean  @default(false) @map("is_pinned")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sticky_notes")
+}
+
+// 5. Ideas
+model Idea {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  title       String    @db.VarChar(255)
+  description String?   @db.Text
+  isArchived  Boolean   @default(false) @map("is_archived")
+  tags        String[]
+  priority    Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("ideas")
+}
+
+// 6. Notebook Tasks
+model Task {
+  id          String    @id @default(uuid())
+  notebookId  String    @map("notebook_id")
+  title       String
+  description String?
+  isCompleted Boolean   @default(false) @map("is_completed")
+  dueDate     DateTime? @map("due_date")
+  priority    Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  notebook    Notebook  @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
+  @@index([notebookId])
+  @@map("notebook_tasks")
+}
+
+// 7. Notebook Reports
+model NotebookReport {
+  id            String    @id @default(uuid())
+  notebookId    String    @map("notebook_id")
+  reportType    String    @map("report_type")
+  status        String    @default("pending")
+  fileUrl       String?   @map("file_url")
+  generatedAt   DateTime? @map("generated_at")
+  metadata      Json?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  notebook      Notebook  @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
+  @@index([notebookId])
+  @@map("notebook_reports")
+}
+
+// 8. Chat Logs
+model ChatLog {
+  id          String   @id @default(uuid())
+  notebookId  String   @map("notebook_id")
+  sessionId   String   @map("session_id")
+  role        String
+  content     String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([notebookId])
+  @@index([sessionId])
+  @@map("chat_logs")
+}
+
+// 9. Timeline Entries
+model TimelineEntry {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  type        String   @map("entry_type")
+  content     String   @db.Text
+  timestamp   DateTime @default(now()) @map("entry_timestamp")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([timestamp])
+  @@map("timeline_entries")
+}
+
+// 10. Archives
+model Archive {
+  id          String   @id @default(uuid())
+  entityId    String   @map("entity_id")
+  entityType  String   @map("entity_type")
+  archivedAt  DateTime @default(now()) @map("archived_at")
+  archivedBy  String?  @map("archived_by")
+  data        Json
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([entityId, entityType])
+  @@map("archives")
+}
+
+// 11. Search Indexes
+model SearchIndex {
+  id          String    @id @default(uuid())
+  entityId    String    @map("entity_id")
+  entityType  String    @map("entity_type")
+  content     String    @db.Text
+  userId      String    @map("user_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([entityId, entityType])
+  @@map("search_indexes")
+}
+
+// 12. Attachments
+model Attachment {
+  id          String   @id @default(uuid())
+  entityId    String   @map("entity_id")
+  entityType  String   @map("entity_type") // PAGE, IDEA, TASK
+  fileName    String   @map("file_name")
+  fileUrl     String   @map("file_url")
+  fileSize    Int      @map("file_size") // in bytes
+  mimeType    String   @map("mime_type")
+  uploadedBy  String   @map("uploaded_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([entityId, entityType])
+  @@map("attachments")
+}
+
+// 13. Reminders
+model Reminder {
+  id          String    @id @default(uuid())
+  entityId    String    @map("entity_id")
+  entityType  String    @map("entity_type") // PAGE, IDEA, TASK
+  userId      String    @map("user_id")
+  title       String
+  description String?   @db.Text
+  remindAt    DateTime  @map("remind_at")
+  isCompleted Boolean   @default(false) @map("is_completed")
+  isSent      Boolean   @default(false) @map("is_sent")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([remindAt])
+  @@index([entityId, entityType])
+  @@map("reminders")
+}
+
+// 14. Version History
+model VersionHistory {
+  id          String   @id @default(uuid())
+  entityId    String   @map("entity_id")
+  entityType  String   @map("entity_type") // PAGE, NOTEBOOK
+  version     Int
+  content     Json
+  changedBy   String   @map("changed_by")
+  changeType  String   @map("change_type") // CREATE, UPDATE, DELETE
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([entityId, entityType])
+  @@index([createdAt])
+  @@map("version_history")
+}
+
+
+// ============================================
+// AI News Aggregator Module
+// Version: 2.5.0
+// Date: 2024-11-28
+// ============================================
+
+// News Sources
+model NewsSource {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  url         String
+  sourceType  String   @map("source_type") // RSS, WEB_SCRAPE, API
+  category    String   // AI, ML, TECH, RESEARCH
+  isActive    Boolean  @default(true) @map("is_active")
+  lastFetched DateTime? @map("last_fetched")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  news AINews[]
+
+  @@map("news_sources")
+}
+
+// AI News Articles
+model AINews {
+  id            Int      @id @default(autoincrement())
+  title         String
+  url           String   @unique
+  content       String?  @db.Text
+  summary       String?  @db.Text
+  author        String?
+  publishedAt   DateTime @map("published_at")
+  category      String   // AI_RESEARCH, ML_TOOLS, INDUSTRY_NEWS, STARTUPS
+  tags          String[] // Array of tags
+  sentiment     String?  // POSITIVE, NEUTRAL, NEGATIVE
+  importance    Int      @default(5) // 1-10 scale
+  sourceId      Int      @map("source_id")
+  isRead        Boolean  @default(false) @map("is_read")
+  isSaved       Boolean  @default(false) @map("is_saved")
+  notebookId    Int?     @map("notebook_id") // Link to Magic Notebook
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  source   NewsSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  summaries NewsSummary[]
+
+  @@index([publishedAt])
+  @@index([category])
+  @@index([sourceId])
+  @@map("ai_news")
+}
+
+// AI-Generated Summaries
+model NewsSummary {
+  id          Int      @id @default(autoincrement())
+  newsId      Int      @map("news_id")
+  summaryType String   @map("summary_type") // SHORT, LONG, BULLET_POINTS
+  content     String   @db.Text
+  model       String   // gpt-4, gpt-3.5-turbo
+  tokensUsed  Int      @map("tokens_used")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  news AINews @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@index([newsId])
+  @@map("news_summaries")
+}
+
+// News Categories
+model NewsCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  icon        String?
+  color       String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("news_categories")
+}
+
+// Daily News Digest
+model NewsDailyDigest {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @unique
+  totalNews   Int      @map("total_news")
+  summary     String   @db.Text
+  topStories  String[] @map("top_stories")
+  categories  String[]
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([date])
+  @@map("news_daily_digests")
+}
+
+// ============================================
+// Gene System Extensions - v2.17.0
+// Date: 2025-11-30
+// ============================================
+
+// Gene Activation History - تاريخ تفعيل/تعطيل الجينات
+model GeneActivationHistory {
+  id          String   @id @default(uuid())
+  geneId      String   @map("gene_id")
+  action      String   // ACTIVATED, DEACTIVATED
+  performedBy String?  @map("performed_by")
+  reason      String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([geneId])
+  @@index([createdAt])
+  @@map("gene_activation_history")
+}
+
+// Gene Dependencies - الاعتماديات بين الجينات
+model GeneDependency {
+  id              String   @id @default(uuid())
+  geneId          String   @map("gene_id")
+  dependsOnGeneId String   @map("depends_on_gene_id")
+  dependencyType  String   @map("dependency_type") // REQUIRED, OPTIONAL, RECOMMENDED
+  description     String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([geneId, dependsOnGeneId])
+  @@index([geneId])
+  @@index([dependsOnGeneId])
+  @@map("gene_dependencies")
+}
+
+// ============================================
+// Organizational Structure - PHASE 10
+// Date: 2025-12-03
+// ============================================
+
+// Department - الأقسام
+model Department {
+  id                  String      @id @default(uuid())
+  code                String      @unique
+  nameAr              String      @map("name_ar")
+  nameEn              String      @map("name_en")
+  description         String?     @db.Text
+  parentDepartmentId  String?     @map("parent_department_id")
+  managerId           String?     @map("manager_id")
+  isActive            Boolean     @default(true) @map("is_active")
+  level               Int         @default(1)
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  parentDepartment    Department?  @relation("DepartmentHierarchy", fields: [parentDepartmentId], references: [id])
+  subDepartments      Department[] @relation("DepartmentHierarchy")
+  employees           Employee[]
+  
+  @@index([parentDepartmentId])
+  @@index([managerId])
+  @@map("departments")
+}
+
+// Position - المناصب الوظيفية
+model Position {
+  id          String     @id @default(uuid())
+  code        String     @unique
+  titleAr     String     @map("title_ar")
+  titleEn     String     @map("title_en")
+  description String?    @db.Text
+  level       Int        @default(1) // 1 = Executive, 2 = Manager, 3 = Staff
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  employees   Employee[]
+
+  @@map("positions")
+}
+
+// Employee - الموظفين
+model Employee {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  firstNameAr   String    @map("first_name_ar")
+  lastNameAr    String    @map("last_name_ar")
+  firstNameEn   String?   @map("first_name_en")
+  lastNameEn    String?   @map("last_name_en")
+  email         String    @unique
+  phone         String
+  departmentId  String    @map("department_id")
+  positionId    String    @map("position_id")
+  managerId     String?   @map("manager_id")
+  hireDate      DateTime  @map("hire_date")
+  salary        Float?
+  isActive      Boolean   @default(true) @map("is_active")
+  userId        String?   @unique @map("user_id") // Link to system user
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  department    Department @relation(fields: [departmentId], references: [id])
+  position      Position   @relation(fields: [positionId], references: [id])
+  manager       Employee?  @relation("EmployeeHierarchy", fields: [managerId], references: [id])
+  subordinates  Employee[] @relation("EmployeeHierarchy")
+
+  @@index([departmentId])
+  @@index([positionId])
+  @@index([managerId])
+  @@index([email])
+  @@map("employees")
+}
+
+
+// ============================================
+// PHASE-15: Smart Journal Entries System (4 tables)
+// ============================================
+
+// 1. Journal Entry Templates
+model JournalEntryTemplate {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  nameAr        String   @map("name_ar")
+  nameEn        String   @map("name_en")
+  operationType String   @map("operation_type") // sales, purchases, payroll, etc.
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  lines         JournalEntryTemplateLine[]
+  automatedEntries AutomatedJournalEntry[]
+
+  @@index([operationType])
+  @@map("journal_entry_templates")
+}
+
+// 2. Journal Entry Template Lines
+model JournalEntryTemplateLine {
+  id                  String   @id @default(uuid())
+  templateId          String   @map("template_id")
+  lineOrder           Int      @map("line_order")
+  accountType         String   @map("account_type") // debit, credit
+  accountId           String?  @map("account_id")
+  accountPlaceholder  String?  @map("account_placeholder") // dynamic account
+  amountSource        String   @map("amount_source") // field name from source
+  descriptionTemplate String?  @map("description_template")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  // Relations
+  template            JournalEntryTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@map("journal_entry_template_lines")
+}
+
+// 3. Smart Learning Log
+model SmartLearningLog {
+  id            String   @id @default(uuid())
+  operationType String   @map("operation_type")
+  contextType   String?  @map("context_type") // fund, customer, supplier, item
+  contextId     String?  @map("context_id")
+  accountId     String   @map("account_id")
+  usageCount    Int      @default(1) @map("usage_count")
+  lastUsedAt    DateTime @default(now()) @map("last_used_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([operationType, contextType, contextId, accountId])
+  @@index([operationType])
+  @@index([contextType, contextId])
+  @@index([accountId])
+  @@map("smart_learning_log")
+}
+
+// 4. Automated Journal Entries
+model AutomatedJournalEntry {
+  id              String   @id @default(uuid())
+  journalEntryId  String   @unique @map("journal_entry_id")
+  journalEntry    JournalEntry @relation(fields: [journalEntryId], references: [id])
+  sourceType      String   @map("source_type") // sales_invoice, purchase_order, etc.
+  sourceId        String   @map("source_id")
+  templateId      String?  @map("template_id")
+  isAutoGenerated Boolean  @default(true) @map("is_auto_generated")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  template        JournalEntryTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([sourceType, sourceId])
+  @@index([journalEntryId])
+  @@index([templateId])
+  @@map("automated_journal_entries")
+}
+
+
+// ============================================
+// PHASE-15: Journal Entry & Lines
+// ============================================
+
+model JournalEntry {
+  id              String    @id @default(uuid())
+  entryNumber     String    @unique
+  entryDate       DateTime
+  description     String
+  reference       String?
+  entryType       String
+  status          String
+  totalDebit      Float
+  totalCredit     Float
+  isBalanced      Boolean
+  postedAt        DateTime?
+  postedBy        String?
+  reversedAt      DateTime?
+  reversedBy      String?
+  reversalOfId    String?
+  fiscalYearId    String
+  holdingId       String?
+  unitId          String?
+  projectId       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  lines           JournalEntryLine[]
+  automatedEntry  AutomatedJournalEntry?
+
+  @@map("journal_entries")
+}
+
+model JournalEntryLine {
+  id              String    @id @default(uuid())
+  journalEntryId  String
+  lineNumber      Int
+  accountId       String
+  description     String
+  debit           Float
+  credit          Float
+  costCenterId    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  journalEntry    JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+
+  @@map("journal_entry_lines")
+}
+
+
+// ============================================
+// Inventory Management System (8 tables)
+// Date: 2025-12-05
+// ============================================
+
+// 1. Warehouses
+model Warehouse {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  nameAr        String    @map("name_ar")
+  nameEn        String?   @map("name_en")
+  location      String?
+  managerId     String?   @map("manager_id")
+  managerName   String?   @map("manager_name")
+  capacity      Float?    @default(0)
+  currentStock  Float?    @default(0) @map("current_stock")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  items         WarehouseItem[]
+  movements     StockMovement[]
+
+  @@index([code])
+  @@index([isActive])
+  @@map("warehouses")
+}
+
+// 2. Items (Products/Materials)
+model Item {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  nameAr        String    @map("name_ar")
+  nameEn        String?   @map("name_en")
+  description   String?
+  categoryId    String?   @map("category_id")
+  categoryName  String?   @map("category_name")
+  unitId        String?   @map("unit_id")
+  unitName      String?   @map("unit_name")
+  barcode       String?   @unique
+  sku           String?   @unique
+  minStock      Float?    @default(0) @map("min_stock")
+  maxStock      Float?    @map("max_stock")
+  reorderPoint  Float?    @map("reorder_point")
+  costPrice     Float?    @default(0) @map("cost_price")
+  sellingPrice  Float?    @map("selling_price")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  warehouseItems WarehouseItem[]
+  movements      StockMovement[]
+  inventoryRecords InventoryRecord[]
+
+  @@index([code])
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("items")
+}
+
+// 3. Warehouse Items (Stock per Warehouse)
+model WarehouseItem {
+  id            String    @id @default(uuid())
+  warehouseId   String    @map("warehouse_id")
+  itemId        String    @map("item_id")
+  quantity      Float     @default(0)
+  reservedQty   Float     @default(0) @map("reserved_qty")
+  availableQty  Float     @default(0) @map("available_qty")
+  lastUpdated   DateTime  @default(now()) @map("last_updated")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  warehouse     Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  item          Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([warehouseId, itemId])
+  @@index([warehouseId])
+  @@index([itemId])
+  @@map("warehouse_items")
+}
+
+// 4. Stock Movements
+model StockMovement {
+  id              String    @id @default(uuid())
+  movementNumber  String    @unique @map("movement_number")
+  movementType    String    @map("movement_type") // IN, OUT, TRANSFER, ADJUSTMENT
+  warehouseId     String    @map("warehouse_id")
+  itemId          String    @map("item_id")
+  quantity        Float
+  fromWarehouseId String?   @map("from_warehouse_id")
+  toWarehouseId   String?   @map("to_warehouse_id")
+  referenceType   String?   @map("reference_type") // PURCHASE, SALE, PRODUCTION, RETURN
+  referenceId     String?   @map("reference_id")
+  referenceNumber String?   @map("reference_number")
+  notes           String?
+  createdBy       String?   @map("created_by")
+  movementDate    DateTime  @default(now()) @map("movement_date")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  warehouse       Warehouse @relation(fields: [warehouseId], references: [id])
+  item            Item      @relation(fields: [itemId], references: [id])
+
+  @@index([movementNumber])
+  @@index([movementType])
+  @@index([warehouseId])
+  @@index([itemId])
+  @@index([movementDate])
+  @@map("stock_movements")
+}
+
+// 5. Inventory Counts (Physical Inventory)
+model InventoryCount {
+  id            String    @id @default(uuid())
+  countNumber   String    @unique @map("count_number")
+  warehouseId   String    @map("warehouse_id")
+  countDate     DateTime  @default(now()) @map("count_date")
+  status        String    @default("DRAFT") // DRAFT, IN_PROGRESS, COMPLETED, CANCELLED
+  countedBy     String?   @map("counted_by")
+  approvedBy    String?   @map("approved_by")
+  notes         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  records       InventoryRecord[]
+
+  @@index([countNumber])
+  @@index([warehouseId])
+  @@index([status])
+  @@index([countDate])
+  @@map("inventory_counts")
+}
+
+// 6. Inventory Records (Count Details)
+model InventoryRecord {
+  id                String         @id @default(uuid())
+  countId           String         @map("count_id")
+  itemId            String         @map("item_id")
+  systemQuantity    Float          @map("system_quantity")
+  countedQuantity   Float?         @map("counted_quantity")
+  difference        Float?
+  notes             String?
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  count             InventoryCount @relation(fields: [countId], references: [id], onDelete: Cascade)
+  item              Item           @relation(fields: [itemId], references: [id])
+
+  @@unique([countId, itemId])
+  @@index([countId])
+  @@index([itemId])
+  @@map("inventory_records")
+}
+
+// 7. Item Categories
+model ItemCategory {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  nameAr        String    @map("name_ar")
+  nameEn        String?   @map("name_en")
+  description   String?
+  parentId      String?   @map("parent_id")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([parentId])
+  @@index([isActive])
+  @@map("item_categories")
+}
+
+// 8. Units of Measure
+model Unit {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  nameAr        String    @map("name_ar")
+  nameEn        String?   @map("name_en")
+  symbol        String?
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([isActive])
+  @@map("units")
+}

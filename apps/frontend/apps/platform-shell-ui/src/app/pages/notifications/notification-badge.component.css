@@ -1,0 +1,99 @@
+.notification-badge-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.notification-badge-container:hover {
+  background-color: #f3f4f6;
+}
+
+/* Bell Icon */
+.bell-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.bell-icon.has-notifications {
+  color: #3b82f6;
+}
+
+.notification-badge-container:hover .bell-icon {
+  color: #111827;
+}
+
+.bell-icon.has-notifications:hover {
+  color: #2563eb;
+}
+
+.bell-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Badge Count */
+.badge-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Pulse Animation */
+.badge-count.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .badge-count {
+  right: auto;
+  left: 4px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notification-badge-container {
+    padding: 6px;
+  }
+
+  .bell-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .badge-count {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    padding: 0 4px;
+  }
+}
