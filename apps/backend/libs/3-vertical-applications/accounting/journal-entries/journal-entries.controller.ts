@@ -2,7 +2,6 @@
 // PHASE-12: إضافة Error Handling شامل مع try-catch و logging
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { JournalEntriesService } from './journal-entries.service';
-import { } from '@semop/contracts';
 
 
 @Controller('journal-entries')

@@ -8,7 +8,6 @@ import { SmartJournalEntriesController } from './smart-journal-entries.controlle
 import { JournalEntryTemplateService } from './journal-entry-template.service';
 import { SmartJournalEntryService } from './smart-journal-entry.service';
 import { SmartLearningService } from './smart-learning.service';
-import { } from '@semop/contracts';
 
 
 @Module({

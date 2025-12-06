@@ -1,6 +1,5 @@
 // PHASE: DTO_QUALITY_FIX
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { } from '@semop/contracts';
 
 
 @Injectable()

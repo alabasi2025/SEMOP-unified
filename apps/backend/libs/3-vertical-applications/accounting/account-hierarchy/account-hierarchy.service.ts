@@ -2,7 +2,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../1-core-services/prisma/prisma.service'; // افتراض وجود PrismaService في هذا المسار
 import { CreateAccountHierarchyDto, UpdateAccountHierarchyDto } from './account_hierarchy.dto';
-import { } from '@semop/contracts';
 
 import { AccountHierarchy } from '@prisma/client'; // افتراض أن Prisma Client تم توليده
 

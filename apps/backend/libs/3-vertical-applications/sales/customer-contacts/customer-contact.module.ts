@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerContactController } from './customer-contact.controller';
 import { CustomerContactService } from './customer-contact.service';
 import { CustomerContact } from './customer-contact.entity';
-import { } from '@semop/contracts';
 
 
 @Module({

@@ -2,7 +2,6 @@
 // PHASE 10: Role Permissions Controller
 import { Controller } from '@nestjs/common';
 import { RolePermissionsService } from './role_permissions.service';
-import { } from '@semop/contracts';
 
 
 @Controller('role-permissions')

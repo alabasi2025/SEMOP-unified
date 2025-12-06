@@ -17,7 +17,6 @@ import { Module } from '@nestjs/common';
 import { LatitudePointsService } from './latitude-points.service';
 import { LatitudePointsController } from './latitude-points.controller';
 import { PrismaModule } from '../../1-core-services/prisma/prisma.module';
-import { } from '@semop/contracts';
 
 
 @Module({
