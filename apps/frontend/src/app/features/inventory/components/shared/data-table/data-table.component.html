@@ -1,0 +1,164 @@
+<div class="data-table-container" [class.responsive]="responsive">
+  <!-- حالة التحميل -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- الجدول -->
+  <div class="table-wrapper">
+    <table class="data-table">
+      <!-- رأس الجدول -->
+      <thead>
+        <tr>
+          <!-- عمود الاختيار -->
+          <th *ngIf="selectable && multiSelect" class="select-column">
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected()"
+              (change)="onSelectAll($event)"
+            />
+          </th>
+
+          <!-- عمود الرقم -->
+          <th class="number-column">#</th>
+
+          <!-- الأعمدة -->
+          <th 
+            *ngFor="let column of columns" 
+            [class.sortable]="column.sortable"
+            [style.width]="column.width"
+            [style.text-align]="column.align || 'right'"
+            (click)="onSort(column)"
+          >
+            <div class="th-content">
+              <span>{{ column.header }}</span>
+              <i *ngIf="column.sortable" class="sort-icon {{ getSortIcon(column) }}"></i>
+            </div>
+          </th>
+
+          <!-- عمود الإجراءات -->
+          <th *ngIf="actions.length > 0" class="actions-column">الإجراءات</th>
+        </tr>
+      </thead>
+
+      <!-- جسم الجدول -->
+      <tbody *ngIf="!loading">
+        <!-- حالة فارغة -->
+        <tr *ngIf="data.length === 0" class="empty-row">
+          <td [attr.colspan]="columns.length + (selectable && multiSelect ? 1 : 0) + (actions.length > 0 ? 1 : 0) + 1">
+            <div class="empty-state">
+              <i class="empty-icon">📭</i>
+              <p>{{ emptyMessage }}</p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- الصفوف -->
+        <tr 
+          *ngFor="let row of data; let i = index" 
+          class="data-row"
+          [class.selected]="isRowSelected(row)"
+          (click)="onRowClick(row)"
+        >
+          <!-- خلية الاختيار -->
+          <td *ngIf="selectable && multiSelect" class="select-cell">
+            <input 
+              type="checkbox" 
+              [checked]="isRowSelected(row)"
+              (change)="onRowSelect(row, $event)"
+            />
+          </td>
+
+          <!-- خلية الرقم -->
+          <td class="number-cell">{{ getRowNumber(i) }}</td>
+
+          <!-- الخلايا -->
+          <td 
+            *ngFor="let column of columns"
+            [style.text-align]="column.align || 'right'"
+          >
+            {{ getCellValue(row, column) }}
+          </td>
+
+          <!-- خلية الإجراءات -->
+          <td *ngIf="actions.length > 0" class="actions-cell">
+            <div class="action-buttons">
+              <button
+                *ngFor="let action of actions"
+                [hidden]="!isActionVisible(action, row)"
+                [disabled]="isActionDisabled(action, row)"
+                [class]="'action-btn ' + (action.color || 'primary')"
+                [title]="action.label"
+                (click)="onActionClick(action, row, $event)"
+              >
+                <i class="action-icon">{{ action.icon }}</i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+
+      <!-- جسم الهيكل التحميلي -->
+      <tbody *ngIf="loading">
+        <tr *ngFor="let _ of skeletonRows" class="skeleton-row">
+          <td *ngIf="selectable && multiSelect">
+            <div class="skeleton-cell"></div>
+          </td>
+          <td>
+            <div class="skeleton-cell"></div>
+          </td>
+          <td *ngFor="let column of columns">
+            <div class="skeleton-cell"></div>
+          </td>
+          <td *ngIf="actions.length > 0">
+            <div class="skeleton-cell"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="table-footer" *ngIf="totalPages > 1">
+    <div class="pagination">
+      <button 
+        class="page-btn"
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(1)"
+      >
+        الأولى
+      </button>
+      <button 
+        class="page-btn"
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        السابقة
+      </button>
+
+      <span class="page-info">
+        صفحة {{ currentPage }} من {{ totalPages }}
+      </span>
+
+      <button 
+        class="page-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        التالية
+      </button>
+      <button 
+        class="page-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(totalPages)"
+      >
+        الأخيرة
+      </button>
+    </div>
+
+    <div class="items-info">
+      عرض {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} من {{ totalItems }}
+    </div>
+  </div>
+</div>
