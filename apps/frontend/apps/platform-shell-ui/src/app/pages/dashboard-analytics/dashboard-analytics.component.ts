@@ -1,3 +1,5 @@
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
 // /root/task_outputs/Task7_Dashboard_Analytics/frontend/dashboard-analytics.component.ts
 
 import { Component, OnInit } from '@angular/core';
