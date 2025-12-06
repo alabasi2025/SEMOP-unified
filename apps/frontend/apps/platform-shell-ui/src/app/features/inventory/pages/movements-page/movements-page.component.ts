@@ -159,18 +159,18 @@ export class MovementsPageComponent implements OnInit {
       switchMap((filter) =>
         combineLatest([
           // جلب الحركات
-          this.inventoryService.getMovements(filter).catch((error: unknown) => {
+          this.inventoryService.getMovements(filter).catch((error: unknown) => error: unknown) => {
             throw new Error('فشل في جلب الحركات');
           }),
           // جلب الإحصائيات
-          this.inventoryService.getMovementStats(filter).catch((error: unknown) => {
+          this.inventoryService.getMovementStats(filter).catch((error: unknown) => error: unknown) => {
             throw new Error('فشل في جلب الإحصائيات');
           }),
         ]).pipe(
           // إخفاء حالة التحميل عند النجاح
           tap(() => this.isLoading.next(false)),
           // معالجة الأخطاء
-          catchError((err) => {
+          catchError((error: unknown) => err) => {
             this.isLoading.next(false);
             const errorMessage = err.message || 'حدث خطأ غير متوقع.';
             this.error.next(errorMessage);
@@ -216,7 +216,7 @@ export class MovementsPageComponent implements OnInit {
       .then(() => {
         this.isLoading.next(false);
       })
-      .catch((err) => {
+      .catch((error: unknown) => err) => {
         this.isLoading.next(false);
         const errorMessage = 'فشل في تصدير البيانات.';
         this.error.next(errorMessage);

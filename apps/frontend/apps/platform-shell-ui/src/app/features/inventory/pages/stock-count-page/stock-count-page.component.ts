@@ -70,7 +70,7 @@ export class StockCountPageComponent implements OnInit {
       tap(() => this.loadingList$.next(true)),
       switchMap((filter) => this.inventoryService.getStockCounts(filter).pipe(
         tap(() => this.loadingList$.next(false)),
-        catchError((error) => {
+        catchError((error: unknown) => error) => {
           this.loadingList$.next(false);
           this.toastService.showError('فشل في تحميل قائمة الجرد: ' + error.message);
           return of([]); // إرجاع مصفوفة فارغة عند الخطأ
@@ -88,7 +88,7 @@ export class StockCountPageComponent implements OnInit {
     this.loadingStats$.next(true);
     return this.inventoryService.getStockCountStats().pipe(
       tap(() => this.loadingStats$.next(false)),
-      catchError((error) => {
+      catchError((error: unknown) => error) => {
         this.loadingStats$.next(false);
         this.toastService.showError('فشل في تحميل الإحصائيات: ' + error.message);
         // إرجاع إحصائيات صفرية عند الخطأ
