@@ -53,8 +53,17 @@ export class CreatePurchaseOrderDto {}
 export class UpdatePurchaseOrderDto {}
 
 // Accounting DTOs
-export enum AccountType {}
-export enum AccountNature {}
+export enum AccountType {
+  ASSET = 'ASSET',
+  LIABILITY = 'LIABILITY',
+  EQUITY = 'EQUITY',
+  REVENUE = 'REVENUE',
+  EXPENSE = 'EXPENSE'
+}
+export enum AccountNature {
+  DEBIT = 'DEBIT',
+  CREDIT = 'CREDIT'
+}
 export class CreateAccountDto {}
 export class UpdateAccountDto {}
 export class AccountResponseDto {}
