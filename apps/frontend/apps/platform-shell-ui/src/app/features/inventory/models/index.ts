@@ -16,6 +16,9 @@ export * from './category.model';
 // Units
 export * from './unit.model';
 
+// Legacy models (for backward compatibility)
+export * from './inventory.models';
+
 // Common Types
 export type InventoryStatus = 'active' | 'inactive' | 'discontinued';
 export type MovementType = 'in' | 'out' | 'transfer' | 'adjustment';

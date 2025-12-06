@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable, Subscription, timer, switchMap, catchError, of, BehaviorSubject, tap } from 'rxjs';
 
-// استيراد المكونات المطلوبة (افتراضية)
-// في مشروع حقيقي، سيتم استيراد هذه المكونات من مكتبة المكونات المشتركة
-import { StatsCardComponent } from './stats-card/stats-card.component';
+// استيراد المكونات المشتركة
+import { StatsCardComponent, DataTableComponent } from '../../components/shared';
 import { ChartComponent } from './chart/chart.component';
-import { DataTableComponent } from './data-table/data-table.component';
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { ToastService } from './toast.service'; // خدمة إشعارات وهمية
 

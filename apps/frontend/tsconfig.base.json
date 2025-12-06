@@ -16,7 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@semop/contracts": ["libs/contracts/src/index.ts"]
+      "@semop/contracts": ["libs/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

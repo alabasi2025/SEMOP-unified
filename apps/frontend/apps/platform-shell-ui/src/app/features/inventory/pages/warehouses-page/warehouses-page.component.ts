@@ -10,14 +10,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, Observable, Subscription, catchError, combineLatest, filter, map, of, startWith, switchMap, tap } from 'rxjs';
 
-// افتراض وجود المكونات والخدمات التالية
-// يجب استبدالها بالمسارات الصحيحة في المشروع الفعلي
-import { WarehouseListComponent } from './warehouse-list/warehouse-list.component'; // افتراض وجود هذا المكون
-import { StatsCardComponent } from './stats-card/stats-card.component'; // افتراض وجود هذا المكون
-import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component'; // افتراض وجود هذا المكون للـ Dialog
-import { WarehouseDetailsComponent } from './warehouse-details/warehouse-details.component'; // افتراض وجود هذا المكون
-import { InventoryService, Warehouse, WarehouseStats } from '../services/inventory.service'; // افتراض وجود هذه الخدمة والأنواع
-import { ToastService } from '../services/toast.service'; // افتراض وجود خدمة الإشعارات
+// استيراد المكونات المشتركة
+import { StatsCardComponent } from '../../components/shared';
+import { WarehouseListComponent } from './warehouse-list/warehouse-list.component';
+import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
+import { WarehouseDetailsComponent } from './warehouse-details/warehouse-details.component';
+import { InventoryService, Warehouse, WarehouseStats } from '../services/inventory.service';
+import { ToastService } from '../services/toast.service';
 
 /**
  * واجهة لتمثيل حالة الصفحة
