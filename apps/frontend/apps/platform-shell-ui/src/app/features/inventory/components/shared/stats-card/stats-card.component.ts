@@ -15,7 +15,7 @@ export type StatsCardTrend = 'up' | 'down' | null;
  * يستخدم لعرض مقاييس وإحصائيات رئيسية مع أيقونات ومؤشرات اتجاه.
  */
 @Component({
-  selector: 'app-stats-card',
+  selector: 'app-inventory-stats-card',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './stats-card.component.html',

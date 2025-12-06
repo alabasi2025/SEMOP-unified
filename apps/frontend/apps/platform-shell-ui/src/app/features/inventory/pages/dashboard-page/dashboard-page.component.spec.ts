@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 // 1. محاكاة المكونات الفرعية (Mock Components)
-@Component({ selector: 'app-stats-card', standalone: true, template: '' })
+@Component({ selector: 'app-inventory-stats-card', standalone: true, template: '' })
 class MockStatsCardComponent {
   @Input() title!: string;
   @Input() value!: number;
@@ -31,7 +31,7 @@ class MockDataTableComponent {
   @Input() columns!: any[];
 }
 
-@Component({ selector: 'app-filter-panel', standalone: true, template: '' })
+@Component({ selector: 'app-inventory-filter-panel', standalone: true, template: '' })
 class MockFilterPanelComponent {
   @Input() initialFilter!: any;
   @Output() filterChange = new EventEmitter<any>();

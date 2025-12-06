@@ -258,7 +258,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 }
 
 // محاكاة المكونات المستخدمة
-@Component({ selector: 'app-stats-card', standalone: true, template: '' })
+@Component({ selector: 'app-inventory-stats-card', standalone: true, template: '' })
 class StatsCardComponent {}
 @Component({ selector: 'app-chart', standalone: true, template: '' })
 class ChartComponent {
@@ -270,7 +270,7 @@ class DataTableComponent {
   // محاكاة لـ @Input() data: any[];
   // محاكاة لـ @Input() columns: any[];
 }
-@Component({ selector: 'app-filter-panel', standalone: true, template: '' })
+@Component({ selector: 'app-inventory-filter-panel', standalone: true, template: '' })
 class FilterPanelComponent {
   // محاكاة لـ @Output() filterChange = new EventEmitter<{ startDate: string, endDate: string }>();
 }
