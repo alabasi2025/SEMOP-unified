@@ -1,6 +1,6 @@
 {
   "name": "@semop/contracts",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "مستودع العقود المشترك بين الواجهة الأمامية والخلفية لمنصة SEMOP",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
