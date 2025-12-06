@@ -23,7 +23,7 @@ class MockSearchBarComponent {
   @Output() searchChange = new EventEmitter<string>();
 }
 
-@Component({ selector: 'app-stats-card', standalone: true, template: '' })
+@Component({ selector: 'app-inventory-stats-card', standalone: true, template: '' })
 class MockStatsCardComponent {
   @Input() title: string = '';
   @Input() value: any;

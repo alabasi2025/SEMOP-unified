@@ -35,7 +35,7 @@ export interface FilterConfig {
  * @description مكون لوحة الفلاتر العامة والقابلة لإعادة الاستخدام
  */
 @Component({
-  selector: 'app-filter-panel',
+  selector: 'app-inventory-filter-panel',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './filter-panel.component.html',

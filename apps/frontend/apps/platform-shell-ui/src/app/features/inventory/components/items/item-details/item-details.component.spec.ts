@@ -24,7 +24,7 @@ class MockDataTableComponent {
 }
 
 @Component({
-  selector: 'app-stats-card',
+  selector: 'app-inventory-stats-card',
   standalone: true,
   template: '<div>Mock Stats Card: {{ title }} - {{ value }}</div>',
 })

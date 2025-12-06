@@ -85,7 +85,7 @@ class MockInventoryService {
 // هنا نستخدم مكونات وهمية لغرض العرض فقط
 
 @Component({
-  selector: 'app-filter-panel',
+  selector: 'app-inventory-filter-panel',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
@@ -148,7 +148,7 @@ class MockFilterPanelComponent implements OnInit {
 }
 
 @Component({
-  selector: 'app-data-table',
+  selector: 'app-inventory-data-table',
   standalone: true,
   imports: [CommonModule],
   template: `

@@ -103,8 +103,8 @@ class MockToastService {
 const ItemListComponent = Component({ selector: 'app-item-list', template: '' })(class {});
 const ItemSearchComponent = Component({ selector: 'app-item-search', template: '' })(class {});
 const ItemFormComponent = Component({ selector: 'app-item-form', template: '' })(class {});
-const StatsCardComponent = Component({ selector: 'app-stats-card', template: '' })(class {});
-const FilterPanelComponent = Component({ selector: 'app-filter-panel', template: '' })(class {});
+const StatsCardComponent = Component({ selector: 'app-inventory-stats-card', template: '' })(class {});
+const FilterPanelComponent = Component({ selector: 'app-inventory-filter-panel', template: '' })(class {});
 const ConfirmationDialogComponent = Component({ selector: 'app-confirmation-dialog', template: '' })(class {});
 
 // دالة مساعدة لمحاكاة التأخير
