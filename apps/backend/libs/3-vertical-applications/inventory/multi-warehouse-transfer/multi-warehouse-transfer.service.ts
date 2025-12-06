@@ -30,12 +30,12 @@ export class MultiWarehouseTransferService {
     // هنا يجب أن تكون هناك عملية تحقق من توفر الكميات في المخزن المصدر
     // ... (منطق التحقق من المخزون)
 
-    const newTransfer: WarehouseTransfer = {
+    const newTransfer = {
       id: this.nextId++,
       ...createDto,
       transferDate: new Date(createDto.transferDate),
       status: 'Pending', // يبدأ كطلب معلق
-    };
+    } as WarehouseTransfer;
 
     this.transfers.push(newTransfer);
     return this.mapToResponseDto(newTransfer);
