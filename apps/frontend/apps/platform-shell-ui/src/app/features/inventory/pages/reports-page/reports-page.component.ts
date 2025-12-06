@@ -179,7 +179,7 @@ class MockFilterPanelComponent implements OnInit {
   `],
   inputs: ['data', 'columns', 'columnKeys']
 })
-class MockDataTableComponent {
+export class MockDataTableComponent {
   data: any[] = [];
   columns: string[] = [];
   columnKeys: string[] = [];
@@ -210,7 +210,7 @@ class MockDataTableComponent {
   `],
   inputs: ['reportName']
 })
-class MockChartsComponent {
+export class MockChartsComponent {
   reportName: string = '';
 }
 
