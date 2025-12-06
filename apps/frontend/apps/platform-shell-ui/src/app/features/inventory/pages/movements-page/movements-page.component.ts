@@ -218,7 +218,7 @@ export class MovementsPageComponent implements OnInit {
       .then(() => {
         this.isLoading.next(false);
       })
-      .catch((error: unknown) => err) => {
+      .catch((error: unknown) => {
         this.isLoading.next(false);
         const errorMessage = 'فشل في تصدير البيانات.';
         this.error.next(errorMessage);
