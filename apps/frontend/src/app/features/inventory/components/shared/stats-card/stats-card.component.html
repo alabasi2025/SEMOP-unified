@@ -1,62 +1,15 @@
-<!-- /home/ubuntu/stats-card.component.html -->
-
-<!-- الحاوية الرئيسية للبطاقة. يتم تطبيق فئة اللون وحالة النقر هنا. -->
-<div
-  class="stats-card"
-  [class.clickable]="clickable"
-  [class.loading]="loading"
-  [class]="color"
-  (click)="onCardClick()"
-  role="status"
-  [attr.aria-live]="loading ? 'polite' : 'off'"
->
-  <!-- حالة التحميل (Skeleton Loader) -->
-  <ng-container *ngIf="loading; else content">
-    <div class="skeleton-content">
-      <!-- هيكل العنوان -->
-      <div class="skeleton-line title-line"></div>
-      <!-- هيكل القيمة -->
-      <div class="skeleton-line value-line"></div>
-      <!-- هيكل الأيقونة -->
-      <div class="skeleton-icon"></div>
+<div class="stats-card" [ngClass]="colorClass">
+  <div class="stats-card-content">
+    <div class="stats-card-icon">
+      <i [class]="'pi ' + icon"></i>
     </div>
-  </ng-container>
-
-  <!-- المحتوى الفعلي للبطاقة -->
-  <ng-template #content>
-    <div class="card-content">
-      <!-- القسم الأيسر: العنوان والقيمة -->
-      <div class="text-section">
-        <!-- العنوان -->
-        <h3 class="card-title">{{ title }}</h3>
-
-        <!-- القيمة الرئيسية مع مؤشر الاتجاه وتأثير الوميض -->
-        <div class="card-value-wrapper">
-          <span
-            class="card-value"
-            [class.value-changed]="(valueChange$ | async)"
-          >
-            {{ value }}
-          </span>
-
-          <!-- مؤشر الاتجاه (Trend Indicator) -->
-          <span
-            *ngIf="trend"
-            class="trend-indicator"
-            [class.trend-up]="trend === 'up'"
-            [class.trend-down]="trend === 'down'"
-            [attr.aria-label]="trend === 'up' ? 'اتجاه صاعد' : 'اتجاه هابط'"
-          >
-            <!-- أيقونة الاتجاه (يفترض استخدام Material Icons) -->
-            <span class="material-icons trend-icon">{{ trendIcon }}</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- القسم الأيمن: الأيقونة الرئيسية -->
-      <div *ngIf="icon" class="icon-section">
-        <span class="material-icons card-icon">{{ icon }}</span>
+    <div class="stats-card-info">
+      <div class="stats-card-title">{{ title }}</div>
+      <div class="stats-card-value">{{ value }}</div>
+      <div class="stats-card-trend" *ngIf="trend" [ngClass]="trendClass">
+        <i [class]="'pi ' + trendIcon"></i>
+        {{ trend > 0 ? '+' : '' }}{{ trend }}%
       </div>
     </div>
-  </ng-template>
+  </div>
 </div>
