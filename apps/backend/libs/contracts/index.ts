@@ -51,3 +51,22 @@ export class WarehouseTransfer {
 // Purchasing DTOs
 export class CreatePurchaseOrderDto {}
 export class UpdatePurchaseOrderDto {}
+
+// Accounting DTOs
+export enum AccountType {}
+export enum AccountNature {}
+export class CreateAccountDto {}
+export class UpdateAccountDto {}
+export class AccountResponseDto {}
+export class AccountSuggestionRequestDto {}
+export class SuggestedAccountDto {}
+export class CreateJournalEntryFromOperationDto {}
+export class CreateJournalEntryFromTemplateDto {}
+export class CreateJournalEntryTemplateDto {}
+export class UpdateJournalEntryTemplateDto {}
+export class JournalEntryTemplateDto {}
+export class ValidateJournalEntryDto {}
+export class JournalEntryValidationResultDto {}
+export class AutomatedJournalEntryDto {}
+export class RecordUsageDto {}
+export class UsageStatisticsDto {}
