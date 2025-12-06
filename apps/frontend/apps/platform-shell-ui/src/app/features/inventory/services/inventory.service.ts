@@ -12,6 +12,8 @@ import {
   PaginatedResponse,
   SearchFilters,
 } from '../models/inventory.models';
+import { StockCount, StockCountFilter, StockCountStats } from '../models';
+import { of } from 'rxjs';
 
 /**
  * خدمة نظام المخازن
@@ -279,6 +281,27 @@ export class InventoryService {
    */
   getCountReport(countId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/stock-count/${countId}/report`);
+  }
+
+  /**
+   * جلب قائمة الجرد
+   */
+  getStockCounts(filter?: StockCountFilter): Observable<StockCount[]> {
+    // TODO: Implement API call
+    return of([]);
+  }
+
+  /**
+   * جلب إحصائيات الجرد
+   */
+  getStockCountStats(): Observable<StockCountStats> {
+    // TODO: Implement API call
+    return of({
+      totalCounts: 0,
+      inProgress: 0,
+      completed: 0,
+      totalDifferenceValue: 0
+    });
   }
 
   // ============================================
