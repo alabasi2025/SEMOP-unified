@@ -159,11 +159,11 @@ export class MovementsPageComponent implements OnInit {
       switchMap((filter) =>
         combineLatest([
           // جلب الحركات
-          this.inventoryService.getMovements(filter).catch(() => {
+          this.inventoryService.getMovements(filter).catch((error: unknown) => {
             throw new Error('فشل في جلب الحركات');
           }),
           // جلب الإحصائيات
-          this.inventoryService.getMovementStats(filter).catch(() => {
+          this.inventoryService.getMovementStats(filter).catch((error: unknown) => {
             throw new Error('فشل في جلب الإحصائيات');
           }),
         ]).pipe(

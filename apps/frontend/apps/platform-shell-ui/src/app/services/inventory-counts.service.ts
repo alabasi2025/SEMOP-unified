@@ -9,6 +9,6 @@ export class InventoryCountsService {
   getAll(): Observable<any[]> { return this.http.get<any[]>(this.apiUrl); }
   getOne(id: number): Observable<any> { return this.http.get<any>(`${this.apiUrl}/${id}`); }
   create(data: any): Observable<any> { return this.http.post<any>(this.apiUrl, data); }
-  update(id: number, data: any): Observable<any> { return this.http.patch<any>(`${this.apiUrl}/${id}`, {}); }
+  update(id: number, data: any): Observable<any> { return this.http.patch<any>(`${this.apiUrl}/${id}`, data); }
   delete(id: number): Observable<any> { return this.http.delete<any>(`${this.apiUrl}/${id}`); }
 }
