@@ -1,3 +1,20 @@
+
+// استيراد المكونات المشتركة
+// استيراد المكونات المشتركة
+import { DataTableComponent, ColumnConfig } from '../../components/shared/data-table/data-table.component';
+import { StatsCardComponent } from '../../components/shared/stats-card/stats-card.component';
+import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
+
+import { 
+  Item, 
+  Warehouse, 
+  StockMovement, 
+  ItemCategory, 
+  Unit,
+  InventoryCount,
+  StockBalance
+} from '../../models/inventory.models';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,21 +30,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import {
-  InventoryService,
-  Movement,
-  MovementFilter,
-  MovementStats,
-  DataTableComponent,
-  StatsCardComponent,
-  FilterPanelComponent,
-  ItemListComponent,
-  WarehouseListComponent,
-  DialogComponent,
-  ButtonComponent,
-  IconComponent,
-  MovementType,
-} from './inventory.models'; // استيراد الواجهات والخدمة الوهمية
+ // استيراد الواجهات والخدمة الوهمية
 
 // تعريف خدمة وهمية لتجنب أخطاء الحقن
 class MockInventoryService extends InventoryService {

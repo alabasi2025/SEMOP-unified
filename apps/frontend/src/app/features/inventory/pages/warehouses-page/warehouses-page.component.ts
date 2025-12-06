@@ -1,5 +1,21 @@
 // warehouses-page.component.ts
 
+// استيراد المكونات المشتركة
+// استيراد المكونات المشتركة
+import { DataTableComponent, ColumnConfig } from '../../components/shared/data-table/data-table.component';
+import { StatsCardComponent } from '../../components/shared/stats-card/stats-card.component';
+import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
+
+import { 
+  Item, 
+  Warehouse, 
+  StockMovement, 
+  ItemCategory, 
+  Unit,
+  InventoryCount,
+  StockBalance
+} from '../../models/inventory.models';
+
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -12,10 +28,10 @@ import { BehaviorSubject, Observable, Subscription, catchError, combineLatest, f
 
 // افتراض وجود المكونات والخدمات التالية
 // يجب استبدالها بالمسارات الصحيحة في المشروع الفعلي
-import { WarehouseListComponent } from './warehouse-list/warehouse-list.component'; // افتراض وجود هذا المكون
-import { StatsCardComponent } from './stats-card/stats-card.component'; // افتراض وجود هذا المكون
-import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component'; // افتراض وجود هذا المكون للـ Dialog
-import { WarehouseDetailsComponent } from './warehouse-details/warehouse-details.component'; // افتراض وجود هذا المكون
+// افتراض وجود هذا المكون
+// افتراض وجود هذا المكون
+// افتراض وجود هذا المكون للـ Dialog
+// افتراض وجود هذا المكون
 import { InventoryService, Warehouse, WarehouseStats } from '../services/inventory.service'; // افتراض وجود هذه الخدمة والأنواع
 import { ToastService } from '../services/toast.service'; // افتراض وجود خدمة الإشعارات
 
@@ -229,9 +245,7 @@ export interface WarehouseStats {
 }
 
 // محاكاة للخدمة
-class MockInventoryService {
-  private mockWarehouses: Warehouse[] = [
-    { id: 1, name: 'المستودع الرئيسي', location: 'الرياض', isActive: true, totalValue: 1500000, itemCount: 500, lastUpdated: new Date() },
+,
     { id: 2, name: 'مستودع الشمال', location: 'جدة', isActive: true, totalValue: 850000, itemCount: 320, lastUpdated: new Date() },
     { id: 3, name: 'مستودع الأرشيف', location: 'الدمام', isActive: false, totalValue: 12000, itemCount: 50, lastUpdated: new Date() },
   ];
@@ -281,9 +295,7 @@ class MockInventoryService {
 }
 
 // محاكاة لخدمة الإشعارات
-class MockToastService {
-  showSuccess(message: string): void {
-    console.log(`[نجاح]: ${message}`);
+`);
     // منطق عرض إشعار النجاح
   }
   showError(message: string): void {

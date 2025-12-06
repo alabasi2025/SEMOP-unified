@@ -1,3 +1,20 @@
+
+// استيراد المكونات المشتركة
+// استيراد المكونات المشتركة
+import { DataTableComponent, ColumnConfig } from '../../components/shared/data-table/data-table.component';
+import { StatsCardComponent } from '../../components/shared/stats-card/stats-card.component';
+import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
+
+import { 
+  Item, 
+  Warehouse, 
+  StockMovement, 
+  ItemCategory, 
+  Unit,
+  InventoryCount,
+  StockBalance
+} from '../../models/inventory.models';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -49,15 +66,7 @@ interface InventoryReportData {
  * @description خدمة وهمية لمحاكاة InventoryService.
  * في التطبيق الحقيقي، سيتم استبدال هذه الخدمة بالخدمة الفعلية التي تتواصل مع الـ Backend.
  */
-class MockInventoryService {
-  /**
-   * @description محاكاة جلب بيانات التقرير بناءً على المعرف والفلاتر.
-   * @param reportId معرف التقرير المطلوب.
-   * @param filters خيارات الفلترة.
-   * @returns Observable ببيانات التقرير.
-   */
-  getReportData(reportId: string, filters: ReportFilters): Observable<any> {
-    console.log(`Fetching data for report: ${reportId} with filters:`, filters);
+ with filters:`, filters);
 
     // محاكاة خطأ في حالة تقرير معين
     if (reportId === 'stagnant-items') {
@@ -128,7 +137,7 @@ class MockInventoryService {
     .btn-primary { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
   `]
 })
-class MockFilterPanelComponent implements OnInit {
+class FilterPanelComponent implements OnInit {
   private fb = inject(FormBuilder);
   form!: FormGroup;
 
@@ -179,7 +188,7 @@ class MockFilterPanelComponent implements OnInit {
   `],
   inputs: ['data', 'columns', 'columnKeys']
 })
-class MockDataTableComponent {
+class DataTableComponent {
   data: any[] = [];
   columns: string[] = [];
   columnKeys: string[] = [];
@@ -210,7 +219,7 @@ class MockDataTableComponent {
   `],
   inputs: ['reportName']
 })
-class MockChartsComponent {
+class ChartsComponent {
   reportName: string = '';
 }
 
@@ -226,9 +235,9 @@ class MockChartsComponent {
     FormsModule,
     ReactiveFormsModule,
     // المكونات الوهمية المستوردة
-    MockFilterPanelComponent,
-    MockDataTableComponent,
-    MockChartsComponent,
+    FilterPanelComponent,
+    DataTableComponent,
+    ChartsComponent,
   ],
   templateUrl: './reports-page.component.html',
   styleUrls: ['./reports-page.component.scss'],
