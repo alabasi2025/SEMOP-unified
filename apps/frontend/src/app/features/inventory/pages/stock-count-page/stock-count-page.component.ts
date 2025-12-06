@@ -1,22 +1,32 @@
+
+// استيراد المكونات المشتركة
+// استيراد المكونات المشتركة
+import { DataTableComponent, ColumnConfig } from '../../components/shared/data-table/data-table.component';
+import { StatsCardComponent } from '../../components/shared/stats-card/stats-card.component';
+import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
+
+import { 
+  Item, 
+  Warehouse, 
+  StockMovement, 
+  ItemCategory, 
+  Unit,
+  InventoryCount,
+  StockBalance
+} from '../../models/inventory.models';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from './inventory.service';
-import { ToastService } from './toast.service';
 import { StockCount, StockCountFilter, StockCountStats, StockCountStatus } from './inventory.interfaces';
 import { BehaviorSubject, Observable, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // لاستخدام ngModel في الفلترة
 
+// استيراد المكونات المشتركة
+
 // افتراض أن هذه المكونات مستقلة ومتاحة للاستيراد
 // في التطبيق الحقيقي، يجب استيرادها من مسارها الصحيح
 // لغرض هذا المثال، نفترض وجودها
-const MOCK_COMPONENTS = [
-  // مكونات واجهة المستخدم
-  // DataTableComponent: لعرض قائمة الجرد
-  // StatsCardComponent: لعرض الإحصائيات
-  // FilterPanelComponent: للفلترة
-  // ButtonComponent: للأزرار
-  // DialogComponent: لعرض التفاصيل
-];
 
 /**
  * @description مكون صفحة جرد المخزون (Stock Count Page Component)
@@ -25,7 +35,7 @@ const MOCK_COMPONENTS = [
 @Component({
   selector: 'app-stock-count-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ...MOCK_COMPONENTS],
+  imports: [CommonModule, DataTableComponent, StatsCardComponent, SearchBarComponent],
   templateUrl: './stock-count-page.component.html',
   styleUrls: ['./stock-count-page.component.scss'],
 })

@@ -1,3 +1,20 @@
+
+// استيراد المكونات المشتركة
+// استيراد المكونات المشتركة
+import { DataTableComponent, ColumnConfig } from '../../components/shared/data-table/data-table.component';
+import { StatsCardComponent } from '../../components/shared/stats-card/stats-card.component';
+import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
+
+import { 
+  Item, 
+  Warehouse, 
+  StockMovement, 
+  ItemCategory, 
+  Unit,
+  InventoryCount,
+  StockBalance
+} from '../../models/inventory.models';
+
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -5,6 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject, Observable, combineLatest, switchMap, catchError, tap, map, startWith, Subject, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+
+// استيراد المكونات المشتركة
 
 // محاكاة للخدمات والمكونات المطلوبة
 // في تطبيق حقيقي، سيتم استيراد هذه من مساراتها الفعلية
@@ -29,10 +48,7 @@ interface ItemFilter {
 }
 
 // محاكاة لخدمة إدارة المخزون (InventoryService)
-class MockInventoryService {
-  // محاكاة البيانات الأولية
-  private mockItems: Item[] = [
-    { id: 1, name: 'لابتوب ديل', category: 'إلكترونيات', price: 2500, stock: 15, isActive: true },
+,
     { id: 2, name: 'هاتف سامسونج', category: 'إلكترونيات', price: 1800, stock: 5, isActive: true },
     { id: 3, name: 'كرسي مكتبي', category: 'أثاث', price: 450, stock: 0, isActive: false },
     { id: 4, name: 'طاولة اجتماعات', category: 'أثاث', price: 1200, stock: 22, isActive: true },
@@ -87,9 +103,7 @@ class MockInventoryService {
 }
 
 // محاكاة لخدمة الإشعارات (ToastService)
-class MockToastService {
-  success(message: string): void {
-    console.log(`Toast SUCCESS: ${message}`);
+`);
   }
   error(message: string): void {
     console.error(`Toast ERROR: ${message}`);
