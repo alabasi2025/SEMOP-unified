@@ -27,7 +27,7 @@ import {
   ButtonComponent,
   IconComponent,
   MovementType,
-} from './inventory.models'; // استيراد الواجهات والخدمة الوهمية
+} from '../models'; // استيراد الواجهات والخدمة الوهمية
 
 // تعريف خدمة وهمية لتجنب أخطاء الحقن
 class MockInventoryService extends InventoryService {

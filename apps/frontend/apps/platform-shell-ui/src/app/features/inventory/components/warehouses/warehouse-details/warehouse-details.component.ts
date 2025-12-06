@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Warehouse, WarehouseItem, StockMovement } from './inventory.models'; // افتراض أن الملف في نفس المجلد أو تم تعديل المسار
+import { Warehouse, WarehouseItem, StockMovement } from '../../models'; // افتراض أن الملف في نفس المجلد أو تم تعديل المسار
 import { StatsCardComponent } from '../stats-card/stats-card.component'; // مكون مشترك مفترض
 import { DataTableComponent } from '../data-table/data-table.component'; // مكون مشترك مفترض
 import { ChartModule } from 'primeng/chart'; // افتراض استخدام مكتبة رسوم بيانية مثل PrimeNG أو Chart.js

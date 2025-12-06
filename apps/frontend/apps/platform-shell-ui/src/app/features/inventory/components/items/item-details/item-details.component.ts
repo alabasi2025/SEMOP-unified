@@ -8,7 +8,7 @@ import { Subject, combineLatest, map, Observable, filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // استيراد النماذج المطلوبة من ملف النماذج الوهمي
-import { Item, WarehouseItem, StockMovement, ItemStatistics } from './inventory.models';
+import { Item, WarehouseItem, StockMovement, ItemStatistics } from '../../models';
 
 // استيراد المكونات المشتركة (افتراضياً موجودة في مسار معين)
 // نفترض أنها مكونات مستقلة (Standalone)

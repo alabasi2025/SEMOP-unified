@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
-import { Item, Category, Unit } from './inventory.models'; // افتراض أن الملف في نفس المجلد
+import { Item, Category, Unit } from '../../models'; // افتراض أن الملف في نفس المجلد
 import { Observable, of } from 'rxjs';
 
 // تعريف رسائل الأخطاء باللغة العربية

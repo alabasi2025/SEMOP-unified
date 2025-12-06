@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, map, Observable, startWith } from 'rxjs';
-import { WarehouseItem, DataTableColumn, StatsCardData } from './inventory.models'; // تم افتراض المسار
+import { WarehouseItem, DataTableColumn, StatsCardData } from '../../models'; // تم افتراض المسار
 
 // *************************************************************************************************
 // ملاحظة: في مشروع حقيقي، سيتم استيراد المكونات المشتركة (DataTableComponent, StatsCardComponent)

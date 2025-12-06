@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { Warehouse, User } from './inventory.models'; // افتراض وجود ملف inventory.models.ts
+import { Warehouse, User } from '../../models'; // افتراض وجود ملف inventory.models.ts
 
 // =================================================================================
 // تعريف النماذج (لأغراض العرض التوضيحي، يجب استيرادها من inventory.models.ts)
