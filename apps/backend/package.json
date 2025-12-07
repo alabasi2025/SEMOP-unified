@@ -1,6 +1,6 @@
 {
   "name": "semop-backend",
-  "version": "5.2.0",
+  "version": "5.2",
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
