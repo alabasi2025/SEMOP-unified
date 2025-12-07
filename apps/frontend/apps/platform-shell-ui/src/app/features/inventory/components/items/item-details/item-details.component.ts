@@ -12,9 +12,7 @@ import { Item, WarehouseItem, StockMovement, ItemStatistics } from '../../models
 
 // استيراد المكونات المشتركة (افتراضياً موجودة في مسار معين)
 // نفترض أنها مكونات مستقلة (Standalone)
-import { DataTableComponent } from './data-table/data-table.component';
-import { StatsCardComponent } from './stats-card/stats-card.component';
-import { SearchBarComponent } from './search-bar/search-bar.component';
+import { DataTableComponent, StatsCardComponent, SearchBarComponent } from '../../../shared';
 
 @Component({
   selector: 'app-item-details',

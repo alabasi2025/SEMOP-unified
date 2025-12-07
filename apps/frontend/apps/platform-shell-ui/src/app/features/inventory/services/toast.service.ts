@@ -25,6 +25,22 @@ export class ToastService {
     // TODO: Integrate with actual toast library
   }
 
+  showError(message: string): void {
+    this.error(message);
+  }
+
+  showSuccess(message: string): void {
+    this.success(message);
+  }
+
+  showWarning(message: string): void {
+    this.warning(message);
+  }
+
+  showInfo(message: string): void {
+    this.info(message);
+  }
+
   show(severity: 'success' | 'error' | 'warning' | 'info', summary: string, detail?: string): void {
     const message = detail ? `${summary}: ${detail}` : summary;
     

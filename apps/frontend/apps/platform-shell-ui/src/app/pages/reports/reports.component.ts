@@ -1,8 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ReportsService, GetReportDto } from './reports.service';
-import { MessageService } from 'primeng/api'; // لاستخدام PrimeNG Toast
+import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ToastModule } from 'primeng/toast';
+
+
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs'; // لاستخدام PrimeNG Toast
 
 @Component({
+  imports: [CommonModule, FormsModule, CardModule, ToastModule, ButtonModule, TableModule, InputTextModule],
   selector: 'app-reports',
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css'],

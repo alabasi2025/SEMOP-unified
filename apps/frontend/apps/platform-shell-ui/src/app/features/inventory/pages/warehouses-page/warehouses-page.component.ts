@@ -1,3 +1,4 @@
+
 // warehouses-page.component.ts
 
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
@@ -11,19 +12,20 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, Observable, Subscription, catchError, combineLatest, filter, map, of, startWith, switchMap, tap } from 'rxjs';
 
 // استيراد المكونات المشتركة
-import { StatsCardComponent } from '../../components/shared';
-import { WarehouseListComponent } from './warehouse-list/warehouse-list.component';
-import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
-import { WarehouseDetailsComponent } from './warehouse-details/warehouse-details.component';
-import { InventoryService, Warehouse, WarehouseStats } from '../services/inventory.service';
-import { ToastService } from '../services/toast.service';
+import { StatsCardComponent } from '../../shared/stats-card/stats-card.component';
+import { WarehouseListComponent } from '../../components/warehouses/warehouse-list/warehouse-list.component';
+import { WarehouseFormComponent } from '../../components/warehouses/warehouse-form/warehouse-form.component';
+import { WarehouseDetailsComponent } from '../../components/warehouses/warehouse-details/warehouse-details.component';
+import { InventoryService } from '../../services/inventory.service';
+import { Warehouse, WarehouseStats } from '../../models';
+import { ToastService } from '../../services/toast.service';
 
 /**
  * واجهة لتمثيل حالة الصفحة
  */
 interface WarehousesPageState {
   warehouses: Warehouse[];
-  stats: WarehouseStats | null;
+  stats: WarehouseStats | null | undefined;
   loading: boolean;
   error: string | null;
   selectedWarehouse: Warehouse | null;
@@ -168,7 +170,7 @@ export class WarehousesPageComponent implements OnInit, OnDestroy {
     const confirmation = confirm(`هل أنت متأكد من حذف المستودع: ${warehouse.name}؟`);
 
     if (confirmation) {
-      this.inventoryService.deleteWarehouse(warehouse.id).pipe(
+      this.inventoryService.deleteWarehouse(warehouse.id.toString()).pipe(
         tap(() => {
           this.toastService.showSuccess(`تم حذف المستودع: ${warehouse.name} بنجاح.`);
           this.refreshData(); // تحديث البيانات بعد الحذف
@@ -198,119 +200,4 @@ export class WarehousesPageComponent implements OnInit, OnDestroy {
     // إلغاء جميع الاشتراكات لتجنب تسرب الذاكرة
     this.subscriptions.unsubscribe();
   }
-}
-
-// ----------------------------------------------------------------
-// محاكاة لخدمة InventoryService والأنواع المطلوبة
-// يجب أن تكون هذه في ملفات منفصلة في مشروع حقيقي (مثل inventory.service.ts)
-// ----------------------------------------------------------------
-
-/**
- * واجهة لتمثيل بيانات المستودع
- */
-export interface Warehouse {
-  id: number;
-  name: string;
-  location: string;
-  isActive: boolean;
-  totalValue: number; // إجمالي قيمة المخزون
-  itemCount: number; // عدد الأصناف
-  lastUpdated: Date;
-}
-
-/**
- * واجهة لتمثيل إحصائيات المستودعات
- */
-export interface WarehouseStats {
-  totalWarehouses: number;
-  activeWarehouses: number;
-  totalInventoryValue: number;
-}
-
-// محاكاة للخدمة
-class MockInventoryService {
-  private mockWarehouses: Warehouse[] = [
-    { id: 1, name: 'المستودع الرئيسي', location: 'الرياض', isActive: true, totalValue: 1500000, itemCount: 500, lastUpdated: new Date() },
-    { id: 2, name: 'مستودع الشمال', location: 'جدة', isActive: true, totalValue: 850000, itemCount: 320, lastUpdated: new Date() },
-    { id: 3, name: 'مستودع الأرشيف', location: 'الدمام', isActive: false, totalValue: 12000, itemCount: 50, lastUpdated: new Date() },
-  ];
-
-  /**
-   * جلب قائمة المستودعات
-   */
-  getWarehouses(): Observable<Warehouse[]> {
-    // محاكاة لطلب API مع تأخير
-    return of(this.mockWarehouses).pipe(
-      delay(500),
-      tap(() => console.log('تم جلب المستودعات بنجاح'))
-    );
-  }
-
-  /**
-   * جلب إحصائيات المستودعات
-   */
-  getWarehouseStats(): Observable<WarehouseStats> {
-    const totalWarehouses = this.mockWarehouses.length;
-    const activeWarehouses = this.mockWarehouses.filter(w => w.isActive).length;
-    const totalInventoryValue = this.mockWarehouses.reduce((sum, w) => sum + w.totalValue, 0);
-
-    return of({ totalWarehouses, activeWarehouses, totalInventoryValue }).pipe(
-      delay(500),
-      tap(() => console.log('تم جلب الإحصائيات بنجاح'))
-    );
-  }
-
-  /**
-   * حذف مستودع
-   * @param id معرف المستودع
-   */
-  deleteWarehouse(id: number): Observable<void> {
-    return of(undefined).pipe(
-      delay(300),
-      tap(() => {
-        const initialLength = this.mockWarehouses.length;
-        this.mockWarehouses = this.mockWarehouses.filter(w => w.id !== id);
-        if (this.mockWarehouses.length === initialLength) {
-          throw new Error('المستودع غير موجود');
-        }
-        console.log(`تم حذف المستودع ذو المعرف ${id}`);
-      })
-    );
-  }
-}
-
-// محاكاة لخدمة الإشعارات
-class MockToastService {
-  showSuccess(message: string): void {
-    console.log(`[نجاح]: ${message}`);
-    // منطق عرض إشعار النجاح
-  }
-  showError(message: string): void {
-    console.error(`[خطأ]: ${message}`);
-    // منطق عرض إشعار الخطأ
-  }
-}
-
-// يجب توفير الخدمات الحقيقية في ملفات منفصلة
-// هنا نستخدم Mocking لأغراض العرض
-export const InventoryService = MockInventoryService as any;
-export const ToastService = MockToastService as any;
-
-// دالة مساعدة لمحاكاة التأخير
-function delay(ms: number) {
-  return (source: Observable<any>) =>
-    new Observable(observer => {
-      const subscription = source.subscribe({
-        next(value) {
-          setTimeout(() => observer.next(value), ms);
-        },
-        error(err) {
-          setTimeout(() => observer.error(err), ms);
-        },
-        complete() {
-          setTimeout(() => observer.complete(), ms);
-        },
-      });
-      return () => subscription.unsubscribe();
-    });
 }

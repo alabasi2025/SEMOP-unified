@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,6 +13,8 @@ import {
   PaginatedResponse,
   SearchFilters,
 } from '../models/inventory.models';
+import { StockCount, StockCountFilter, StockCountStats } from '../models';
+import { of } from 'rxjs';
 
 /**
  * خدمة نظام المخازن
@@ -281,6 +284,27 @@ export class InventoryService {
     return this.http.get(`${this.apiUrl}/stock-count/${countId}/report`);
   }
 
+  /**
+   * جلب قائمة الجرد
+   */
+  getStockCounts(filter?: StockCountFilter): Observable<StockCount[]> {
+    // TODO: Implement API call
+    return of([]);
+  }
+
+  /**
+   * جلب إحصائيات الجرد
+   */
+  getStockCountStats(): Observable<StockCountStats> {
+    // TODO: Implement API call
+    return of({
+      totalCounts: 0,
+      inProgress: 0,
+      completed: 0,
+      totalDifferenceValue: 0
+    });
+  }
+
   // ============================================
   // التقارير (Reports)
   // ============================================
@@ -310,5 +334,17 @@ export class InventoryService {
     let params = new HttpParams();
     if (warehouseId) params = params.set('warehouseId', warehouseId);
     return this.http.get(`${this.apiUrl}/reports/stock-balance`, { params });
+  }
+
+  approveStockCount(countId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/stock-count/${countId}/approve`, {});
+  }
+
+  getWarehouseStats(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/warehouses/stats`);
+  }
+
+  updateItemQuantity(itemId: string, quantity: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/items/${itemId}/quantity`, { quantity });
   }
 }

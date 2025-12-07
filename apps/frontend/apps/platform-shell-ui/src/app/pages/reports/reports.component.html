@@ -7,7 +7,7 @@
         <!-- اختيار نوع التقرير -->
         <div class="p-col-12 p-md-4">
           <label for="reportType">نوع التقرير</label>
-          <p-dropdown
+          <p-select
             [options]="[
               { label: 'ملخص المخزون', value: 'inventory-summary' },
               { label: 'المبيعات حسب الصنف', value: 'sales-by-item' },
@@ -17,28 +17,28 @@
             placeholder="اختر تقريراً"
             optionLabel="label"
             optionValue="value"
-          ></p-dropdown>
+          ></p-select>
         </div>
 
         <!-- فلاتر التاريخ -->
         <div class="p-col-12 p-md-4">
           <label for="startDate">تاريخ البدء</label>
-          <p-calendar
+          <p-date-picker
             [(ngModel)]="filter.startDate"
             dateFormat="yy-mm-dd"
             [showIcon]="true"
             placeholder="تاريخ البدء"
-          ></p-calendar>
+          ></p-date-picker>
         </div>
 
         <div class="p-col-12 p-md-4">
           <label for="endDate">تاريخ الانتهاء</label>
-          <p-calendar
+          <p-date-picker
             [(ngModel)]="filter.endDate"
             dateFormat="yy-mm-dd"
             [showIcon]="true"
             placeholder="تاريخ الانتهاء"
-          ></p-calendar>
+          ></p-date-picker>
         </div>
 
         <!-- فلاتر إضافية (الصنف والمستودع) -->
