@@ -1,22 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InventoryService } from './inventory.service';
-import { ToastService } from './toast.service';
-import { StockCount, StockCountFilter, StockCountStats, StockCountStatus } from './inventory.interfaces';
+import { InventoryService } from '../services/inventory.service';
+import { ToastService } from '../services/toast.service';
+import { StockCount, StockCountFilter, StockCountStats, StockCountStatus } from '../models';
 import { BehaviorSubject, Observable, catchError, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // لاستخدام ngModel في الفلترة
 
 // افتراض أن هذه المكونات مستقلة ومتاحة للاستيراد
 // في التطبيق الحقيقي، يجب استيرادها من مسارها الصحيح
 // لغرض هذا المثال، نفترض وجودها
-const MOCK_COMPONENTS = [
-  // مكونات واجهة المستخدم
-  // DataTableComponent: لعرض قائمة الجرد
-  // StatsCardComponent: لعرض الإحصائيات
-  // FilterPanelComponent: للفلترة
-  // ButtonComponent: للأزرار
-  // DialogComponent: لعرض التفاصيل
-];
+const MOCK_COMPONENTS: any[] = [];
 
 /**
  * @description مكون صفحة جرد المخزون (Stock Count Page Component)
@@ -70,7 +63,7 @@ export class StockCountPageComponent implements OnInit {
       tap(() => this.loadingList$.next(true)),
       switchMap((filter) => this.inventoryService.getStockCounts(filter).pipe(
         tap(() => this.loadingList$.next(false)),
-        catchError((error: unknown) => error) => {
+        catchError((error: unknown) => {
           this.loadingList$.next(false);
           this.toastService.showError('فشل في تحميل قائمة الجرد: ' + error.message);
           return of([]); // إرجاع مصفوفة فارغة عند الخطأ
@@ -88,7 +81,7 @@ export class StockCountPageComponent implements OnInit {
     this.loadingStats$.next(true);
     return this.inventoryService.getStockCountStats().pipe(
       tap(() => this.loadingStats$.next(false)),
-      catchError((error: unknown) => error) => {
+      catchError((error: unknown) => {
         this.loadingStats$.next(false);
         this.toastService.showError('فشل في تحميل الإحصائيات: ' + error.message);
         // إرجاع إحصائيات صفرية عند الخطأ

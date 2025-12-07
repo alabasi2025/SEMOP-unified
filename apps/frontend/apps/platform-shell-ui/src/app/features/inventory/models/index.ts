@@ -23,5 +23,39 @@ export * from './inventory.models';
 export type InventoryStatus = 'active' | 'inactive' | 'discontinued';
 export type MovementType = 'in' | 'out' | 'transfer' | 'adjustment';
 export type StockCountType = 'full' | 'partial' | 'cycle';
-export type StockCountStatus = 'draft' | 'in_progress' | 'completed' | 'cancelled';
 export type TransferStatus = 'draft' | 'pending' | 'in_transit' | 'completed' | 'cancelled';
+
+// StockCount Status Enum
+export enum StockCountStatus {
+  DRAFT = 'draft',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
+// StockCount Interfaces
+export interface StockCount {
+  id: string;
+  countNumber: string;
+  warehouseId: string;
+  warehouseName: string;
+  countType: StockCountType;
+  status: StockCountStatus;
+  startDate: Date;
+  endDate?: Date;
+  notes?: string;
+}
+
+export interface StockCountFilter {
+  status: StockCountStatus | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  warehouseId: string | null;
+}
+
+export interface StockCountStats {
+  totalCounts: number;
+  inProgress: number;
+  completed: number;
+  totalDifferenceValue: number;
+}
