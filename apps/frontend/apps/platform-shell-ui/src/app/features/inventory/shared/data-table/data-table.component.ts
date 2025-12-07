@@ -40,4 +40,5 @@ import { CommonModule } from '@angular/common';
 export class DataTableComponent {
   @Input() data: any[] = [];
   @Input() columns: { field: string; header: string }[] = [];
+  @Input() loading: boolean = false;
 }
