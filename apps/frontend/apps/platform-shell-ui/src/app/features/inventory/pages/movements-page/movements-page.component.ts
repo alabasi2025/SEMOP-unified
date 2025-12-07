@@ -172,7 +172,7 @@ export class MovementsPageComponent implements OnInit {
           // إخفاء حالة التحميل عند النجاح
           tap(() => this.isLoading.next(false)),
           // معالجة الأخطاء
-          catchError((error: unknown) => err) => {
+          catchError((err: any) => {
             this.isLoading.next(false);
             const errorMessage = err.message || 'حدث خطأ غير متوقع.';
             this.error.next(errorMessage);
