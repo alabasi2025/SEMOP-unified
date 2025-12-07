@@ -18,7 +18,8 @@ COPY . .
 RUN npx prisma generate
 
 # Build application
-RUN npx nx build api-gateway
+ENV NX_DAEMON=false
+RUN npx nx build api-gateway --skip-nx-cache
 
 # Production stage
 FROM node:22-alpine
