@@ -7,9 +7,7 @@ import { Item, Category, InventoryStats } from '../inventory.models';
 
 // افتراض استيراد المكونات المشتركة (يجب استبدالها بالمسارات الصحيحة)
 // لأغراض هذا المكون، سنفترض وجود هذه المكونات كـ Standalone
-import { DataTableComponent } from '../shared/data-table/data-table.component';
-import { SearchBarComponent } from '../shared/search-bar/search-bar.component';
-import { StatsCardComponent } from '../shared/stats-card/stats-card.component';
+import { DataTableComponent, SearchBarComponent, StatsCardComponent } from '../../../shared';
 
 /**
  * @description مكون قائمة الأصناف (ItemListComponent)
