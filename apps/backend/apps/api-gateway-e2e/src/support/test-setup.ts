@@ -1,5 +1,10 @@
 /* eslint-disable */
 import axios from 'axios';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load test environment variables
+dotenv.config({ path: path.join(__dirname, '../../../../.env.test') });
 
 module.exports = async function () {
   // Configure axios for tests to use.
