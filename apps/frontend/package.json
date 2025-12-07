@@ -1,6 +1,6 @@
 {
   "name": "@unified-frontend-monorepo/source",
-  "version": "5.2.0",
+  "version": "5.2",
   "license": "MIT",
   "scripts": {
     "prepare": "husky"
