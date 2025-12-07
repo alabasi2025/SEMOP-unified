@@ -13,8 +13,8 @@
         <!-- فلتر الفئة -->
         <div class="p-col-12 p-md-6 p-lg-3">
           <label for="category">الفئة</label>
-          <p-multiSelect [options]="categories" [(ngModel)]="filter.category" optionLabel="label"
-            placeholder="اختر الفئات" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
+          <p-multiSelect  [options]="categories" [(ngModel)]="filter.category" optionLabel="label"
+            placeholder="اختر الفئات"  [style]="{'width': '100%'}"
             (onChange)="performSearch()">
           </p-multiSelect>
         </div>
@@ -22,8 +22,8 @@
         <!-- فلتر الحالة -->
         <div class="p-col-12 p-md-6 p-lg-3">
           <label for="status">الحالة</label>
-          <p-multiSelect [options]="statuses" [(ngModel)]="filter.status" optionLabel="label"
-            placeholder="اختر الحالات" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
+          <p-multiSelect  [options]="statuses" [(ngModel)]="filter.status" optionLabel="label"
+            placeholder="اختر الحالات"  [style]="{'width': '100%'}"
             (onChange)="performSearch()">
           </p-multiSelect>
         </div>

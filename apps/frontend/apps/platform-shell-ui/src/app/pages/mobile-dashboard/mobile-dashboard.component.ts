@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { MobileDashboardService } from './mobile-dashboard.service';
 import { MobileDashboardDto, Activity } from './mobile-dashboard.dto';
-import { MessageService } from 'primeng/api'; // افتراض استخدام PrimeNG MessageService
+import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ListboxModule } from 'primeng/listbox';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { CommonModule } from '@angular/common'; // افتراض استخدام PrimeNG MessageService
 
 @Component({
+  imports: [CommonModule, CardModule, ListboxModule, ButtonModule, TagModule],
   selector: 'app-mobile-dashboard',
   templateUrl: './mobile-dashboard.component.html',
   styleUrls: ['./mobile-dashboard.component.css'],

@@ -1,8 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { MessagesModule } from 'primeng/messages';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
+import { FieldsetModule } from 'primeng/fieldset';
+import { FormsModule } from '@angular/forms';
 import { BarcodeScannerService, ItemDetails } from './barcode-scanner.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
+  imports: [
+    MessagesModule,
+    InputTextModule,
+    ButtonModule,
+    DividerModule,
+    FieldsetModule,
+    FormsModule
+  ],
   selector: 'app-barcode-scanner',
   templateUrl: './barcode-scanner.component.html',
   styleUrls: ['./barcode-scanner.component.css'],

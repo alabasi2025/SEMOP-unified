@@ -7,12 +7,14 @@ import { MessageService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { DividerModule } from 'primeng/divider';
+import { CardModule } from 'primeng/card';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-multi-warehouse-transfer',
@@ -23,12 +25,13 @@ import { DividerModule } from 'primeng/divider';
     TableModule,
     ButtonModule,
     DialogModule,
-    DropdownModule,
+    SelectModule,
     InputTextModule,
     InputTextareaModule,
     ToastModule,
     RippleModule,
-    DividerModule
+    DividerModule,
+    CardModule
   ],
   templateUrl: './multi-warehouse-transfer.component.html',
   styleUrls: ['./multi-warehouse-transfer.component.css'],

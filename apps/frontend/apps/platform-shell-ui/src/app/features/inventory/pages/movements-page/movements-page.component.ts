@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ import {
   ButtonComponent,
   IconComponent,
   MovementType,
-} from '../models'; // استيراد الواجهات والخدمة الوهمية
+} from '../../models'; // استيراد الواجهات والخدمة الوهمية
 
 // تعريف خدمة وهمية لتجنب أخطاء الحقن
 class MockInventoryService extends InventoryService {
@@ -103,7 +103,7 @@ class MockInventoryService extends InventoryService {
 @Component({
   selector: 'app-movements-page',
   standalone: true,
-  imports: [CommonModule, FormsModule], // سيتم إضافة المكونات الأخرى في ملف HTML
+  imports: [CommonModule, FormsModule, DataTableComponent, StatsCardComponent, FilterPanelComponent, ItemListComponent, WarehouseListComponent, DialogComponent, ButtonComponent, IconComponent], // سيتم إضافة المكونات الأخرى في ملف HTML
   templateUrl: './movements-page.component.html',
   styleUrls: ['./movements-page.component.scss'],
   providers: [
@@ -161,13 +161,9 @@ export class MovementsPageComponent implements OnInit {
       switchMap((filter) =>
         combineLatest([
           // جلب الحركات
-          this.inventoryService.getMovements(filter).catch((error: unknown) => error: unknown) => {
-            throw new Error('فشل في جلب الحركات');
-          }),
+          this.inventoryService.getMovements(filter),
           // جلب الإحصائيات
-          this.inventoryService.getMovementStats(filter).catch((error: unknown) => error: unknown) => {
-            throw new Error('فشل في جلب الإحصائيات');
-          }),
+          this.inventoryService.getMovementStats(filter),
         ]).pipe(
           // إخفاء حالة التحميل عند النجاح
           tap(() => this.isLoading.next(false)),

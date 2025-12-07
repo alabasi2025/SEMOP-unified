@@ -4,9 +4,14 @@ import { FormsModule } from '@angular/forms';
 
 import { Component, OnInit } from '@angular/core';
 import { DashboardAnalyticsService, DashboardAnalytics } from './dashboard-analytics.service';
-import { MessageService } from 'primeng/api'; // PrimeNG dependency
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ChartModule } from 'primeng/chart';
+import { CardModule } from 'primeng/card';
+import { CommonModule } from '@angular/common'; // PrimeNG dependency
 
 @Component({
+  imports: [CommonModule, FormsModule, CalendarModule, ToastModule, ChartModule, CardModule],
   selector: 'app-dashboard-analytics',
   templateUrl: './dashboard-analytics.component.html',
   styleUrls: ['./dashboard-analytics.component.css'],

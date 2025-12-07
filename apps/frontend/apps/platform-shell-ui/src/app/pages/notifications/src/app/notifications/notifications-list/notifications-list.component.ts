@@ -2,8 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { NotificationsService } from '../notifications.service';
 import { Notification, NotificationType } from '../models/notification.model';
 import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ToastModule } from 'primeng/toast';
+import { BadgeModule } from 'primeng/badge';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  imports: [CommonModule, CardModule, ToastModule, BadgeModule, ButtonModule, TableModule, TagModule],
   selector: 'app-notifications-list',
   templateUrl: './notifications-list.component.html',
   styleUrls: ['./notifications-list.component.css'],
@@ -78,7 +86,7 @@ export class NotificationsListComponent implements OnInit {
     });
   }
 
-  getSeverity(type: NotificationType): string {
+  getSeverity(type: NotificationType): 'info' | 'success' | 'danger' | 'secondary' {
     switch (type) {
       case NotificationType.SYSTEM:
         return 'info';

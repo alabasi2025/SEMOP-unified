@@ -1,10 +1,30 @@
 // /root/task_outputs/Task2_Advanced_Search_Filters/frontend/advanced-search.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ItemsService } from '../items.service';
-import { Item, AdvancedSearchFilter } from '../item.interface';
-import { PrimeNGConfig } from 'primeng/api';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FormsModule } from '@angular/forms';
+import { CardModule } from 'primeng/card';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { InventoryService as ItemsService } from '../../features/inventory/services/inventory.service';
+import { Item, AdvancedSearchFilter } from '../../features/inventory/models';
+
 
 @Component({
+  imports: [
+    MultiSelectModule,
+    CardModule,
+    InputTextModule,
+    ButtonModule,
+    InputNumberModule,
+    AccordionModule,
+    TableModule,
+    FormsModule,
+    TagModule
+  ],
   selector: 'app-advanced-search',
   templateUrl: './advanced-search.component.html',
   styleUrls: ['./advanced-search.component.css']
@@ -25,22 +45,12 @@ export class AdvancedSearchComponent implements OnInit {
 
   constructor(
     private itemsService: ItemsService,
-    private primengConfig: PrimeNGConfig // لإعداد PrimeNG
+    
   ) { }
 
   ngOnInit(): void {
     // إعداد PrimeNG للغة العربية
-    this.primengConfig.ripple = true;
-    this.primengConfig.setTranslation({
-      startsWith: 'يبدأ بـ',
-      contains: 'يحتوي على',
-      notContains: 'لا يحتوي على',
-      endsWith: 'ينتهي بـ',
-      equals: 'يساوي',
-      notEquals: 'لا يساوي',
-      noFilter: 'بدون فلتر',
-      // ... المزيد من الترجمات حسب الحاجة
-    });
+    
 
     this.itemsService.getFilterOptions().subscribe(options => {
       this.categories = options.categories;

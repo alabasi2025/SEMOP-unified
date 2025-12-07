@@ -14,12 +14,12 @@
       <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" styleClass="p-d-block p-mx-auto">
       </p-progressSpinner>
 
-      <p-listbox [options]="notifications" optionLabel="title" [listStyle]="{'max-height':'400px'}" *ngIf="!loading">
+      <p-listbox [options]="notifications" optionLabel="title"  *ngIf="!loading">
         <ng-template let-notification pTemplate="item">
           <div class="p-d-flex p-jc-between p-ai-center" [ngClass]="{'notification-read': notification.isRead, 'notification-unread': !notification.isRead}">
             <div class="p-d-flex p-flex-column">
               <div class="p-text-bold p-mb-1">
-                <p-tag [value]="notification.type | translateNotificationType" [severity]="getSeverity(notification.type)"
+                <p-tag [value]="notification.type " [severity]="getSeverity(notification.type)"
                   class="p-mr-2"></p-tag>
                 {{ notification.title }}
               </div>

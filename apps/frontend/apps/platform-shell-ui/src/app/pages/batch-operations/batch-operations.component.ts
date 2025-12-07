@@ -1,8 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { BatchOperationsService, BatchOperationDto, BatchOperationResponseDto } from './batch-operations.service';
 import { Message } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ListboxModule } from 'primeng/listbox';
+import { DropdownModule } from 'primeng/dropdown';
+import { MessagesModule } from 'primeng/messages';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+
+
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  imports: [CommonModule, FormsModule, CardModule, ListboxModule, ButtonModule, InputTextModule, DropdownModule, MessagesModule],
   selector: 'app-batch-operations',
   templateUrl: './batch-operations.component.html',
   styleUrls: ['./batch-operations.component.css']

@@ -59,3 +59,17 @@ export interface StockCountStats {
   completed: number;
   totalDifferenceValue: number;
 }
+
+export interface AdvancedSearchFilter {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortOrder?: string;
+  searchTerm?: string;
+  category?: string[];
+  status?: string[];
+  minQuantity?: number;
+  maxQuantity?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}
